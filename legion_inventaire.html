@@ -856,7 +856,16 @@ async function loadData() {
 async function saveInventory(fortKey, tabKey) {
   const items = stores[fortKey][tabKey];
   try {
-    await sbUpsert('inventory', { fort: fortKey, category: tabKey, items, updated_at: new Date().toISOString() });
+    // Tente un PATCH sur la ligne existante (fort + category)
+    const r = await fetch(
+      `${SB_URL}/rest/v1/inventory?fort=eq.${fortKey}&category=eq.${tabKey}`,
+      {
+        method: 'PATCH',
+        headers: SB_HEADERS,
+        body: JSON.stringify({ items, updated_at: new Date().toISOString() })
+      }
+    );
+    if (!r.ok) throw new Error(await r.text());
   } catch(e) { console.error('saveInventory:', e); toast('Erreur de sauvegarde.'); }
 }
 
