@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bourse de Markarth — Registre des Commodités</title>
+<title>Marché de Markarth</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Eagle+Lake&family=IM+Fell+English:ital@0;1&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -12,147 +12,146 @@
   --bg:#080C06;--surface:#0F140C;--card:#141C10;--card2:#1B2415;
   --border:#1E2C18;--borderb:#2E4224;
   --gold:#C9A84C;--goldd:#7A6230;
-  --up:#3E7A3E;--upb:#5CB85C;--down:#7A3E3E;--downb:#C05050;
+  --upb:#5CB85C;--downb:#C05050;
   --text:#D4C490;--textd:#8A9A62;--textf:#4A5A32;
   --mono:'JetBrains Mono',monospace;--serif:'Eagle Lake',serif;
   --body:'IM Fell English',Georgia,serif;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:14px;min-height:100vh;overflow-x:hidden;}
-body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");opacity:.45;}
+body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:14px;min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.4;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");}
 
-#bloader{position:fixed;inset:0;z-index:9000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;}
-.bl-ram{font-size:2.5rem;animation:blp 1.2s ease-in-out infinite;}
-@keyframes blp{0%,100%{opacity:1}50%{opacity:.2}}
-#bl-msg{font-family:var(--serif);font-size:.8rem;color:var(--textd);letter-spacing:.08em;}
-
-/* HEADER */
-header{background:var(--surface);border-bottom:1px solid var(--borderb);display:flex;align-items:stretch;position:sticky;top:0;z-index:200;height:52px;}
-.logo{padding:0 1.2rem;border-right:1px solid var(--borderb);display:flex;align-items:center;gap:.7rem;flex-shrink:0;min-width:210px;}
-.logo-title{font-family:var(--serif);font-size:.82rem;letter-spacing:.06em;color:var(--gold);line-height:1.2;}
-.logo-sub{font-family:var(--body);font-size:.65rem;font-style:italic;color:var(--textd);}
-.ticker-wrap{flex:1;overflow:hidden;display:flex;align-items:center;border-right:1px solid var(--borderb);position:relative;}
-.ticker-wrap::before,.ticker-wrap::after{content:'';position:absolute;top:0;bottom:0;width:32px;z-index:1;pointer-events:none;}
-.ticker-wrap::before{left:0;background:linear-gradient(to right,var(--surface),transparent);}
-.ticker-wrap::after{right:0;background:linear-gradient(to left,var(--surface),transparent);}
-.ticker-inner{display:flex;animation:tscroll 80s linear infinite;white-space:nowrap;will-change:transform;}
-@keyframes tscroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-.tick-item{display:flex;align-items:center;gap:.45rem;padding:0 1rem;border-right:1px solid var(--border);cursor:pointer;transition:background .15s;height:52px;flex-shrink:0;}
-.tick-item:hover{background:var(--card)}.tick-item.active{background:var(--card2)}
-.tick-sym{font-family:var(--mono);font-size:.68rem;font-weight:600;color:var(--textd);letter-spacing:.07em;}
-.tick-name{font-family:var(--body);font-size:.7rem;font-style:italic;color:var(--textf);}
-.tick-price{font-family:var(--mono);font-size:.82rem;font-weight:600;color:var(--text);}
-.tick-var{font-family:var(--mono);font-size:.7rem;}
-.tick-var.up{color:var(--upb)}.tick-var.dn{color:var(--downb)}
-.hdr-right{padding:0 1rem;display:flex;align-items:center;gap:.6rem;flex-shrink:0;}
-.btn-sm{background:transparent;border:1px solid var(--borderb);color:var(--textd);font-family:var(--serif);font-size:.68rem;letter-spacing:.06em;padding:.3rem .7rem;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block;}
+/* ── HEADER ── */
+header{background:var(--surface);border-bottom:1px solid var(--borderb);
+  display:flex;align-items:center;padding:0 1.5rem;height:52px;
+  position:sticky;top:0;z-index:200;gap:1rem;}
+.logo{font-family:var(--serif);font-size:.9rem;color:var(--gold);letter-spacing:.06em;flex-shrink:0;}
+.logo-sub{font-family:var(--body);font-size:.65rem;font-style:italic;color:var(--textf);margin-top:.1rem;}
+.hdr-right{margin-left:auto;display:flex;align-items:center;gap:.6rem;flex-shrink:0;}
+.btn-sm{background:transparent;border:1px solid var(--borderb);color:var(--textd);font-family:var(--serif);
+  font-size:.68rem;letter-spacing:.06em;padding:.3rem .7rem;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block;}
 .btn-sm:hover{border-color:var(--goldd);color:var(--gold);}
-.sb-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.sb-dot.ok{background:var(--upb);box-shadow:0 0 6px rgba(92,184,92,.5);}
+.btn-sm.active{border-color:var(--upb);color:var(--upb);}
+.sb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.sb-dot.ok{background:var(--upb);box-shadow:0 0 5px rgba(92,184,92,.5);}
 .sb-dot.ko{background:var(--downb);}
-.sb-dot.wait{background:var(--goldd);animation:blp .8s ease-in-out infinite;}
-#sb-label{font-family:var(--mono);font-size:.62rem;color:var(--textf);letter-spacing:.05em;}
+.sb-dot.wait{background:var(--goldd);animation:pulse .8s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+#sb-label{font-family:var(--mono);font-size:.6rem;color:var(--textf);}
 
-/* COMMODITY BAR */
-.comm-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:.65rem 1.5rem;display:flex;align-items:center;gap:2rem;position:relative;z-index:1;}
-.comm-id{font-family:var(--mono);font-size:.68rem;font-weight:600;color:var(--textf);letter-spacing:.1em;margin-bottom:.15rem;}
-.comm-name{font-family:var(--serif);font-size:.95rem;color:var(--gold);letter-spacing:.03em;}
-.comm-desc{font-family:var(--body);font-size:.74rem;font-style:italic;color:var(--textd);margin-top:.12rem;}
-.comm-price-area{margin-left:auto;text-align:right;}
-.comm-price{font-family:var(--mono);font-size:1.9rem;font-weight:600;color:var(--text);line-height:1;}
-.comm-var{font-family:var(--mono);font-size:.88rem;font-weight:600;}
-.comm-ohlc{font-family:var(--mono);font-size:.66rem;color:var(--textf);margin-top:.18rem;letter-spacing:.03em;}
+/* ── BANNIÈRE ÉVÉNEMENT ── */
+.event-banner{display:none;padding:.65rem 1.5rem;border-bottom:1px solid;position:relative;z-index:1;}
+.event-banner.on{display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap;}
+.event-banner.penurie{background:rgba(122,62,62,.18);border-color:rgba(192,80,80,.4);border-left:4px solid var(--downb);}
+.event-banner.faveur {background:rgba(62,122,62,.12);border-color:rgba(92,184,92,.4);border-left:4px solid var(--upb);}
+.event-banner.siege  {background:rgba(100,70,10,.15);border-color:rgba(180,130,0,.3);border-left:4px solid #B88200;}
+.event-banner.route  {background:rgba(100,90,10,.12);border-color:rgba(170,140,0,.3);border-left:4px solid #A89000;}
+.event-banner.recolte{background:rgba(40,90,40,.12);border-color:rgba(92,184,92,.4);border-left:4px solid var(--upb);}
+.ev-icone{font-size:1.2rem;flex-shrink:0;}
+.ev-texte{flex:1;}
+.ev-titre{font-family:var(--serif);font-size:.82rem;color:var(--gold);margin-bottom:.1rem;}
+.ev-desc {font-family:var(--body);font-size:.74rem;font-style:italic;color:var(--textd);}
+.ev-meta {font-family:var(--mono);font-size:.66rem;color:var(--textf);margin-top:.2rem;}
 
-/* CATEGORY BAR */
-.cat-bar{background:var(--bg);border-bottom:1px solid var(--border);padding:.35rem 1.5rem;display:flex;gap:.3rem;align-items:center;position:relative;z-index:1;flex-wrap:wrap;}
-.cat-btn{font-family:var(--serif);font-size:.64rem;letter-spacing:.05em;padding:.2rem .6rem;border:1px solid var(--border);cursor:pointer;color:var(--textf);background:transparent;transition:all .15s;}
+/* ── BARRE DE CATÉGORIES ── */
+.cat-bar{background:var(--bg);border-bottom:1px solid var(--border);padding:.38rem 1.5rem;
+  display:flex;gap:.28rem;align-items:center;flex-wrap:wrap;position:relative;z-index:1;}
+.cat-btn{font-family:var(--serif);font-size:.64rem;letter-spacing:.05em;padding:.2rem .6rem;
+  border:1px solid var(--border);cursor:pointer;color:var(--textf);background:transparent;transition:all .15s;}
 .cat-btn:hover{border-color:var(--goldd);color:var(--textd);}
 .cat-btn.active{background:var(--card2);border-color:var(--goldd);color:var(--gold);}
+.cat-sep{width:1px;height:14px;background:var(--border);margin:0 .2rem;flex-shrink:0;}
 
-/* MAIN GRID */
-.main-grid{display:grid;grid-template-columns:1fr 290px;position:relative;z-index:1;}
-.chart-section{background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;min-height:430px;}
-.chart-toolbar{padding:.45rem .9rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.4rem;flex-shrink:0;}
-.chart-label{font-family:var(--serif);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--textf);}
-.comm-tabs{display:flex;gap:.22rem;margin-left:auto;flex-wrap:wrap;max-width:520px;justify-content:flex-end;}
-.ctab{font-family:var(--mono);font-size:.65rem;font-weight:600;letter-spacing:.06em;padding:.18rem .48rem;cursor:pointer;background:transparent;border:1px solid var(--border);color:var(--textd);transition:all .15s;}
-.ctab:hover{border-color:var(--goldd);}
-.ctab.active{background:var(--card2);border-color:var(--goldd);color:var(--gold);}
-.chart-area{flex:1;position:relative;min-height:280px;cursor:crosshair;overflow:hidden;}
-#main-chart{width:100%;height:100%;display:block;}
-.ch-v,.ch-h{position:absolute;pointer-events:none;opacity:0;transition:opacity .08s;}
-.ch-v{width:1px;background:rgba(201,168,76,.25);top:0;bottom:0;}
-.ch-h{height:1px;background:rgba(201,168,76,.25);left:0;right:0;}
-.tt{position:absolute;background:var(--card2);border:1px solid var(--borderb);padding:.45rem .7rem;pointer-events:none;z-index:50;display:none;font-family:var(--mono);font-size:.7rem;line-height:1.7;box-shadow:0 4px 16px rgba(0,0,0,.4);}
-.tt-date{font-size:.64rem;color:var(--textd);margin-bottom:.1rem;font-family:var(--serif);letter-spacing:.04em;}
-.vol-area{height:56px;border-top:1px solid var(--border);flex-shrink:0;}
-#vol-chart{width:100%;height:100%;display:block;}
-.seal{position:absolute;bottom:.75rem;right:.6rem;width:68px;height:68px;display:none;z-index:10;animation:sealpulse 3s ease-in-out infinite;pointer-events:none;}
-.seal.on{display:block;}
-@keyframes sealpulse{0%,100%{filter:drop-shadow(0 0 3px rgba(201,168,76,.3))}50%{filter:drop-shadow(0 0 10px rgba(201,168,76,.65))}}
+/* ── TABLEAU DU MARCHÉ ── */
+main{position:relative;z-index:1;}
+.market-wrap{overflow-x:auto;}
+.market-table{width:100%;border-collapse:collapse;min-width:700px;}
+.market-table th{
+  font-family:var(--serif);font-size:.64rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--textf);padding:.55rem 1rem;border-bottom:2px solid var(--borderb);
+  text-align:left;position:sticky;top:52px;background:var(--surface);z-index:10;white-space:nowrap;}
+.market-table th.right{text-align:right;}
+.market-table th.center{text-align:center;}
 
-/* RIGHT PANEL */
-.right-panel{background:var(--surface);display:flex;flex-direction:column;}
-.rpanel{padding:.8rem .9rem;border-bottom:1px solid var(--border);}
-.rpanel:last-child{border-bottom:none;flex:1;}
-.rp-title{font-family:var(--serif);font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:.6rem;}
-.t-row{display:flex;justify-content:space-between;align-items:center;padding:.28rem 0;border-bottom:1px solid var(--border);}
-.t-row:last-of-type{border-bottom:none;}
-.t-label{font-family:var(--body);font-size:.74rem;font-style:italic;color:var(--textd);}
-.t-val{font-family:var(--mono);font-size:.82rem;font-weight:600;}
-.t-val.achat{color:var(--upb)}.t-val.vente{color:var(--downb)}.t-val.marge{color:var(--gold)}
-.t-band-wrap{margin:.6rem 0 .28rem;}
-.t-band-bg{height:6px;background:var(--bg);border-radius:2px;position:relative;}
-.t-band-fill{position:absolute;top:0;height:100%;background:linear-gradient(to right,rgba(92,184,92,.35),rgba(201,168,76,.35),rgba(192,80,80,.35));border-radius:2px;border:1px solid rgba(201,168,76,.2);}
-.t-cursor{position:absolute;top:-3px;width:2px;height:12px;background:var(--gold);border-radius:1px;transform:translateX(-50%);}
-.t-band-labels{display:flex;justify-content:space-between;margin-top:.2rem;font-family:var(--mono);font-size:.58rem;color:var(--textf);}
-.t-note{font-family:var(--body);font-size:.68rem;font-style:italic;color:var(--textf);border-top:1px solid var(--border);padding-top:.45rem;margin-top:.45rem;line-height:1.5;}
-.cond-badge{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--gold);padding:.5rem .65rem;margin-bottom:.4rem;}
-.cond-badge.penurie{border-left-color:var(--downb)}.cond-badge.faveur{border-left-color:var(--upb)}
-.cond-badge.siege{border-left-color:#8B5500}.cond-badge.route{border-left-color:#7A6A20}.cond-badge.recolte{border-left-color:var(--upb)}
-.cond-titre{font-family:var(--serif);font-size:.74rem;margin-bottom:.18rem;}
-.cond-desc{font-family:var(--body);font-size:.7rem;font-style:italic;color:var(--textd);line-height:1.4;}
-.cond-effet{font-family:var(--mono);font-size:.64rem;color:var(--gold);margin-top:.28rem;}
-.cond-period{font-family:var(--mono);font-size:.6rem;color:var(--textf);margin-top:.08rem;}
-.cond-del{background:none;border:none;color:var(--textf);font-size:.62rem;cursor:pointer;float:right;font-family:var(--mono);transition:color .2s;}
-.cond-del:hover{color:var(--downb);}
-.no-cond{font-family:var(--body);font-size:.74rem;font-style:italic;color:var(--textf);line-height:1.5;}
-.ls-grid{font-family:var(--mono);font-size:.72rem;}
-.ls-row{display:flex;justify-content:space-between;gap:.5rem;padding:.13rem 0;}
-.ls-key{color:var(--textf)}.ls-val{color:var(--text)}
+/* Ligne de séparateur de catégorie */
+.cat-sep-row td{
+  font-family:var(--serif);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--textf);padding:.35rem 1rem .25rem;background:var(--bg);border-bottom:1px solid var(--border);
+  border-top:2px solid var(--borderb);}
 
-/* HISTORY */
-.history{grid-column:1/-1;background:var(--surface);border-top:1px solid var(--borderb);padding:.8rem 1.5rem 1.4rem;position:relative;z-index:1;}
-.hist-title{font-family:var(--serif);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--textf);margin-bottom:.6rem;}
-.hist-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:.74rem;}
-.hist-table th{text-align:left;color:var(--textf);font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;padding:.25rem .45rem;border-bottom:1px solid var(--borderb);}
-.hist-table td{padding:.28rem .45rem;border-bottom:1px solid var(--border);color:var(--textd);}
-.hist-table tr:hover td{background:var(--card);}
-.hist-table td.up{color:var(--upb)}.hist-table td.dn{color:var(--downb)}.hist-table td.gold{color:var(--gold)}
+.market-row{border-bottom:1px solid var(--border);transition:background .12s;cursor:default;}
+.market-row:hover{background:var(--card);}
+.market-row.admin-mode{cursor:pointer;}
+.market-row.admin-mode:hover{background:var(--card2);}
 
-/* ADMIN */
-.adm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;display:none;align-items:center;justify-content:center;}
-.adm-overlay.on{display:flex;}
-.adm-modal{background:var(--card);border:1px solid var(--borderb);border-top:2px solid var(--gold);width:520px;max-height:85vh;overflow-y:auto;padding:1.3rem;}
-.adm-title{font-family:var(--serif);font-size:.92rem;color:var(--gold);letter-spacing:.04em;}
-.adm-tabs{display:flex;gap:.3rem;margin:1rem 0 .7rem;border-bottom:1px solid var(--border);padding-bottom:.45rem;flex-wrap:wrap;}
-.adm-tab{font-family:var(--serif);font-size:.66rem;letter-spacing:.06em;padding:.26rem .68rem;border:1px solid var(--border);cursor:pointer;color:var(--textd);background:transparent;transition:all .15s;}
-.adm-tab.active{border-color:var(--goldd);color:var(--gold);background:var(--card2);}
+.market-row td{padding:.6rem 1rem;vertical-align:middle;}
+
+/* Colonne Bien */
+.cell-bien{display:flex;align-items:center;gap:.8rem;}
+.item-emoji{font-size:1.25rem;flex-shrink:0;width:28px;text-align:center;}
+.item-info{min-width:0;}
+.item-name{font-family:var(--serif);font-size:.82rem;color:var(--text);white-space:nowrap;}
+.item-note{font-family:var(--body);font-size:.7rem;font-style:italic;color:var(--textd);margin-top:.12rem;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;}
+
+/* Colonne Disponibilité */
+.dispo{font-family:var(--serif);font-size:.66rem;letter-spacing:.03em;
+  padding:.18rem .5rem;border:1px solid;white-space:nowrap;}
+.dispo.abondant{color:#5CB85C;border-color:rgba(92,184,92,.35);background:rgba(92,184,92,.07);}
+.dispo.normal  {color:#C9A84C;border-color:rgba(201,168,76,.35);background:rgba(201,168,76,.07);}
+.dispo.rare    {color:#D4803A;border-color:rgba(212,128,58,.35);background:rgba(212,128,58,.07);}
+.dispo.rupture {color:#C05050;border-color:rgba(192,80,80,.35);background:rgba(192,80,80,.07);}
+
+/* Colonnes prix */
+.prix-achat{font-family:var(--mono);font-size:.88rem;font-weight:600;color:var(--upb);text-align:right;white-space:nowrap;}
+.prix-vente{font-family:var(--mono);font-size:.88rem;font-weight:600;color:var(--text);text-align:right;white-space:nowrap;}
+
+/* Colonne Évolution */
+.evo-cell{display:flex;align-items:center;gap:.5rem;}
+.evo-arrow{font-family:var(--mono);font-size:.8rem;font-weight:600;white-space:nowrap;}
+.evo-arrow.up{color:var(--upb);}
+.evo-arrow.dn{color:var(--downb);}
+.evo-arrow.eq{color:var(--textf);}
+
+/* Légende bas de page */
+.legend{background:var(--surface);border-top:1px solid var(--border);padding:.65rem 1.5rem;
+  display:flex;gap:2rem;flex-wrap:wrap;position:relative;z-index:1;}
+.legend-item{font-family:var(--body);font-size:.7rem;font-style:italic;color:var(--textf);}
+.legend-item strong{font-style:normal;color:var(--textd);}
+
+/* ── ADMIN OVERLAY ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:500;
+  display:none;align-items:center;justify-content:center;}
+.overlay.on{display:flex;}
+.modal{background:var(--card);border:1px solid var(--borderb);border-top:2px solid var(--gold);
+  padding:1.4rem;width:100%;max-height:88vh;overflow-y:auto;}
+.modal-sm{max-width:400px;}
+.modal-md{max-width:480px;}
+.modal-title{font-family:var(--serif);font-size:.92rem;color:var(--gold);letter-spacing:.04em;margin-bottom:1rem;}
+.modal-close{background:none;border:none;color:var(--textd);cursor:pointer;font-size:1.1rem;float:right;margin-top:-.2rem;}
 .frow{display:grid;grid-template-columns:1fr 1fr;gap:.42rem;margin-bottom:.42rem;}
 .frow1{grid-template-columns:1fr;}
-.ff label{font-family:var(--body);font-size:.66rem;font-style:italic;color:var(--textd);display:block;margin-bottom:.16rem;}
-.ff input,.ff select{width:100%;background:var(--bg);border:1px solid var(--borderb);color:var(--text);font-family:var(--mono);font-size:.78rem;padding:.28rem .42rem;outline:none;transition:border-color .15s;}
-.ff input:focus,.ff select:focus{border-color:var(--goldd);}
-.btn-main{background:var(--card2);border:1px solid var(--goldd);color:var(--gold);font-family:var(--serif);font-size:.68rem;letter-spacing:.08em;padding:.42rem 1.3rem;cursor:pointer;margin-top:.55rem;transition:all .2s;}
+.ff label{font-family:var(--body);font-size:.68rem;font-style:italic;color:var(--textd);display:block;margin-bottom:.16rem;}
+.ff input,.ff select,.ff textarea{width:100%;background:var(--bg);border:1px solid var(--borderb);
+  color:var(--text);font-family:var(--mono);font-size:.8rem;padding:.3rem .45rem;outline:none;transition:border-color .15s;resize:vertical;}
+.ff input:focus,.ff select:focus,.ff textarea:focus{border-color:var(--goldd);}
+.btn-main{background:var(--card2);border:1px solid var(--goldd);color:var(--gold);font-family:var(--serif);
+  font-size:.7rem;letter-spacing:.08em;padding:.42rem 1.3rem;cursor:pointer;margin-top:.55rem;transition:all .2s;display:inline-block;}
 .btn-main:hover{background:rgba(201,168,76,.12);}
-.btn-danger{background:transparent;border:1px solid var(--downb);color:var(--downb);font-family:var(--serif);font-size:.68rem;letter-spacing:.06em;padding:.38rem 1rem;cursor:pointer;margin-top:.5rem;transition:all .2s;}
+.btn-danger{background:transparent;border:1px solid var(--downb);color:var(--downb);font-family:var(--serif);
+  font-size:.7rem;letter-spacing:.06em;padding:.38rem 1rem;cursor:pointer;margin-top:.5rem;margin-left:.4rem;transition:all .2s;}
 .btn-danger:hover{background:rgba(192,80,80,.1);}
-.adm-err{color:var(--downb);font-size:.68rem;font-style:italic;display:none;margin-top:.22rem;}
-.adm-ok{color:var(--upb);font-size:.68rem;font-style:italic;display:none;margin-top:.22rem;}
-.sql-block{background:var(--bg);border:1px solid var(--border);padding:.55rem;font-family:var(--mono);font-size:.64rem;color:var(--textd);white-space:pre;overflow-x:auto;line-height:1.6;margin:.45rem 0;max-height:170px;overflow-y:auto;}
-.cmi{display:flex;justify-content:space-between;align-items:center;padding:.28rem 0;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:.7rem;}
-.cmi:last-child{border-bottom:none;}
+.adm-ok{color:var(--upb);font-size:.7rem;font-style:italic;display:none;margin-top:.3rem;}
+.adm-err{color:var(--downb);font-size:.7rem;font-style:italic;display:none;margin-top:.3rem;}
+.sql-block{background:var(--bg);border:1px solid var(--border);padding:.55rem;font-family:var(--mono);
+  font-size:.63rem;color:var(--textd);white-space:pre;overflow-x:auto;line-height:1.6;margin:.45rem 0;max-height:200px;overflow-y:auto;}
+
+/* Admin action bar (visible quand connecté) */
+.admin-bar{display:none;background:rgba(201,168,76,.06);border-bottom:1px solid rgba(201,168,76,.2);
+  padding:.38rem 1.5rem;position:relative;z-index:1;align-items:center;gap:.6rem;flex-wrap:wrap;}
+.admin-bar.on{display:flex;}
+.admin-bar-label{font-family:var(--serif);font-size:.64rem;color:var(--gold);letter-spacing:.06em;}
 
 ::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-track{background:var(--bg);}
@@ -161,231 +160,195 @@ header{background:var(--surface);border-bottom:1px solid var(--borderb);display:
 </head>
 <body>
 
-<div id="bloader"><div class="bl-ram">🐏</div><div id="bl-msg">Connexion à Supabase...</div></div>
-
+<!-- ── HEADER ── -->
 <header>
-  <div class="logo">
-    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-      <circle cx="14" cy="14" r="13" stroke="#C9A84C" stroke-width="1.2"/>
-      <circle cx="14" cy="14" r="9" fill="none" stroke="rgba(201,168,76,.3)" stroke-width=".5"/>
-      <text x="14" y="18.5" text-anchor="middle" fill="#C9A84C" font-size="11">🐏</text>
-    </svg>
-    <div><div class="logo-title">Bourse de Markarth</div><div class="logo-sub">Bordeciel · Registre des Commodités</div></div>
+  <div>
+    <div class="logo">🐏 Marché de Markarth</div>
+    <div class="logo-sub">Affiche officielle de la Châtellerie — mise à jour par l'Intendant</div>
   </div>
-  <div class="ticker-wrap"><div class="ticker-inner" id="ticker"></div></div>
   <div class="hdr-right">
-    <div class="sb-dot wait" id="sb-dot"></div><span id="sb-label">connexion...</span>
+    <div class="sb-dot wait" id="sb-dot"></div>
+    <span id="sb-label">connexion...</span>
     <a href="index.html" class="btn-sm">📜 Livret</a>
-    <button class="btn-sm" onclick="openAdmin()">⚙ Jarl</button>
+    <button class="btn-sm" id="btn-intendant" onclick="openLogin()">⚙ Intendant</button>
   </div>
 </header>
 
-<div class="comm-bar">
-  <div>
-    <div class="comm-id" id="bar-sym">—</div>
-    <div class="comm-name" id="bar-name">—</div>
-    <div class="comm-desc" id="bar-desc">—</div>
-  </div>
-  <div class="comm-price-area">
-    <div style="display:flex;align-items:baseline;gap:.6rem;justify-content:flex-end;">
-      <div class="comm-price" id="bar-price">—</div>
-      <div class="comm-var" id="bar-var"></div>
-    </div>
-    <div class="comm-ohlc" id="bar-ohlc">O: — H: — B: — C: —</div>
+<!-- ── BANNIÈRE ÉVÉNEMENT ── -->
+<div class="event-banner" id="event-banner">
+  <div class="ev-icone" id="ev-icone">⚔</div>
+  <div class="ev-texte">
+    <div class="ev-titre" id="ev-titre">—</div>
+    <div class="ev-desc"  id="ev-desc">—</div>
+    <div class="ev-meta"  id="ev-meta">—</div>
   </div>
 </div>
 
+<!-- ── BARRE ADMIN ── -->
+<div class="admin-bar" id="admin-bar">
+  <span class="admin-bar-label">MODE INTENDANT</span>
+  <button class="btn-sm" onclick="openNew()">+ Ajouter un bien</button>
+  <button class="btn-sm" onclick="openEvent()">📢 Événement de marché</button>
+  <button class="btn-sm" onclick="openSetup()">🗄 SQL Setup</button>
+  <button class="btn-sm" style="margin-left:auto;" onclick="logout()">Déconnexion</button>
+</div>
+
+<!-- ── CATÉGORIES ── -->
 <div class="cat-bar" id="cat-bar"></div>
 
-<div class="main-grid">
-  <section class="chart-section">
-    <div class="chart-toolbar">
-      <span class="chart-label">Chandeliers — Sessions</span>
-      <div class="comm-tabs" id="comm-tabs"></div>
-    </div>
-    <div class="chart-area" id="chart-area" onmousemove="onMove(event)" onmouseleave="onLeave()">
-      <svg id="main-chart" viewBox="0 0 820 300" preserveAspectRatio="none"></svg>
-      <div class="ch-v" id="ch-v"></div><div class="ch-h" id="ch-h"></div>
-      <div class="tt" id="tooltip"></div>
-      <div class="seal" id="seal">
-        <svg viewBox="0 0 72 72" fill="none">
-          <circle cx="36" cy="36" r="33" fill="rgba(120,80,10,.55)" stroke="#C9A84C" stroke-width="1.4"/>
-          <circle cx="36" cy="36" r="27" fill="none" stroke="rgba(201,168,76,.4)" stroke-width=".6" stroke-dasharray="3 2.5"/>
-          <text x="36" y="22" text-anchor="middle" fill="#C9A84C" font-size="5.5" font-family="Eagle Lake,serif" letter-spacing=".8">ORDONNANCE</text>
-          <text x="36" y="38" text-anchor="middle" fill="#C9A84C" font-size="17">⚔</text>
-          <text x="36" y="50" text-anchor="middle" fill="#C9A84C" font-size="6" font-family="Eagle Lake,serif" letter-spacing=".5">DU JARL</text>
-          <text x="36" y="60" text-anchor="middle" fill="rgba(201,168,76,.6)" font-size="4.5" font-family="Eagle Lake,serif">MARKARTH</text>
-        </svg>
-      </div>
-    </div>
-    <div class="vol-area"><svg id="vol-chart" viewBox="0 0 820 56" preserveAspectRatio="none"></svg></div>
-  </section>
-
-  <aside class="right-panel">
-    <div class="rpanel">
-      <div class="rp-title">⚖ Tarif de la Châtellerie</div>
-      <div class="t-row"><span class="t-label">Prix d'achat officiel</span><span class="t-val achat" id="t-achat">—</span></div>
-      <div class="t-row"><span class="t-label">Prix de vente autorisé</span><span class="t-val vente" id="t-vente">—</span></div>
-      <div class="t-row" style="border-bottom:none;"><span class="t-label">Marge légale</span><span class="t-val marge" id="t-marge">—</span></div>
-      <div class="t-band-wrap">
-        <div class="t-band-bg">
-          <div class="t-band-fill" id="t-fill" style="left:15%;width:70%;"></div>
-          <div class="t-cursor" id="t-cursor" style="left:50%;"></div>
-        </div>
-        <div class="t-band-labels"><span>Achat</span><span>⟵ Fourchette légale ⟶</span><span>Vente</span></div>
-      </div>
-      <div class="t-note">Prix en septims. Tout écart expose à révocation de licence.</div>
-    </div>
-    <div class="rpanel"><div class="rp-title">📜 Conditions du Marché</div><div id="cond-list"></div></div>
-    <div class="rpanel" style="border-bottom:none;"><div class="rp-title">📊 Dernière Session</div><div class="ls-grid" id="last-sess"></div></div>
-  </aside>
-
-  <div class="history">
-    <div class="hist-title">Historique des Sessions</div>
-    <table class="hist-table">
-      <thead><tr><th>Session</th><th>Ouverture</th><th>Haut</th><th>Bas</th><th>Clôture</th><th>Variation</th><th>Volume</th></tr></thead>
-      <tbody id="hist-tbody"></tbody>
+<!-- ── TABLEAU ── -->
+<main>
+  <div class="market-wrap">
+    <table class="market-table">
+      <thead>
+        <tr>
+          <th style="min-width:220px;">Bien</th>
+          <th style="min-width:110px;">Disponibilité</th>
+          <th class="right" style="min-width:115px;" title="Ce que la Châtellerie verse au marchand">Rachat Châtellerie ↕</th>
+          <th class="right" style="min-width:115px;" title="Ce que paye le citoyen en boutique">Prix au citoyen ↕</th>
+          <th style="min-width:130px;">Tendance</th>
+        </tr>
+      </thead>
+      <tbody id="market-tbody"></tbody>
     </table>
+  </div>
+</main>
+
+<!-- ── LÉGENDE ── -->
+<div class="legend">
+  <div class="legend-item"><strong>Rachat Châtellerie</strong> — Prix auquel la Châtellerie rachète à un marchand</div>
+  <div class="legend-item"><strong>Prix au citoyen</strong> — Plafond légal de vente en boutique</div>
+  <div class="legend-item"><strong>Tendance</strong> — Évolution par rapport à la mise à jour précédente</div>
+</div>
+
+<!-- ── OVERLAY LOGIN ── -->
+<div class="overlay" id="ov-login">
+  <div class="modal modal-sm">
+    <button class="modal-close" onclick="closeAll()">✕</button>
+    <div class="modal-title">🔐 Accès Intendant</div>
+    <div class="frow frow1 ff">
+      <label>Mot de passe</label>
+      <input type="password" id="login-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+      <p class="adm-err" id="login-err">Mot de passe incorrect.</p>
+    </div>
+    <button class="btn-main" onclick="doLogin()">Accéder</button>
   </div>
 </div>
 
-<!-- ADMIN -->
-<div class="adm-overlay" id="adm-overlay">
-  <div class="adm-modal">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem;">
-      <div class="adm-title">🔐 Administration — Bourse de Markarth</div>
-      <button onclick="closeAdmin()" style="background:none;border:none;color:var(--textd);cursor:pointer;font-size:1.1rem;">✕</button>
+<!-- ── OVERLAY MODIFIER UN BIEN ── -->
+<div class="overlay" id="ov-edit">
+  <div class="modal modal-md">
+    <button class="modal-close" onclick="closeAll()">✕</button>
+    <div class="modal-title" id="edit-title">Modifier un bien</div>
+    <div class="frow">
+      <div class="ff"><label>Rachat Châtellerie (sp)</label><input id="ed-achat" type="number" step="0.01"></div>
+      <div class="ff"><label>Prix au citoyen (sp)</label><input id="ed-vente" type="number" step="0.01"></div>
     </div>
-    <div id="adm-login">
-      <div class="frow frow1 ff" style="margin-bottom:.5rem;">
-        <label>Mot de passe du Jarl</label>
-        <input type="password" id="adm-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkPass()">
-        <p class="adm-err" id="adm-err">Accès refusé.</p>
-      </div>
-      <button class="btn-main" onclick="checkPass()">Accéder</button>
+    <div class="frow frow1 ff">
+      <label>Disponibilité</label>
+      <select id="ed-dispo">
+        <option value="abondant">🟢 Abondant — stock élevé, offre excédentaire</option>
+        <option value="normal">🟡 Normal — approvisionnement régulier</option>
+        <option value="rare">🟠 Rare — stock limité, production réduite</option>
+        <option value="rupture">🔴 Rupture — plus disponible pour le moment</option>
+      </select>
     </div>
-    <div id="adm-content" style="display:none;">
-      <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem;font-family:var(--mono);font-size:.68rem;color:var(--textd);">
-        <div class="sb-dot" id="adm-sb-dot"></div><span id="adm-sb-txt">—</span>
-      </div>
-      <div class="adm-tabs">
-        <button class="adm-tab active" onclick="admTab('sess',this)">Session</button>
-        <button class="adm-tab" onclick="admTab('tarif',this)">Tarif</button>
-        <button class="adm-tab" onclick="admTab('cond',this)">Ordonnance</button>
-        <button class="adm-tab" onclick="admTab('newc',this)">+ Commodité</button>
-        <button class="adm-tab" onclick="admTab('setup',this)">SQL Setup</button>
-      </div>
-      <div id="tab-sess">
-        <div class="frow frow1 ff"><label>Commodité</label><select id="a-comm"></select></div>
-        <div class="frow">
-          <div class="ff"><label>Intitulé</label><input id="a-date" placeholder="Sem. 16"></div>
-          <div class="ff"><label>Volume</label><input id="a-vol" type="number" placeholder="150"></div>
-        </div>
-        <div class="frow">
-          <div class="ff"><label>Ouverture (O)</label><input id="a-o" type="number" step="0.01"></div>
-          <div class="ff"><label>Haut (H)</label><input id="a-h" type="number" step="0.01"></div>
-        </div>
-        <div class="frow">
-          <div class="ff"><label>Bas (B)</label><input id="a-l" type="number" step="0.01"></div>
-          <div class="ff"><label>Clôture (C)</label><input id="a-c" type="number" step="0.01"></div>
-        </div>
-        <p class="adm-ok" id="ok-sess">✓ Session enregistrée dans Supabase.</p>
-        <p class="adm-err" id="err-sess"></p>
-        <button class="btn-main" onclick="addSession()">Enregistrer la session</button>
-      </div>
-      <div id="tab-tarif" style="display:none;">
-        <div class="frow frow1 ff" style="margin-bottom:.5rem;"><label>Commodité</label><select id="a-tc" onchange="loadTarifFields()"></select></div>
-        <div class="frow">
-          <div class="ff"><label>Prix d'achat (sp)</label><input id="a-ta" type="number" step="0.01"></div>
-          <div class="ff"><label>Prix de vente max. (sp)</label><input id="a-tv" type="number" step="0.01"></div>
-        </div>
-        <div class="frow frow1 ff"><label>Statut</label>
-          <select id="a-ts"><option value="normal">Normal</option><option value="penurie">Pénurie</option><option value="gele">Prix gelé</option><option value="libre">Prix libre</option></select></div>
-        <p class="adm-ok" id="ok-tarif">✓ Tarif appliqué dans Supabase.</p>
-        <p class="adm-err" id="err-tarif"></p>
-        <button class="btn-main" onclick="saveTarif()">Appliquer le tarif</button>
-      </div>
-      <div id="tab-cond" style="display:none;">
-        <div style="margin-bottom:.7rem;">
-          <div style="font-family:var(--serif);font-size:.66rem;color:var(--textf);letter-spacing:.06em;margin-bottom:.35rem;">CONDITIONS ACTIVES</div>
-          <div id="cond-manage"></div>
-        </div>
-        <div style="border-top:1px solid var(--border);padding-top:.7rem;margin-bottom:.45rem;font-family:var(--serif);font-size:.66rem;color:var(--textf);letter-spacing:.06em;">NOUVELLE ORDONNANCE</div>
-        <div class="frow frow1 ff"><label>Type</label>
-          <select id="a-ct"><option value="penurie">Pénurie</option><option value="faveur">Faveur du Jarl</option><option value="siege">Siège / Conflit</option><option value="route">Route commerciale coupée</option><option value="recolte">Récolte abondante</option></select></div>
-        <div class="frow frow1 ff"><label>Titre</label><input id="a-ctit" placeholder="Pénurie de minerai du Reach"></div>
-        <div class="frow frow1 ff"><label>Description</label><input id="a-cdesc" placeholder="Détails..."></div>
-        <div class="frow">
-          <div class="ff"><label>Effet</label><input id="a-ceff" placeholder="Plafond FER +30%"></div>
-          <div class="ff"><label>Durée</label><input id="a-cdur" placeholder="Sem. 8 → 12"></div>
-        </div>
-        <p class="adm-ok" id="ok-cond">✓ Ordonnance promulguée.</p>
-        <p class="adm-err" id="err-cond"></p>
-        <button class="btn-main" onclick="addCond()">Promulguer l'ordonnance</button>
-      </div>
-      <!-- Nouvelle Commodité -->
-      <div id="tab-newc" style="display:none;">
-        <div style="font-family:var(--body);font-size:.76rem;font-style:italic;color:var(--textd);margin-bottom:.65rem;line-height:1.5;">
-          Crée une nouvelle commodité et l'ajoute immédiatement au ticker et aux onglets.
-          Elle sera sauvegardée dans Supabase si la connexion est active.
-        </div>
-        <div class="frow">
-          <div class="ff"><label>Symbole (3 lettres max.)</label>
-            <input id="nc-sym" placeholder="EBO" maxlength="4" style="text-transform:uppercase;"
-              oninput="this.value=this.value.toUpperCase()"></div>
-          <div class="ff"><label>Catégorie</label>
-            <select id="nc-cat">
-              <option value="METAL">⛏ Métaux</option>
-              <option value="ALCH">🧪 Alchimie</option>
-              <option value="FOOD">🍖 Nourriture</option>
-              <option value="MAGI">✨ Magie</option>
-              <option value="EQUI">⚔ Équipement</option>
-              <option value="DIVE">📦 Divers</option>
-            </select></div>
-        </div>
-        <div class="frow frow1 ff"><label>Nom complet</label>
-          <input id="nc-name" placeholder="Lingot d'ébonite"></div>
-        <div class="frow">
-          <div class="ff"><label>Emoji</label><input id="nc-emoji" placeholder="⚫" maxlength="4"></div>
-          <div class="ff"><label>Statut initial</label>
-            <select id="nc-statut">
-              <option value="normal">Normal</option>
-              <option value="penurie">Pénurie</option>
-              <option value="gele">Prix gelé</option>
-              <option value="libre">Prix libre</option>
-            </select></div>
-        </div>
-        <div class="frow frow1 ff"><label>Description (affichée dans la barre de commodité)</label>
-          <input id="nc-desc" placeholder="Minerai volcanique noir et dense. L'un des matériaux les plus rares..."></div>
-        <div class="frow">
-          <div class="ff"><label>Prix d'achat officiel (sp)</label>
-            <input id="nc-achat" type="number" step="0.01" placeholder="130"></div>
-          <div class="ff"><label>Prix de vente max. (sp)</label>
-            <input id="nc-vente" type="number" step="0.01" placeholder="200"></div>
-        </div>
-        <div class="frow">
-          <div class="ff"><label>Prix de 1ère session (ouverture)</label>
-            <input id="nc-base" type="number" step="0.01" placeholder="150"></div>
-          <div class="ff"><label>Volume échangé (1ère session)</label>
-            <input id="nc-vol" type="number" placeholder="50"></div>
-        </div>
-        <p class="adm-ok" id="ok-newc">✓ Commodité créée et ajoutée à la bourse.</p>
-        <p class="adm-err" id="err-newc"></p>
-        <button class="btn-main" onclick="createComm()">Créer la commodité</button>
-      </div>
+    <div class="frow frow1 ff">
+      <label>Note RP de l'Intendant (optionnel)</label>
+      <textarea id="ed-note" rows="2" placeholder="Ex: Taxe exceptionnelle levée jusqu'à la fin du siège..."></textarea>
+    </div>
+    <p class="adm-ok" id="ok-edit">✓ Bien mis à jour.</p>
+    <p class="adm-err" id="err-edit"></p>
+    <button class="btn-main" onclick="saveEdit()">Enregistrer</button>
+    <button class="btn-danger" onclick="closeAll()">Annuler</button>
+  </div>
+</div>
 
-      <div id="tab-setup" style="display:none;">
-        <div style="font-family:var(--body);font-size:.76rem;font-style:italic;color:var(--textd);margin-bottom:.55rem;line-height:1.5;">Exécutez ce SQL dans l'éditeur Supabase, puis initialisez les données.</div>
-        <div class="sql-block" id="sql-block"></div>
-        <div style="display:flex;gap:.45rem;flex-wrap:wrap;margin-top:.45rem;">
-          <button class="btn-main" onclick="copySql()">Copier le SQL</button>
-          <button class="btn-main" onclick="seedData()">Initialiser les données</button>
-          <button class="btn-danger" onclick="resetData()">Vider les tables</button>
-        </div>
-        <p class="adm-ok" id="ok-seed">✓ Données initialisées.</p>
-        <p class="adm-err" id="err-seed"></p>
-      </div>
+<!-- ── OVERLAY NOUVEAU BIEN ── -->
+<div class="overlay" id="ov-new">
+  <div class="modal modal-md">
+    <button class="modal-close" onclick="closeAll()">✕</button>
+    <div class="modal-title">+ Ajouter un bien au marché</div>
+    <div class="frow">
+      <div class="ff"><label>Symbole (2-4 lettres)</label>
+        <input id="nw-sym" placeholder="EBO" maxlength="4" oninput="this.value=this.value.toUpperCase()"></div>
+      <div class="ff"><label>Catégorie</label>
+        <select id="nw-cat">
+          <option value="METAL">⛏ Métaux</option><option value="ALCH">🧪 Alchimie</option>
+          <option value="FOOD">🍖 Nourriture</option><option value="MAGI">✨ Magie</option>
+          <option value="EQUI">⚔ Équipement</option><option value="DIVE">📦 Divers</option>
+        </select></div>
     </div>
+    <div class="frow">
+      <div class="ff"><label>Nom complet</label><input id="nw-name" placeholder="Lingot d'ébonite"></div>
+      <div class="ff"><label>Emoji</label><input id="nw-emoji" placeholder="⚫" maxlength="4"></div>
+    </div>
+    <div class="frow frow1 ff"><label>Description courte</label>
+      <input id="nw-desc" placeholder="Minerai volcanique rare, utilisé pour l'armurerie avancée..."></div>
+    <div class="frow">
+      <div class="ff"><label>Rachat Châtellerie (sp)</label><input id="nw-achat" type="number" step="0.01"></div>
+      <div class="ff"><label>Prix au citoyen (sp)</label><input id="nw-vente" type="number" step="0.01"></div>
+    </div>
+    <div class="frow frow1 ff"><label>Disponibilité initiale</label>
+      <select id="nw-dispo">
+        <option value="normal">🟡 Normal</option><option value="abondant">🟢 Abondant</option>
+        <option value="rare">🟠 Rare</option><option value="rupture">🔴 Rupture</option>
+      </select></div>
+    <p class="adm-ok" id="ok-new">✓ Bien ajouté au marché.</p>
+    <p class="adm-err" id="err-new"></p>
+    <button class="btn-main" onclick="saveNew()">Ajouter</button>
+    <button class="btn-danger" onclick="closeAll()">Annuler</button>
+  </div>
+</div>
+
+<!-- ── OVERLAY ÉVÉNEMENT ── -->
+<div class="overlay" id="ov-event">
+  <div class="modal modal-md">
+    <button class="modal-close" onclick="closeAll()">✕</button>
+    <div class="modal-title">📢 Événement de marché</div>
+    <div style="font-family:var(--body);font-size:.76rem;font-style:italic;color:var(--textd);margin-bottom:.8rem;line-height:1.5;">
+      L'événement actif s'affiche en bannière pour tous les visiteurs.
+      Un seul événement actif à la fois.
+    </div>
+    <div id="ev-current" style="margin-bottom:.8rem;"></div>
+    <div style="border-top:1px solid var(--border);padding-top:.75rem;margin-bottom:.5rem;font-family:var(--serif);font-size:.66rem;color:var(--textf);letter-spacing:.06em;">NOUVEL ÉVÉNEMENT</div>
+    <div class="frow frow1 ff"><label>Type</label>
+      <select id="ev-type">
+        <option value="penurie">🔴 Pénurie</option><option value="faveur">🟢 Faveur du Jarl</option>
+        <option value="siege">⚔ Siège / Conflit</option><option value="route">🟡 Route coupée</option>
+        <option value="recolte">🌾 Récolte abondante</option>
+      </select></div>
+    <div class="frow frow1 ff"><label>Titre affiché</label>
+      <input id="ev-titre-in" placeholder="Pénurie de minerai du Reach"></div>
+    <div class="frow frow1 ff"><label>Description</label>
+      <textarea id="ev-desc-in" rows="2" placeholder="Les galeries nord ont été inondées. Production réduite de 40%."></textarea></div>
+    <div class="frow">
+      <div class="ff"><label>Effet sur les prix</label><input id="ev-effet" placeholder="Plafond FER & ARG +30%"></div>
+      <div class="ff"><label>Durée prévue</label><input id="ev-dur" placeholder="Sem. 8 → 12"></div>
+    </div>
+    <p class="adm-ok" id="ok-ev">✓ Événement publié.</p>
+    <p class="adm-err" id="err-ev"></p>
+    <button class="btn-main" onclick="saveEvent()">Publier l'événement</button>
+    <button class="btn-danger" onclick="clearEvent()">Lever l'événement actif</button>
+  </div>
+</div>
+
+<!-- ── OVERLAY SQL SETUP ── -->
+<div class="overlay" id="ov-setup">
+  <div class="modal modal-md">
+    <button class="modal-close" onclick="closeAll()">✕</button>
+    <div class="modal-title">🗄 SQL Setup</div>
+    <div style="font-family:var(--body);font-size:.76rem;font-style:italic;color:var(--textd);margin-bottom:.5rem;line-height:1.5;">
+      Collez ce SQL dans l'éditeur Supabase, puis cliquez sur Initialiser.
+    </div>
+    <div class="sql-block" id="sql-block"></div>
+    <div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.45rem;">
+      <button class="btn-main" onclick="copySql()">Copier le SQL</button>
+      <button class="btn-main" onclick="seedData()">Initialiser les données</button>
+      <button class="btn-danger" onclick="resetData()">Vider les tables</button>
+    </div>
+    <p class="adm-ok" id="ok-setup">✓ Données initialisées.</p>
+    <p class="adm-err" id="err-setup"></p>
   </div>
 </div>
 
@@ -400,193 +363,176 @@ async function sbPost(t,b,up=false){const r=await fetch(`${SB_URL}/rest/v1/${t}`
 async function sbPatch(t,q,b){const r=await fetch(`${SB_URL}/rest/v1/${t}${q}`,{method:'PATCH',headers:SB_H,body:JSON.stringify(b)});if(!r.ok)throw new Error(await r.text());return r.json();}
 async function sbDelete(t,q){const r=await fetch(`${SB_URL}/rest/v1/${t}${q}`,{method:'DELETE',headers:SB_H});if(!r.ok)throw new Error(await r.text());}
 
-// ══ CATÉGORIES ══
-const CATS={
-  METAL:{label:'Métaux',      icon:'⛏'},
-  ALCH: {label:'Alchimie',    icon:'🧪'},
-  FOOD: {label:'Nourriture',  icon:'🍖'},
-  MAGI: {label:'Magie',       icon:'✨'},
-  EQUI: {label:'Équipement',  icon:'⚔'},
-  DIVE: {label:'Divers',      icon:'📦'},
-};
-const CAT_MAP={
-  // Métaux (sans Ébonite — bloquée sur le serveur)
-  FER:'METAL',ACE:'METAL',COR:'METAL',AUR:'METAL',ARG:'METAL',
-  ORI:'METAL',QSI:'METAL',PLU:'METAL',DWE:'METAL',MAL:'METAL',
-  // Alchimie
-  RCA:'ALCH',LUT:'ALCH',NIR:'ALCH',PAP:'ALCH',VCH:'ALCH',
-  GEA:'ALCH',BGN:'ALCH',CML:'ALCH',FSF:'ALCH',FGS:'ALCH',TOF:'ALCH',LDR:'ALCH',
-  // Nourriture
-  HYD:'FOOD',VIN:'FOOD',POI:'FOOD',VIA:'FOOD',PAI:'FOOD',MEL:'FOOD',LGM:'FOOD',CHE:'FOOD',
-  // Magie
-  APE:'MAGI',AMO:'MAGI',AGR:'MAGI',ANO:'MAGI',EMR:'MAGI',
-  // Équipement
-  EEP:'EQUI',EAR:'EQUI',DAG:'EQUI',ARC:'EQUI',ARF:'EQUI',AAR:'EQUI',
-  // Divers
-  BOI:'DIVE',PEA:'DIVE',POT:'DIVE',FLP:'DIVE',OST:'DIVE',
-};
+// ══ SQL ══
+const SQL=`-- Exécuter dans Supabase SQL Editor
 
-// ══ GÉNÉRATEUR DE SESSIONS (RNG déterministe) ══
-function makeRng(seed){let s=Math.abs(seed+1);return()=>{s=(s*1664525+1013904223)&0xFFFFFFFF;return(s>>>0)/0xFFFFFFFF;};}
-function strSeed(str){return str.split('').reduce((a,c)=>a+c.charCodeAt(0),0);}
-function genSess(p,n=12){
-  const rng=makeRng(strSeed(p.sym));
-  const dc=p.base>=100?0:p.base>=10?1:2;
-  const sess=[];let price=p.base;
-  for(let i=1;i<=n;i++){
-    const drift=(rng()-.44)*p.vol;
-    const o=Math.max(.01,price+drift);
-    const r=rng()*p.vol*1.3;
-    const h=+(o+r*.6).toFixed(dc);
-    const l=+Math.max(.01,o-r*.4).toFixed(dc);
-    const cRaw=o+(rng()-.46)*p.vol*.8+p.trend;
-    const c=+Math.max(l+Math.pow(10,-dc),Math.min(h-Math.pow(10,-dc),cRaw)).toFixed(dc);
-    const v=Math.floor(p.vb*(0.65+rng()*.7));
-    sess.push({d:`Sem.${i<10?' ':''}${i}`,o:+o.toFixed(dc),h,l,c,v});
-    price=c;
-  }
-  return sess;
-}
-
-// ══ DONNÉES DE DÉPART (25 commodités, 6 catégories) ══
-const PARAMS=[
-  // ═══ MÉTAUX — 10 items (Ébonite exclue : bloquée sur le serveur) ═══
-  {sym:'FER',cat:'METAL',name:"Lingot de fer",         emoji:'🔩',desc:"Minerai abondant du Reach. Matériau de base de l'artisanat et de la forge militaire de Markarth.",                  base:8,   vol:1.5, trend:.35, vb:300, tarif:{achat:11,  vente:16},  statut:'penurie'},
-  {sym:'ACE',cat:'METAL',name:"Lingot d'acier",        emoji:'🔗',desc:"Alliage de fer et de corindon. Requis pour les armes et armures intermédiaires des gardes.",                         base:20,  vol:3,   trend:.5,  vb:200, tarif:{achat:18,  vente:28},  statut:'normal'},
-  {sym:'COR',cat:'METAL',name:"Lingot de corindon",    emoji:'🟤',desc:"Minerai rougeâtre des veines du Reach. Nécessaire à la forge de l'armure d'écailles et de plaque d'acier.",        base:12,  vol:2,   trend:.3,  vb:220, tarif:{achat:10,  vente:18},  statut:'normal'},
-  {sym:'ARG',cat:'METAL',name:"Lingot d'argent",       emoji:'⬜',desc:"Métal noble des veines argentifères. Conducteur magique reconnu des enchanteurs de Markarth.",                      base:22,  vol:4,   trend:.9,  vb:90,  tarif:{achat:30,  vente:44},  statut:'normal'},
-  {sym:'AUR',cat:'METAL',name:"Lingot d'or",           emoji:'🟡',desc:"Métal précieux universel. Valeur refuge des Jarls et monnaie d'échange à travers tout Bordeciel.",                 base:52,  vol:8,   trend:1.5, vb:120, tarif:{achat:65,  vente:85},  statut:'normal'},
-  {sym:'ORI',cat:'METAL',name:"Lingot d'orichalque",   emoji:'🟠',desc:"Alliage résistant des forgerons orques. Fournisseurs principaux : les strongholds du Reach.",                      base:45,  vol:7,   trend:1,   vb:80,  tarif:{achat:40,  vente:62},  statut:'normal'},
-  {sym:'QSI',cat:'METAL',name:"Lingot de vif-argent",  emoji:'💧',desc:"Métal liquide à bas point de fusion. Utilisé pour les armes elfiques et armures nordiques taillées.",              base:70,  vol:10,  trend:1.5, vb:70,  tarif:{achat:58,  vente:90},  statut:'normal'},
-  {sym:'PLU',cat:'METAL',name:"Pierre de lune raff.",  emoji:'🌙',desc:"Minerai lunaire traité. Forge les armes et armures elfiques. Réservé aux artisans qualifiés de haut rang.",        base:90,  vol:14,  trend:2,   vb:55,  tarif:{achat:75,  vente:120}, statut:'normal'},
-  {sym:'DWE',cat:'METAL',name:"Métal dwemer",          emoji:'⚙', desc:"Alliage antique fondu depuis les épaves des ruines dwemer. Propriétés mécaniques uniques non reproductibles.",    base:65,  vol:10,  trend:1.5, vb:65,  tarif:{achat:55,  vente:85},  statut:'normal'},
-  {sym:'MAL',cat:'METAL',name:"Malachite raffinée",    emoji:'🟢',desc:"Pierre volcanique verte traitée. Base des armures en verre. Très rare dans le Reach, importation coûteuse.",      base:130, vol:18,  trend:2.5, vb:40,  tarif:{achat:110, vente:175}, statut:'normal'},
-
-  // ═══ ALCHIMIE — 12 ingrédients ═══
-  {sym:'RCA',cat:'ALCH', name:"Racine de canis",       emoji:'🌿',desc:"Ingrédient courant aux propriétés curatives. Demande régulière des guildes de guérisseurs et apothicaires.",      base:7.5, vol:1.2, trend:.25, vb:550, tarif:{achat:9,   vente:14},  statut:'normal'},
-  {sym:'LUT',cat:'ALCH', name:"Pied de lutin",         emoji:'🍄',desc:"Champignon rare aux propriétés paralysantes. Demande fluctuante des guildes et maîtres alchimistes.",             base:24,  vol:3.5, trend:.8,  vb:170, tarif:{achat:30,  vente:44},  statut:'normal'},
-  {sym:'NIR',cat:'ALCH', name:"Nirnroot",              emoji:'💜',desc:"Plante luminescente rarissime de bord d'eau. Émission sonore caractéristique. Très prisée des alchimistes.",       base:22,  vol:4,   trend:.6,  vb:120, tarif:{achat:25,  vente:40},  statut:'normal'},
-  {sym:'PAP',cat:'ALCH', name:"Aile de papillon",      emoji:'🦋',desc:"Ingrédient volatile des lépidoptères de Bordeciel. Propriétés de vision nocturne et de soin léger.",              base:8,   vol:1.5, trend:.2,  vb:250, tarif:{achat:7,   vente:12},  statut:'normal'},
-  {sym:'VCH',cat:'ALCH', name:"Œufs de chauros",       emoji:'🦂',desc:"Collectés dans les nids des grottes du Reach. Composant clé des potions d'invisibilité et résistance magique.",   base:38,  vol:6,   trend:.5,  vb:90,  tarif:{achat:32,  vente:55},  statut:'normal'},
-  {sym:'GEA',cat:'ALCH', name:"Orteil de géant",       emoji:'👣',desc:"Ingrédient rarissime aux propriétés multiplicatrices uniques. Les potions de soin fortifié atteignent des valeurs record.",base:20,vol:4,trend:.5,vb:60,tarif:{achat:18,vente:35},statut:'normal'},
-  {sym:'BGN',cat:'ALCH', name:"Baies de genièvre",     emoji:'🍒',desc:"Baies des buissons des forêts du Reach. Propriétés de résistance au feu. Cueillette aisée mais saisonnière.",     base:6,   vol:1,   trend:.15, vb:350, tarif:{achat:5,   vente:10},  statut:'normal'},
-  {sym:'CML',cat:'ALCH', name:"Champignon lumineux",   emoji:'✨',desc:"Champignon des cavernes émettant une lueur bleue. Propriétés de soin et résistance au choc magique.",             base:10,  vol:2,   trend:.25, vb:220, tarif:{achat:8,   vente:16},  statut:'normal'},
-  {sym:'FSF',cat:'ALCH', name:"Sels de feu",           emoji:'🔥',desc:"Cristaux récoltés sur les atronachs des flammes. Composant premium des potions de résistance à la chaleur.",      base:50,  vol:8,   trend:1,   vb:80,  tarif:{achat:42,  vente:70},  statut:'normal'},
-  {sym:'FGS',cat:'ALCH', name:"Sels de glace",         emoji:'❄', desc:"Cristaux d'atronachs de glace. Requis pour les potions de résistance au froid et aux sorts de givre.",           base:50,  vol:8,   trend:1,   vb:80,  tarif:{achat:42,  vente:70},  statut:'normal'},
-  {sym:'TOF',cat:'ALCH', name:"Graisse de troll",      emoji:'🧟',desc:"Extrait adipeux des trolls des montagnes. Composant clé des potions de résistance au feu et de régénération.",   base:15,  vol:2.5, trend:.35, vb:160, tarif:{achat:13,  vente:22},  statut:'normal'},
-  {sym:'LDR',cat:'ALCH', name:"Langue de dragon",      emoji:'🌺',desc:"Plante à fleurs rouges écarlates des plaines de Bordeciel. Propriétés d'altération et résistance au feu.",       base:5,   vol:1,   trend:.1,  vb:400, tarif:{achat:4,   vente:8},   statut:'normal'},
-
-  // ═══ NOURRITURE & BOISSONS — 8 items ═══
-  {sym:'PAI',cat:'FOOD', name:"Pain",                  emoji:'🍞',desc:"Denrée fondamentale produite par les moulins de Markarth. Aliment de base de toute la population.",               base:1,   vol:.2,  trend:.02, vb:800, tarif:{achat:1,   vente:2},   statut:'normal'},
-  {sym:'HYD',cat:'FOOD', name:"Hydromel",              emoji:'🍺',desc:"Bière de miel brassée localement. Denrée populaire dans les tavernes et auberges du Reach.",                      base:4,   vol:.8,  trend:.1,  vb:400, tarif:{achat:3,   vente:7},   statut:'normal'},
-  {sym:'MEL',cat:'FOOD', name:"Miel",                  emoji:'🍯',desc:"Récolté dans les ruches des plaines du Reach. Utilisé pour le brassage de l'hydromel et la cuisine noble.",       base:3,   vol:.6,  trend:.08, vb:350, tarif:{achat:2,   vente:5},   statut:'normal'},
-  {sym:'VIN',cat:'FOOD', name:"Vin de Colovie",        emoji:'🍷',desc:"Vin rouge importé de Cyrodiil via les routes marchandes. Coût d'acheminement élevé. Réservé aux nobles.",        base:10,  vol:2,   trend:.2,  vb:180, tarif:{achat:8,   vente:16},  statut:'normal'},
-  {sym:'POI',cat:'FOOD', name:"Poisson fumé",          emoji:'🐟',desc:"Produit des rivières du Reach. Fumé pour conservation. Aliment de base de la population ouvrière.",               base:2.5, vol:.5,  trend:.05, vb:500, tarif:{achat:2,   vente:4},   statut:'normal'},
-  {sym:'VIA',cat:'FOOD', name:"Viande séchée",         emoji:'🥩',desc:"Gibier des montagnes séché au sel. Denrée courante sujette aux variations saisonnières de la chasse.",            base:4,   vol:.8,  trend:.05, vb:450, tarif:{achat:3,   vente:7},   statut:'normal'},
-  {sym:'LGM',cat:'FOOD', name:"Légumes du Reach",      emoji:'🥬',desc:"Poireaux, choux et navets cultivés dans les rares terres fertiles du Reach. Base de l'alimentation paysanne.",   base:2,   vol:.4,  trend:.03, vb:600, tarif:{achat:1,   vente:4},   statut:'normal'},
-  {sym:'CHE',cat:'FOOD', name:"Fromage nordique",      emoji:'🧀',desc:"Fromage de lait de chèvre des troupeaux montagnards. Spécialité locale appréciée des marchands.",                 base:3,   vol:.6,  trend:.05, vb:300, tarif:{achat:2,   vente:5},   statut:'normal'},
-
-  // ═══ MAGIE — 5 items ═══
-  {sym:'APE',cat:'MAGI', name:"Âme de gemme petite",   emoji:'🔮',desc:"Gemme enchantée de faible puissance. Utilisée pour les enchantements de base en forge et atelier.",              base:55,  vol:8,   trend:1,   vb:80,  tarif:{achat:45,  vente:75},  statut:'normal'},
-  {sym:'AMO',cat:'MAGI', name:"Âme de gemme commune",  emoji:'💙',desc:"Gemme de puissance intermédiaire. Utilisée pour la majorité des enchantements d'armes courantes.",               base:100, vol:14,  trend:2,   vb:45,  tarif:{achat:85,  vente:140}, statut:'normal'},
-  {sym:'AGR',cat:'MAGI', name:"Âme de gemme grande",   emoji:'💠',desc:"Gemme de haute puissance. Requise pour les enchantements d'armes et d'armures de qualité supérieure.",           base:220, vol:30,  trend:5,   vb:25,  tarif:{achat:180, vente:300}, statut:'normal'},
-  {sym:'ANO',cat:'MAGI', name:"Âme de gemme noire",    emoji:'🖤',desc:"Puissance maximale. Capture uniquement les âmes humanoïdes. Réglementation stricte par décret du Jarl.",         base:850, vol:100, trend:15,  vb:8,   tarif:{achat:700,vente:1100},statut:'normal'},
-  {sym:'EMR',cat:'MAGI', name:"Émeraude",              emoji:'💎',desc:"Gemme précieuse rare du Reach. Haute valeur spéculative. Utilisée en joaillerie et enchantement avancé.",        base:780, vol:90,  trend:12,  vb:12,  tarif:{achat:650,vente:1000},statut:'normal'},
-
-  // ═══ ÉQUIPEMENT — 6 items ═══
-  {sym:'DAG',cat:'EQUI', name:"Dague de fer",          emoji:'🔪',desc:"Arme de discrétion de base. Autorisée à tous les citoyens en possession légale déclarée à la Garde.",            base:15,  vol:2.5, trend:.3,  vb:100, tarif:{achat:12,  vente:22},  statut:'normal'},
-  {sym:'EEP',cat:'EQUI', name:"Épée de fer",           emoji:'🗡', desc:"Arme d'infanterie standard certifiée par la Garde de Markarth. Production locale contrôlée.",                   base:32,  vol:5,   trend:.5,  vb:60,  tarif:{achat:28,  vente:50},  statut:'normal'},
-  {sym:'EAR',cat:'EQUI', name:"Épée d'acier",          emoji:'⚔', desc:"Arme intermédiaire de bonne facture. Portée par les sergents et officiers de la Garde.",                         base:55,  vol:8,   trend:.8,  vb:40,  tarif:{achat:45,  vente:80},  statut:'normal'},
-  {sym:'ARC',cat:'EQUI', name:"Arc de chasse",         emoji:'🏹',desc:"Arc léger standard des chasseurs et archers du Reach. Certifié par la milice à distance.",                        base:45,  vol:7,   trend:.7,  vb:55,  tarif:{achat:38,  vente:65},  statut:'normal'},
-  {sym:'ARF',cat:'EQUI', name:"Armure de fer",         emoji:'🛡', desc:"Protection lourde standard de la milice. Certifiée par le Chevalier-Châtelain de Markarth.",                   base:130, vol:20,  trend:2,   vb:30,  tarif:{achat:110, vente:180}, statut:'normal'},
-  {sym:'AAR',cat:'EQUI', name:"Armure d'acier",        emoji:'🦺',desc:"Armure de qualité intermédiaire portée par les officiers. Production sur commande de l'armurerie officielle.",   base:225, vol:30,  trend:3.5, vb:18,  tarif:{achat:190, vente:300}, statut:'normal'},
-
-  // ═══ DIVERS — 5 items ═══
-  {sym:'BOI',cat:'DIVE', name:"Bois de chauffage",     emoji:'🪵',desc:"Combustible essentiel pour les hivers du Reach. Collecte régulière dans les forêts environnantes.",               base:1.5, vol:.3,  trend:.02, vb:800, tarif:{achat:1,   vente:3},   statut:'normal'},
-  {sym:'PEA',cat:'DIVE', name:"Peau tannée",           emoji:'🦌',desc:"Matériau de maroquinerie issu de la chasse locale. Qualité variable selon le tanneur.",                           base:6,   vol:1.2, trend:.1,  vb:350, tarif:{achat:5,   vente:10},  statut:'normal'},
-  {sym:'FLP',cat:'DIVE', name:"Pelage de loup",        emoji:'🐺',desc:"Fourrure brute des loups du Reach. Matériau d'isolation thermique. Commerce saisonnier lié à la chasse.",        base:8,   vol:1.5, trend:.1,  vb:280, tarif:{achat:6,   vente:13},  statut:'normal'},
-  {sym:'OST',cat:'DIVE', name:"Défense de mammouth",   emoji:'🦣',desc:"Os précieux des mammouths des toundras nordiques. Utilisé en sculpture et décoration noble.",                     base:30,  vol:5,   trend:.5,  vb:100, tarif:{achat:25,  vente:45},  statut:'normal'},
-  {sym:'POT',cat:'DIVE', name:"Potion de soin",        emoji:'🧴',desc:"Potion standard de restauration produite par les apothicaires agréés de la Châtellerie de Markarth.",            base:18,  vol:3,   trend:.3,  vb:200, tarif:{achat:15,  vente:28},  statut:'normal'},
-];
-
-// Construire LOCAL à partir de PARAMS
-const LOCAL={};
-PARAMS.forEach(p=>{LOCAL[p.sym]={...p,sessions:genSess(p)};});
-
-const LOCAL_COND=[{
-  type:'penurie',titre:'Pénurie de minerai du Reach',
-  desc:'Les galeries nord des mines ont été partiellement inondées. Production FER & ARG réduite de 40%.',
-  effet:'Prix plafond FER & ARG levé de +30%',periode:'Sem. 8 → Sem. 12',actif:true
-}];
-
-const SQL_SETUP=`CREATE TABLE IF NOT EXISTS mk_bourse_commos (
-  id text PRIMARY KEY, name text NOT NULL, emoji text,
-  description text, tarif_achat numeric(12,2) DEFAULT 0,
-  tarif_vente numeric(12,2) DEFAULT 0, statut text DEFAULT 'normal'
+-- Table principale des biens
+CREATE TABLE IF NOT EXISTS mk_bourse_commos (
+  id            text PRIMARY KEY,
+  name          text NOT NULL,
+  emoji         text,
+  description   text,
+  tarif_achat   numeric(12,2) DEFAULT 0,
+  tarif_vente   numeric(12,2) DEFAULT 0,
+  disponibilite text DEFAULT 'normal',
+  note_rp       text DEFAULT '',
+  statut        text DEFAULT 'normal'
 );
+
+-- Historique des prix (pour la flèche de tendance)
 CREATE TABLE IF NOT EXISTS mk_bourse_sessions (
-  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  id           bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   commodite_id text REFERENCES mk_bourse_commos(id) ON DELETE CASCADE,
-  session_label text NOT NULL, ouverture numeric(12,2) NOT NULL,
-  haut numeric(12,2) NOT NULL, bas numeric(12,2) NOT NULL,
-  cloture numeric(12,2) NOT NULL, volume integer DEFAULT 0,
-  created_at timestamptz DEFAULT now()
+  cloture      numeric(12,2) NOT NULL,
+  created_at   timestamptz DEFAULT now()
 );
+
+-- Événements de marché (bannière)
 CREATE TABLE IF NOT EXISTS mk_bourse_conditions (
-  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  type text NOT NULL, titre text NOT NULL, description text,
-  effet text, periode text, actif boolean DEFAULT true,
-  created_at timestamptz DEFAULT now()
+  id          bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  type        text NOT NULL,
+  titre       text NOT NULL,
+  description text,
+  effet       text,
+  periode     text,
+  actif       boolean DEFAULT true,
+  created_at  timestamptz DEFAULT now()
 );
+
+-- Accès public (sans RLS)
 ALTER TABLE mk_bourse_commos     DISABLE ROW LEVEL SECURITY;
 ALTER TABLE mk_bourse_sessions   DISABLE ROW LEVEL SECURITY;
-ALTER TABLE mk_bourse_conditions DISABLE ROW LEVEL SECURITY;`;
+ALTER TABLE mk_bourse_conditions DISABLE ROW LEVEL SECURITY;
+
+-- Si les tables existaient déjà (mise à jour)
+ALTER TABLE mk_bourse_commos ADD COLUMN IF NOT EXISTS disponibilite text DEFAULT 'normal';
+ALTER TABLE mk_bourse_commos ADD COLUMN IF NOT EXISTS note_rp text DEFAULT '';`;
+
+// ══ CATÉGORIES ══
+const CATS={
+  METAL:{label:'Métaux',icon:'⛏'},ALCH:{label:'Alchimie',icon:'🧪'},
+  FOOD:{label:'Nourriture',icon:'🍖'},MAGI:{label:'Magie',icon:'✨'},
+  EQUI:{label:'Équipement',icon:'⚔'},DIVE:{label:'Divers',icon:'📦'},
+};
+
+// ══ DONNÉES PAR DÉFAUT ══
+const DEFAUT=[
+  // MÉTAUX
+  {id:'FER',cat:'METAL',name:"Lingot de fer",      emoji:'🔩',desc:"Minerai abondant du Reach. Matériau de base de l'artisanat et de la forge.",      a:11, v:16,  dispo:'rupture',note:''},
+  {id:'ACE',cat:'METAL',name:"Lingot d'acier",     emoji:'🔗',desc:"Alliage de fer et corindon. Requis pour les armes et armures intermédiaires.",     a:18, v:28,  dispo:'normal', note:''},
+  {id:'COR',cat:'METAL',name:"Lingot de corindon", emoji:'🟤',desc:"Minerai rougeâtre du Reach. Nécessaire à l'armure d'écailles et de plaque.",      a:10, v:18,  dispo:'normal', note:''},
+  {id:'ARG',cat:'METAL',name:"Lingot d'argent",    emoji:'⬜',desc:"Métal noble des veines argentifères. Conducteur magique des enchanteurs.",         a:30, v:44,  dispo:'rare',   note:''},
+  {id:'AUR',cat:'METAL',name:"Lingot d'or",        emoji:'🟡',desc:"Métal précieux universel. Valeur refuge des Jarls de Bordeciel.",                  a:65, v:85,  dispo:'normal', note:''},
+  {id:'ORI',cat:'METAL',name:"Orichalque",         emoji:'🟠',desc:"Alliage résistant des forgerons orques. Strongholds principaux fournisseurs.",     a:40, v:62,  dispo:'normal', note:''},
+  {id:'QSI',cat:'METAL',name:"Vif-argent",         emoji:'💧',desc:"Métal fluide à bas point de fusion. Utilisé pour les armures elfiques.",            a:58, v:90,  dispo:'rare',   note:''},
+  {id:'PLU',cat:'METAL',name:"Pierre de lune",     emoji:'🌙',desc:"Minerai lunaire raffiné. Base des armures et armes elfiques de qualité.",          a:75, v:120, dispo:'rare',   note:''},
+  {id:'DWE',cat:'METAL',name:"Métal dwemer",       emoji:'⚙', desc:"Alliage antique des ruines dwemer. Propriétés mécaniques non reproductibles.",    a:55, v:85,  dispo:'rare',   note:''},
+  {id:'MAL',cat:'METAL',name:"Malachite raffinée", emoji:'🟢',desc:"Pierre volcanique verte. Base des armures en verre. Très rare dans le Reach.",    a:110,v:175, dispo:'rupture',note:''},
+  // ALCHIMIE
+  {id:'RCA',cat:'ALCH', name:"Racine de canis",    emoji:'🌿',desc:"Propriétés curatives. Demande régulière des guildes de guérisseurs.",               a:9,  v:14,  dispo:'normal', note:''},
+  {id:'LUT',cat:'ALCH', name:"Pied de lutin",      emoji:'🍄',desc:"Champignon paralysant rare. Demande fluctuante des guildes.",                       a:30, v:44,  dispo:'normal', note:''},
+  {id:'NIR',cat:'ALCH', name:"Nirnroot",           emoji:'💜',desc:"Plante luminescente rarissime de bord d'eau. Très prisée des alchimistes.",         a:25, v:40,  dispo:'rupture',note:'Collecte suspendue — zones inondées.'},
+  {id:'PAP',cat:'ALCH', name:"Aile de papillon",   emoji:'🦋',desc:"Ingrédient volatile. Propriétés de vision nocturne et de soin léger.",              a:7,  v:12,  dispo:'abondant',note:''},
+  {id:'VCH',cat:'ALCH', name:"Œufs de chauros",    emoji:'🦂',desc:"Grottes du Reach. Potions d'invisibilité et résistance magique.",                  a:32, v:55,  dispo:'normal', note:''},
+  {id:'GEA',cat:'ALCH', name:"Orteil de géant",    emoji:'👣',desc:"Ingrédient rarissime aux propriétés multiplicatrices exceptionnelles.",             a:18, v:35,  dispo:'rare',   note:''},
+  {id:'BGN',cat:'ALCH', name:"Baies de genièvre",  emoji:'🍒',desc:"Résistance au feu. Cueillette saisonnière dans les forêts du Reach.",              a:5,  v:10,  dispo:'abondant',note:''},
+  {id:'CML',cat:'ALCH', name:"Champignon lumineux",emoji:'✨',desc:"Cavernes du Reach. Soin et résistance au choc magique.",                            a:8,  v:16,  dispo:'normal', note:''},
+  {id:'FSF',cat:'ALCH', name:"Sels de feu",        emoji:'🔥',desc:"Cristaux d'atronachs des flammes. Résistance à la chaleur.",                       a:42, v:70,  dispo:'rare',   note:''},
+  {id:'FGS',cat:'ALCH', name:"Sels de glace",      emoji:'❄', desc:"Cristaux d'atronachs de glace. Résistance au froid et aux sorts de givre.",       a:42, v:70,  dispo:'rare',   note:''},
+  {id:'TOF',cat:'ALCH', name:"Graisse de troll",   emoji:'🧟',desc:"Trolls des montagnes. Composant de potions de résistance et régénération.",        a:13, v:22,  dispo:'normal', note:''},
+  {id:'LDR',cat:'ALCH', name:"Langue de dragon",   emoji:'🌺',desc:"Plante à fleurs rouges des plaines. Propriétés d'altération.",                     a:4,  v:8,   dispo:'abondant',note:''},
+  // NOURRITURE
+  {id:'PAI',cat:'FOOD', name:"Pain",               emoji:'🍞',desc:"Denrée fondamentale. Produite par les moulins de Markarth.",                        a:1,  v:2,   dispo:'abondant',note:''},
+  {id:'HYD',cat:'FOOD', name:"Hydromel",           emoji:'🍺',desc:"Bière de miel brassée localement. Populaire dans les tavernes du Reach.",           a:3,  v:7,   dispo:'abondant',note:''},
+  {id:'MEL',cat:'FOOD', name:"Miel",               emoji:'🍯',desc:"Ruches des plaines du Reach. Utilisé pour le brassage et la cuisine noble.",        a:2,  v:5,   dispo:'abondant',note:''},
+  {id:'VIN',cat:'FOOD', name:"Vin de Colovie",     emoji:'🍷',desc:"Importé de Cyrodiil. Coût d'acheminement élevé. Réservé aux tables nobles.",       a:8,  v:16,  dispo:'normal', note:''},
+  {id:'POI',cat:'FOOD', name:"Poisson fumé",       emoji:'🐟',desc:"Rivières du Reach. Fumé pour conservation. Aliment de base populaire.",             a:2,  v:4,   dispo:'abondant',note:''},
+  {id:'VIA',cat:'FOOD', name:"Viande séchée",      emoji:'🥩',desc:"Gibier des montagnes séché au sel. Sujette aux variations saisonnières.",           a:3,  v:7,   dispo:'normal', note:''},
+  {id:'LGM',cat:'FOOD', name:"Légumes du Reach",   emoji:'🥬',desc:"Poireaux, choux, navets. Alimentation paysanne de base.",                           a:1,  v:4,   dispo:'abondant',note:''},
+  {id:'CHE',cat:'FOOD', name:"Fromage nordique",   emoji:'🧀',desc:"Fromage de chèvre des troupeaux montagnards. Spécialité locale.",                   a:2,  v:5,   dispo:'normal', note:''},
+  // MAGIE
+  {id:'APE',cat:'MAGI', name:"Âme petite",         emoji:'🔮',desc:"Gemme enchantée de faible puissance. Enchantements de base.",                       a:45, v:75,  dispo:'normal', note:''},
+  {id:'AMO',cat:'MAGI', name:"Âme commune",        emoji:'💙',desc:"Puissance intermédiaire. Enchantements d'armes courantes.",                         a:85, v:140, dispo:'normal', note:''},
+  {id:'AGR',cat:'MAGI', name:"Âme grande",         emoji:'💠',desc:"Haute puissance. Enchantements d'armes et armures de qualité.",                    a:180,v:300, dispo:'rare',   note:''},
+  {id:'ANO',cat:'MAGI', name:"Âme noire",          emoji:'🖤',desc:"Puissance maximale. Âmes humanoïdes uniquement. Décret du Jarl requis.",            a:700,v:1100,dispo:'rupture',note:'Vente soumise à autorisation du Châtelain.'},
+  {id:'EMR',cat:'MAGI', name:"Émeraude",           emoji:'💎',desc:"Gemme rare du Reach. Joaillerie et enchantement avancé.",                           a:650,v:1000,dispo:'rare',   note:''},
+  // ÉQUIPEMENT
+  {id:'DAG',cat:'EQUI', name:"Dague de fer",       emoji:'🔪',desc:"Arme de discrétion de base. Portée légale déclarée à la Garde.",                   a:12, v:22,  dispo:'abondant',note:''},
+  {id:'EEP',cat:'EQUI', name:"Épée de fer",        emoji:'🗡', desc:"Arme d'infanterie standard certifiée par la Garde de Markarth.",                  a:28, v:50,  dispo:'abondant',note:''},
+  {id:'EAR',cat:'EQUI', name:"Épée d'acier",       emoji:'⚔', desc:"Arme intermédiaire de bonne facture. Sergents et officiers.",                      a:45, v:80,  dispo:'normal', note:''},
+  {id:'ARC',cat:'EQUI', name:"Arc de chasse",      emoji:'🏹',desc:"Arc léger standard des chasseurs et archers du Reach.",                             a:38, v:65,  dispo:'normal', note:''},
+  {id:'ARF',cat:'EQUI', name:"Armure de fer",      emoji:'🛡', desc:"Protection lourde standard certifiée par le Chevalier-Châtelain.",                 a:110,v:180, dispo:'normal', note:''},
+  {id:'AAR',cat:'EQUI', name:"Armure d'acier",     emoji:'🦺',desc:"Qualité intermédiaire des officiers. Production sur commande.",                     a:190,v:300, dispo:'rare',   note:''},
+  // DIVERS
+  {id:'BOI',cat:'DIVE', name:"Bois de chauffage",  emoji:'🪵',desc:"Combustible essentiel pour l'hiver du Reach.",                                      a:1,  v:3,   dispo:'abondant',note:''},
+  {id:'PEA',cat:'DIVE', name:"Peau tannée",        emoji:'🦌',desc:"Maroquinerie issue de la chasse locale. Qualité variable.",                          a:5,  v:10,  dispo:'normal', note:''},
+  {id:'FLP',cat:'DIVE', name:"Pelage de loup",     emoji:'🐺',desc:"Fourrure brute des loups du Reach. Isolation thermique.",                            a:6,  v:13,  dispo:'normal', note:''},
+  {id:'OST',cat:'DIVE', name:"Défense de mammouth",emoji:'🦣',desc:"Os précieux des mammouths nordiques. Sculpture et décoration noble.",               a:25, v:45,  dispo:'rare',   note:''},
+  {id:'POT',cat:'DIVE', name:"Potion de soin",     emoji:'🧴',desc:"Potion standard des apothicaires agréés de la Châtellerie.",                        a:15, v:28,  dispo:'normal', note:''},
+];
 
 // ══ STATE ══
 const PASS='jarl_mk';
-let C={},CONDITIONS=[],cur='FER',activeCat='METAL',loggedIn=false,sbOk=false;
-const CM={PAD:{t:22,r:62,b:24,l:8},W:820,H:300};
+let DATA={};          // {id → objet bien avec history[]}
+let EVENT=null;       // l'événement actif
+let activeCat='ALL';
+let isAdmin=false;
+let sbOk=false;
+let editSym=null;     // symbole en cours d'édition
 
 // ══ INIT ══
 async function init(){
-  document.getElementById('sql-block').textContent=SQL_SETUP;
-  setSBStatus('wait','connexion...');
-  try{await loadFromSB();sbOk=true;setSBStatus('ok','Supabase connecté');}
-  catch(e){console.warn('Supabase —',e.message);useFallback();setSBStatus('ko','hors ligne — données locales');}
-  hideBLoader();
-  buildCatBar();buildTicker();buildTabs();
-  render(cur);
+  document.getElementById('sql-block').textContent=SQL;
+  setSB('wait','connexion...');
+  try{await loadSB();sbOk=true;setSB('ok','Supabase connecté');}
+  catch(e){console.warn('Supabase:',e.message);useFallback();setSB('ko','hors ligne — données locales');}
+  buildCatBar();
+  renderTable();
+  renderEvent();
 }
 
-async function loadFromSB(){
+// ══ SUPABASE LOAD ══
+async function loadSB(){
   const[commos,sessions,conds]=await Promise.all([
     sbGet('mk_bourse_commos','?order=id.asc'),
-    sbGet('mk_bourse_sessions','?order=commodite_id.asc,id.asc'),
-    sbGet('mk_bourse_conditions','?order=id.asc')
+    sbGet('mk_bourse_sessions','?order=commodite_id.asc,id.desc'),
+    sbGet('mk_bourse_conditions','?actif=eq.true&order=id.desc&limit=1')
   ]);
   if(!commos.length){useFallback();return;}
-  C={};
-  commos.forEach(co=>{
-    C[co.id]={sym:co.id,cat:CAT_MAP[co.id]||'DIVE',name:co.name,emoji:co.emoji||'●',desc:co.description||'',
-      tarif:{achat:+co.tarif_achat,vente:+co.tarif_vente},statut:co.statut||'normal',
-      sessions:sessions.filter(s=>s.commodite_id===co.id).map(s=>({d:s.session_label,o:+s.ouverture,h:+s.haut,l:+s.bas,c:+s.cloture,v:+s.volume,dbid:s.id}))
+  DATA={};
+  commos.forEach(c=>{
+    const hist=sessions.filter(s=>s.commodite_id===c.id).map(s=>+s.cloture);
+    DATA[c.id]={
+      id:c.id,cat:CAT_MAP[c.id]||'DIVE',name:c.name,emoji:c.emoji||'●',
+      desc:c.description||'',a:+c.tarif_achat,v:+c.tarif_vente,
+      dispo:c.disponibilite||'normal',note:c.note_rp||'',
+      history:hist.reverse() // chronologique
     };
   });
-  CONDITIONS=conds.map(cd=>({dbid:cd.id,type:cd.type,titre:cd.titre,desc:cd.description||'',effet:cd.effet||'',periode:cd.periode||'',actif:cd.actif}));
+  EVENT=conds.length?conds[0]:null;
 }
 
 function useFallback(){
-  C={};Object.entries(LOCAL).forEach(([k,v])=>{C[k]=JSON.parse(JSON.stringify(v));});
-  CONDITIONS=JSON.parse(JSON.stringify(LOCAL_COND));
+  DATA={};
+  DEFAUT.forEach(d=>{DATA[d.id]={...d,history:[d.v]};});
+  EVENT=null;
 }
 
-function hideBLoader(){const l=document.getElementById('bloader');l.style.opacity='0';l.style.transition='opacity .4s';setTimeout(()=>l.style.display='none',420);}
-function setSBStatus(state,txt){document.getElementById('sb-dot').className='sb-dot '+state;document.getElementById('sb-label').textContent=txt;}
+// ══ CAT MAP ══
+const CAT_MAP={
+  FER:'METAL',ACE:'METAL',COR:'METAL',ARG:'METAL',AUR:'METAL',ORI:'METAL',QSI:'METAL',PLU:'METAL',DWE:'METAL',MAL:'METAL',
+  RCA:'ALCH',LUT:'ALCH',NIR:'ALCH',PAP:'ALCH',VCH:'ALCH',GEA:'ALCH',BGN:'ALCH',CML:'ALCH',FSF:'ALCH',FGS:'ALCH',TOF:'ALCH',LDR:'ALCH',
+  PAI:'FOOD',HYD:'FOOD',MEL:'FOOD',VIN:'FOOD',POI:'FOOD',VIA:'FOOD',LGM:'FOOD',CHE:'FOOD',
+  APE:'MAGI',AMO:'MAGI',AGR:'MAGI',ANO:'MAGI',EMR:'MAGI',
+  DAG:'EQUI',EEP:'EQUI',EAR:'EQUI',ARC:'EQUI',ARF:'EQUI',AAR:'EQUI',
+  BOI:'DIVE',PEA:'DIVE',FLP:'DIVE',OST:'DIVE',POT:'DIVE',
+};
 
 // ══ CAT BAR ══
 function buildCatBar(){
   const cats=[{id:'ALL',label:'Tous',icon:''},...Object.entries(CATS).map(([id,v])=>({id,...v}))];
-  document.getElementById('cat-bar').innerHTML=cats.map(c=>
+  document.getElementById('cat-bar').innerHTML=cats.map((c,i)=>
+    (i===1?`<div class="cat-sep"></div>`:'')+ // séparateur avant les catégories
     `<button class="cat-btn${c.id===activeCat?' active':''}" onclick="filterCat('${c.id}',this)">${c.icon?c.icon+' ':''}${c.label}</button>`
   ).join('');
 }
@@ -595,308 +541,273 @@ function filterCat(cat,btn){
   activeCat=cat;
   document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  buildTabs();
-  const first=Object.values(C).find(c=>cat==='ALL'||c.cat===cat);
-  if(first) render(first.sym);
+  renderTable();
 }
 
-// ══ TICKER ══
-function buildTicker(){
-  const t=document.getElementById('ticker');
-  const items=Object.values(C).map(c=>{
-    if(!c.sessions.length) return '';
-    const last=c.sessions[c.sessions.length-1],prev=c.sessions[c.sessions.length-2];
-    const vp=prev?((last.c-prev.c)/prev.c*100).toFixed(2):'0.00';
-    const up=!prev||last.c>=prev.c;
-    return `<div class="tick-item${c.sym===cur?' active':''}" onclick="render('${c.sym}')" data-sym="${c.sym}">
-      <span class="tick-sym">${c.sym}</span><span class="tick-name">${c.name}</span>
-      <span class="tick-price">${sf(last.c)}</span>
-      <span class="tick-var ${up?'up':'dn'}">${up?'+':''}${vp}%</span>
-    </div>`;
-  }).join('');
-  t.innerHTML=items+items;
-}
-
-// ══ TABS ══
-function buildTabs(){
-  const filtered=Object.values(C).filter(c=>activeCat==='ALL'||c.cat===activeCat);
-  document.getElementById('comm-tabs').innerHTML=filtered.map(c=>
-    `<button class="ctab${c.sym===cur?' active':''}" id="ctab-${c.sym}" onclick="render('${c.sym}')">${c.sym}</button>`
-  ).join('');
-}
-
-// ══ RENDER ══
-function render(sym){
-  if(!C[sym]) return;
-  cur=sym;
-  // Si le sym n'est pas dans la catégorie active, basculer
-  if(activeCat!=='ALL'&&C[sym].cat!==activeCat){
-    activeCat=C[sym].cat||'ALL';
-    document.querySelectorAll('.cat-btn').forEach(b=>{b.classList.toggle('active',b.textContent.includes(CATS[activeCat]?.label||'Tous'));});
-  }
-  Object.keys(C).forEach(s=>{const t=document.getElementById('ctab-'+s);if(t)t.className='ctab'+(s===sym?' active':'');});
-  document.querySelectorAll('.tick-item').forEach(el=>el.classList.toggle('active',el.dataset.sym===sym));
-
-  const comm=C[sym],sess=comm.sessions;
-  if(!sess.length) return;
-  const last=sess[sess.length-1],prev=sess[sess.length-2];
-  const dAbs=(last.c-(prev?prev.c:last.c)).toFixed(2),dPct=prev?((last.c-prev.c)/prev.c*100).toFixed(2):'0.00';
-  const up=!prev||last.c>=prev.c;
-
-  document.getElementById('bar-sym').textContent=sym+' · '+(CATS[comm.cat]?.label||'');
-  document.getElementById('bar-name').textContent=comm.emoji+' '+comm.name;
-  document.getElementById('bar-desc').textContent=comm.desc;
-  document.getElementById('bar-price').textContent=sf(last.c)+' sp';
-  const ve=document.getElementById('bar-var');
-  ve.textContent=`${up?'+':''}${dAbs} sp (${up?'+':''}${dPct}%)`;ve.style.color=up?'var(--upb)':'var(--downb)';
-  document.getElementById('bar-ohlc').textContent=`O: ${sf(last.o)}  H: ${sf(last.h)}  B: ${sf(last.l)}  C: ${sf(last.c)}`;
-
-  const t=comm.tarif;
-  document.getElementById('t-achat').textContent=sf(t.achat)+' sp';
-  document.getElementById('t-vente').textContent=sf(t.vente)+' sp';
-  const mg=t.vente-t.achat;
-  document.getElementById('t-marge').textContent=sf(mg)+' sp ('+((mg/t.achat)*100).toFixed(0)+'%)';
-  const allP=sess.flatMap(s=>[s.h,s.l]),lo=Math.min(...allP)*.95,hi=Math.max(...allP)*1.05,range=hi-lo;
-  document.getElementById('t-fill').style.cssText=`left:${((t.achat-lo)/range*100).toFixed(1)}%;width:${((t.vente-t.achat)/range*100).toFixed(1)}%;`;
-  document.getElementById('t-cursor').style.left=((last.c-lo)/range*100).toFixed(1)+'%';
-
-  renderCond();
-  document.getElementById('last-sess').innerHTML=`
-    <div class="ls-row"><span class="ls-key">Session</span><span class="ls-val">${last.d}</span></div>
-    <div class="ls-row"><span class="ls-key">Ouv.</span><span class="ls-val">${sf(last.o)} sp</span></div>
-    <div class="ls-row"><span class="ls-key">Haut</span><span style="color:var(--upb)">${sf(last.h)} sp</span></div>
-    <div class="ls-row"><span class="ls-key">Bas</span><span style="color:var(--downb)">${sf(last.l)} sp</span></div>
-    <div class="ls-row"><span class="ls-key">Clôt.</span><span style="color:${up?'var(--upb)':'var(--downb)'}">${sf(last.c)} sp</span></div>
-    <div class="ls-row"><span class="ls-key">Volume</span><span class="ls-val">${last.v} u.</span></div>`;
-
-  document.getElementById('seal').classList.toggle('on',CONDITIONS.some(c=>c.actif));
-  drawChart(sess,t);drawVol(sess);renderHist(sess);
-}
-
-// ══ CONDITIONS ══
-function renderCond(){
-  const el=document.getElementById('cond-list');
-  const active=CONDITIONS.filter(c=>c.actif);
-  if(!active.length){el.innerHTML=`<p class="no-cond">Aucune condition exceptionnelle. Échanges selon le tarif standard.</p>`;return;}
-  el.innerHTML=active.map(c=>`<div class="cond-badge ${c.type}">
-    <div class="cond-titre">${typeIcon(c.type)} ${c.titre}</div>
-    ${c.desc?`<div class="cond-desc">${c.desc}</div>`:''}
-    ${c.effet?`<div class="cond-effet">⚡ ${c.effet}</div>`:''}
-    ${c.periode?`<div class="cond-period">📅 ${c.periode}</div>`:''}
-  </div>`).join('');
-}
-function renderCondManage(){
-  const el=document.getElementById('cond-manage');
-  if(!CONDITIONS.length){el.innerHTML=`<p style="font-family:var(--body);font-size:.7rem;font-style:italic;color:var(--textf);">Aucune condition.</p>`;return;}
-  el.innerHTML=CONDITIONS.map((c,i)=>`<div class="cmi">
-    <span style="color:${c.actif?'var(--text)':'var(--textf)'}">${typeIcon(c.type)} ${c.titre}</span>
-    <div style="display:flex;gap:.45rem;align-items:center;">
-      <span style="font-size:.62rem;color:${c.actif?'var(--upb)':'var(--textf)'}">${c.actif?'ACTIF':'INACTIF'}</span>
-      <button class="cond-del" onclick="toggleCond(${i})">${c.actif?'Désactiver':'Réactiver'}</button>
-    </div>
-  </div>`).join('');
-}
-function typeIcon(t){return{penurie:'🔴',faveur:'🟢',siege:'⚔',route:'🟡',recolte:'🌾'}[t]||'●';}
-async function toggleCond(i){
-  CONDITIONS[i].actif=!CONDITIONS[i].actif;renderCond();renderCondManage();
-  document.getElementById('seal').classList.toggle('on',CONDITIONS.some(c=>c.actif));
-  if(sbOk&&CONDITIONS[i].dbid){try{await sbPatch('mk_bourse_conditions',`?id=eq.${CONDITIONS[i].dbid}`,{actif:CONDITIONS[i].actif});}catch(e){console.error(e.message);}}
-}
-
-// ══ CHART ══
-function drawChart(sess,tarif){
-  const svg=document.getElementById('main-chart');
-  const{PAD,W,H}=CM,cW=W-PAD.l-PAD.r,cH=H-PAD.t-PAD.b;
-  const n=sess.length,sp=cW/n,bw=sp*.55;
-  const allP=sess.flatMap(s=>[s.h,s.l]).concat([tarif.achat,tarif.vente]);
-  const lo=Math.min(...allP)*.96,hi=Math.max(...allP)*1.04,pr=hi-lo;
-  const toY=p=>PAD.t+cH-((p-lo)/pr)*cH,toX=i=>PAD.l+i*sp+sp/2;
-  let h='';
-  for(let i=0;i<=6;i++){const p=lo+pr*(i/6),y=toY(p);
-    h+=`<line x1="${PAD.l}" y1="${y.toFixed(1)}" x2="${W-PAD.r}" y2="${y.toFixed(1)}" stroke="rgba(46,66,36,.5)" stroke-width=".8"/>`;
-    h+=`<text x="${W-PAD.r+4}" y="${(y+4).toFixed(1)}" fill="rgba(138,154,98,.75)" font-size="8.5" font-family="JetBrains Mono,monospace">${sf(p)}</text>`;}
-  const ty1=toY(tarif.vente),ty2=toY(tarif.achat);
-  h+=`<rect x="${PAD.l}" y="${ty1.toFixed(1)}" width="${cW}" height="${(ty2-ty1).toFixed(1)}" fill="rgba(201,168,76,.04)" stroke="rgba(201,168,76,.18)" stroke-width=".7" stroke-dasharray="5 3"/>`;
-  h+=`<text x="${PAD.l+5}" y="${(ty1-3).toFixed(1)}" fill="rgba(201,168,76,.4)" font-size="7.5" font-family="JetBrains Mono,monospace">― Plafond ${sf(tarif.vente)} sp</text>`;
-  h+=`<text x="${PAD.l+5}" y="${(ty2+10).toFixed(1)}" fill="rgba(201,168,76,.4)" font-size="7.5" font-family="JetBrains Mono,monospace">― Achat ${sf(tarif.achat)} sp</text>`;
-  sess.forEach((s,i)=>{
-    const x=toX(i),up=s.c>=s.o,col=up?'#3E7A3E':'#7A3E3E',bri=up?'#5CB85C':'#C05050';
-    const yO=toY(Math.max(s.o,s.c)),yC=toY(Math.min(s.o,s.c)),bH=Math.max(1.5,yC-yO);
-    h+=`<line x1="${x.toFixed(1)}" y1="${toY(s.h).toFixed(1)}" x2="${x.toFixed(1)}" y2="${toY(s.l).toFixed(1)}" stroke="${bri}" stroke-width="1.4"/>`;
-    h+=`<rect x="${(x-bw/2).toFixed(1)}" y="${yO.toFixed(1)}" width="${bw.toFixed(1)}" height="${bH.toFixed(1)}" fill="${col}" stroke="${bri}" stroke-width=".6" rx=".5"/>`;
-    if(i%Math.ceil(n/8)===0||i===n-1) h+=`<text x="${x.toFixed(1)}" y="${(H-5).toFixed(1)}" fill="rgba(138,154,98,.5)" font-size="7.5" font-family="JetBrains Mono,monospace" text-anchor="middle">${s.d}</text>`;
-  });
-  const lc=sess[n-1].c,ly=toY(lc);
-  h+=`<line x1="${PAD.l}" y1="${ly.toFixed(1)}" x2="${W-PAD.r}" y2="${ly.toFixed(1)}" stroke="rgba(201,168,76,.5)" stroke-width="1" stroke-dasharray="7 3"/>`;
-  h+=`<rect x="${(W-PAD.r).toFixed(1)}" y="${(ly-8).toFixed(1)}" width="${(PAD.r-3).toFixed(1)}" height="16" fill="rgba(201,168,76,.12)" stroke="rgba(201,168,76,.4)" stroke-width=".7"/>`;
-  h+=`<text x="${(W-PAD.r+(PAD.r-3)/2).toFixed(1)}" y="${(ly+4.5).toFixed(1)}" fill="#C9A84C" font-size="9" font-weight="600" font-family="JetBrains Mono,monospace" text-anchor="middle">${sf(lc)}</text>`;
-  svg.innerHTML=h;
-  CM.sess=sess;CM.lo=lo;CM.hi=hi;CM.sp=sp;CM.n=n;CM.PAD2=PAD;
-}
-
-function drawVol(sess){
-  const svg=document.getElementById('vol-chart');
-  const W=820,H=56,P={l:8,r:62,t:4,b:12};
-  const cW=W-P.l-P.r,cH=H-P.t-P.b,n=sess.length,sp=cW/n,bw=sp*.55,maxV=Math.max(...sess.map(s=>s.v));
-  let h=`<text x="${W-P.r+4}" y="${P.t+9}" fill="rgba(74,90,50,.7)" font-size="7.5" font-family="JetBrains Mono,monospace">VOL</text>`;
-  sess.forEach((s,i)=>{
-    const x=P.l+i*sp+sp/2,bH=(s.v/maxV)*cH,up=s.c>=s.o;
-    h+=`<rect x="${(x-bw/2).toFixed(1)}" y="${(P.t+cH-bH).toFixed(1)}" width="${bw.toFixed(1)}" height="${bH.toFixed(1)}" fill="${up?'rgba(62,122,62,.45)':'rgba(122,62,62,.45)'}"/>`;
-  });
-  svg.innerHTML=h;
-}
-
-// ══ HOVER ══
-function onMove(e){
-  if(!CM.sess) return;
-  const area=document.getElementById('chart-area'),rect=area.getBoundingClientRect();
-  const mx=e.clientX-rect.left,my=e.clientY-rect.top;
-  const idx=Math.floor(((mx/rect.width)*CM.W-CM.PAD2.l)/CM.sp);
-  document.getElementById('ch-v').style.cssText=`left:${mx}px;opacity:1;`;
-  document.getElementById('ch-h').style.cssText=`top:${my}px;opacity:1;`;
-  const tt=document.getElementById('tooltip');
-  if(idx>=0&&idx<CM.n){
-    const s=CM.sess[idx],up=s.c>=s.o,va=(s.c-s.o).toFixed(2),vp=((s.c-s.o)/s.o*100).toFixed(2);
-    tt.innerHTML=`<div class="tt-date">${s.d}</div>O <span style="color:var(--text)">${sf(s.o)}</span>&nbsp;&nbsp;H <span style="color:var(--upb)">${sf(s.h)}</span><br>B <span style="color:var(--downb)">${sf(s.l)}</span>&nbsp;&nbsp;C <span style="color:${up?'var(--upb)':'var(--downb)'}">${sf(s.c)}</span><br>Var <span style="color:${up?'var(--upb)':'var(--downb)'}">${up?'+':''}${va} (${up?'+':''}${vp}%)</span>  Vol ${s.v}`;
-    const tx=mx+12,ty=Math.max(4,my-68);
-    tt.style.cssText=`display:block;left:${tx+160>rect.width?mx-168:tx}px;top:${ty}px;`;
-  } else tt.style.display='none';
-}
-function onLeave(){document.getElementById('ch-v').style.opacity='0';document.getElementById('ch-h').style.opacity='0';document.getElementById('tooltip').style.display='none';}
-
-// ══ HISTORY ══
-function renderHist(sess){
-  document.getElementById('hist-tbody').innerHTML=[...sess].reverse().map((s,i,arr)=>{
-    const prev=arr[i+1],up=prev?s.c>=prev.c:true,da=prev?(s.c-prev.c).toFixed(2):'—',dp=prev?((s.c-prev.c)/prev.c*100).toFixed(2):'—';
-    return `<tr><td class="gold">${s.d}</td><td>${sf(s.o)}</td><td class="up">${sf(s.h)}</td><td class="dn">${sf(s.l)}</td>
-      <td style="color:${up?'var(--upb)':'var(--downb)'};font-weight:600;">${sf(s.c)}</td>
-      <td class="${prev?(up?'up':'dn'):''}">${prev?`${up?'+':''}${da} sp (${up?'+':''}${dp}%)`:'—'}</td>
-      <td style="color:var(--textf)">${s.v}</td></tr>`;
-  }).join('');
-}
-
-// ══ ADMIN ══
-function openAdmin(){document.getElementById('adm-overlay').classList.add('on');if(!loggedIn){document.getElementById('adm-login').style.display='block';document.getElementById('adm-content').style.display='none';}else showAdm();}
-function closeAdmin(){document.getElementById('adm-overlay').classList.remove('on');}
-function checkPass(){if(document.getElementById('adm-pass').value===PASS){loggedIn=true;document.getElementById('adm-pass').value='';document.getElementById('adm-err').style.display='none';document.getElementById('adm-login').style.display='none';showAdm();}else{document.getElementById('adm-err').style.display='block';document.getElementById('adm-pass').value='';}}
-
-function showAdm(){
-  document.getElementById('adm-content').style.display='block';
-  const opts=Object.values(C).map(c=>`<option value="${c.sym}">${c.sym} — ${c.name}</option>`).join('');
-  document.getElementById('a-comm').innerHTML=opts;document.getElementById('a-tc').innerHTML=opts;
-  document.getElementById('adm-sb-dot').className='sb-dot '+(sbOk?'ok':'ko');
-  document.getElementById('adm-sb-txt').textContent=sbOk?'Supabase connecté':'Hors ligne — données locales uniquement';
-  loadTarifFields();renderCondManage();
-}
-function admTab(t,btn){
-  ['sess','tarif','cond','newc','setup'].forEach(x=>document.getElementById('tab-'+x).style.display=x===t?'block':'none');
-  document.querySelectorAll('.adm-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
-  if(t==='tarif') loadTarifFields();if(t==='cond') renderCondManage();
-}
-
-async function createComm(){
-  const sym   = document.getElementById('nc-sym').value.trim().toUpperCase();
-  const cat   = document.getElementById('nc-cat').value;
-  const name  = document.getElementById('nc-name').value.trim();
-  const emoji = document.getElementById('nc-emoji').value.trim()||'●';
-  const desc  = document.getElementById('nc-desc').value.trim();
-  const achat = +document.getElementById('nc-achat').value;
-  const vente = +document.getElementById('nc-vente').value;
-  const base  = +document.getElementById('nc-base').value;
-  const vol   = +document.getElementById('nc-vol').value||50;
-  const statut= document.getElementById('nc-statut').value;
-
-  // Validation
-  if(!sym||sym.length<2){alert('Symbole requis (2-4 lettres).');return;}
-  if(C[sym]){alert(`La commodité "${sym}" existe déjà.`);return;}
-  if(!name){alert('Nom requis.');return;}
-  if(!achat||!vente||vente<=achat){alert('Prix invalides (vente doit être > achat).');return;}
-  if(!base){alert('Prix de départ requis.');return;}
-
-  // Créer la première session avec le prix de base
-  const firstSess = {d:'Sem. 1', o:base, h:+(base*1.05).toFixed(2), l:+(base*0.95).toFixed(2), c:base, v:vol};
-
-  // Ajouter en mémoire
-  C[sym] = {sym, cat, name, emoji, desc, tarif:{achat, vente}, statut, sessions:[firstSess]};
-  CAT_MAP[sym] = cat;
-
-  // Mettre à jour l'interface immédiatement
-  buildTicker();
-  // Si la catégorie active correspond, reconstruire les tabs
-  if(activeCat==='ALL'||activeCat===cat){
-    buildTabs();
-  }
-  render(sym);
-
-  // Pré-remplir le select commodité du tab Session
-  const opts = Object.values(C).map(c=>`<option value="${c.sym}"${c.sym===sym?' selected':''}>${c.sym} — ${c.name}</option>`).join('');
-  document.getElementById('a-comm').innerHTML = opts;
-  document.getElementById('a-tc').innerHTML   = opts;
-
-  // Réinitialiser le formulaire
-  ['nc-sym','nc-name','nc-emoji','nc-desc','nc-achat','nc-vente','nc-base','nc-vol'].forEach(id=>{
-    document.getElementById(id).value='';
-  });
-
-  await flash('ok-newc','err-newc', async()=>{
-    if(!sbOk) return;
-    // Insérer dans Supabase
-    await sbPost('mk_bourse_commos',[{
-      id:sym, name, emoji, description:desc,
-      tarif_achat:achat, tarif_vente:vente, statut
-    }],true);
-    // Insérer la première session
-    await sbPost('mk_bourse_sessions',{
-      commodite_id:sym, session_label:'Sem. 1',
-      ouverture:base, haut:firstSess.h, bas:firstSess.l, cloture:base, volume:vol
+// ══ TABLEAU ══
+function renderTable(){
+  const tbody=document.getElementById('market-tbody');
+  const order=['METAL','ALCH','FOOD','MAGI','EQUI','DIVE'];
+  const cats=activeCat==='ALL'?order:[activeCat];
+  let html='';
+  cats.forEach(cat=>{
+    const items=Object.values(DATA).filter(d=>d.cat===cat);
+    if(!items.length) return;
+    // Séparateur de catégorie si "Tous"
+    if(activeCat==='ALL'){
+      const {label,icon}=CATS[cat];
+      html+=`<tr class="cat-sep-row"><td colspan="5">${icon} ${label}</td></tr>`;
+    }
+    items.forEach(d=>{
+      const {arrow,diff}=evoArrow(d);
+      const spark=sparkline(d.history,d.v);
+      const adminClass=isAdmin?' admin-mode':'';
+      const editCall=isAdmin?`onclick="openEdit('${d.id}')"` :'';
+      html+=`<tr class="market-row${adminClass}" ${editCall}>
+        <td><div class="cell-bien">
+          <span class="item-emoji">${d.emoji}</span>
+          <div class="item-info">
+            <div class="item-name">${d.name}</div>
+            ${d.note?`<div class="item-note">📌 ${d.note}</div>`:''}
+          </div>
+        </div></td>
+        <td><span class="dispo ${d.dispo}">${dispoLabel(d.dispo)}</span></td>
+        <td class="prix-achat">${sf(d.a)} sp</td>
+        <td class="prix-vente">${sf(d.v)} sp</td>
+        <td><div class="evo-cell">
+          <span class="evo-arrow ${arrow.cls}">${arrow.txt}${diff}</span>
+          ${spark}
+        </div></td>
+      </tr>`;
     });
   });
+  tbody.innerHTML=html||'<tr><td colspan="5" style="padding:2rem;text-align:center;font-style:italic;color:var(--textf);">Aucun bien dans cette catégorie.</td></tr>';
 }
-function loadTarifFields(){const sym=document.getElementById('a-tc').value;if(!sym||!C[sym])return;document.getElementById('a-ta').value=C[sym].tarif.achat;document.getElementById('a-tv').value=C[sym].tarif.vente;document.getElementById('a-ts').value=C[sym].statut||'normal';}
 
-async function addSession(){
-  const sym=document.getElementById('a-comm').value,d=document.getElementById('a-date').value||`Sem. ${C[sym].sessions.length+1}`;
-  const o=+document.getElementById('a-o').value,h=+document.getElementById('a-h').value,l=+document.getElementById('a-l').value,c=+document.getElementById('a-c').value,v=+document.getElementById('a-vol').value||100;
-  if([o,h,l,c].some(isNaN)||!o){alert('Valeurs OHLC manquantes.');return;}
-  if(h<Math.max(o,c)||l>Math.min(o,c)){alert('H ≥ max(O,C) et B ≤ min(O,C) requis.');return;}
-  C[sym].sessions.push({d,o,h,l,c,v});buildTicker();if(cur===sym)render(sym);
-  await flash('ok-sess','err-sess',async()=>{if(!sbOk)return;await sbPost('mk_bourse_sessions',{commodite_id:sym,session_label:d,ouverture:o,haut:h,bas:l,cloture:c,volume:v});});
+function dispoLabel(d){
+  return{abondant:'🟢 Abondant',normal:'🟡 Normal',rare:'🟠 Rare',rupture:'🔴 Rupture'}[d]||d;
 }
-async function saveTarif(){
-  const sym=document.getElementById('a-tc').value,a=+document.getElementById('a-ta').value,v=+document.getElementById('a-tv').value,st=document.getElementById('a-ts').value;
-  if(!a||!v||v<=a){alert('Vente doit être > achat.');return;}
-  C[sym].tarif={achat:a,vente:v};C[sym].statut=st;if(cur===sym)render(sym);
-  await flash('ok-tarif','err-tarif',async()=>{if(!sbOk)return;await sbPatch('mk_bourse_commos',`?id=eq.${sym}`,{tarif_achat:a,tarif_vente:v,statut:st});});
+
+function evoArrow(d){
+  const h=d.history;
+  if(h.length<2) return{arrow:{txt:'→',cls:'eq'},diff:''};
+  const prev=h[h.length-2], cur=h[h.length-1]??d.v;
+  const diff=cur-prev;
+  if(diff>0)  return{arrow:{txt:'↑ +',cls:'up'},diff:sf(diff)+' sp'};
+  if(diff<0)  return{arrow:{txt:'↓ ',cls:'dn'},diff:sf(Math.abs(diff))+' sp'};
+  return{arrow:{txt:'→',cls:'eq'},diff:'stable'};
 }
-async function addCond(){
-  const titre=document.getElementById('a-ctit').value,desc=document.getElementById('a-cdesc').value,effet=document.getElementById('a-ceff').value,dur=document.getElementById('a-cdur').value,type=document.getElementById('a-ct').value;
+
+function sparkline(hist,current){
+  const all=[...hist,current].slice(-8);
+  if(all.length<2) return '';
+  const min=Math.min(...all),max=Math.max(...all),range=max-min||1;
+  const W=56,H=16,bw=Math.floor(W/all.length)-1;
+  const bars=all.map((p,i)=>{
+    const bh=Math.max(2,((p-min)/range)*H);
+    const x=i*(bw+1), y=H-bh;
+    const last=i===all.length-1;
+    return`<rect x="${x}" y="${y}" width="${bw}" height="${bh}" fill="${last?'#C9A84C':'rgba(138,154,98,.45)'}"/>`;
+  }).join('');
+  return`<svg width="${W}" height="${H}" style="vertical-align:middle;flex-shrink:0;">${bars}</svg>`;
+}
+
+// ══ ÉVÉNEMENT ══
+function renderEvent(){
+  const banner=document.getElementById('event-banner');
+  if(!EVENT||!EVENT.actif){banner.className='event-banner';return;}
+  const icons={penurie:'🔴',faveur:'🟢',siege:'⚔',route:'🟡',recolte:'🌾'};
+  banner.className=`event-banner on ${EVENT.type||''}`;
+  document.getElementById('ev-icone').textContent=icons[EVENT.type]||'📢';
+  document.getElementById('ev-titre').textContent=EVENT.titre||'—';
+  document.getElementById('ev-desc').textContent=EVENT.description||'';
+  let meta='';
+  if(EVENT.effet)  meta+=`⚡ ${EVENT.effet}`;
+  if(EVENT.periode) meta+=(meta?'  ·  ':'')+`📅 ${EVENT.periode}`;
+  document.getElementById('ev-meta').textContent=meta;
+}
+
+function renderEvCurrent(){
+  const el=document.getElementById('ev-current');
+  if(!EVENT||!EVENT.actif){el.innerHTML=`<p style="font-family:var(--body);font-size:.74rem;font-style:italic;color:var(--textf);">Aucun événement actif.</p>`;return;}
+  el.innerHTML=`<div style="background:var(--card2);border:1px solid var(--border);padding:.55rem .75rem;">
+    <div style="font-family:var(--serif);font-size:.76rem;color:var(--gold);">${EVENT.titre}</div>
+    <div style="font-family:var(--body);font-size:.7rem;font-style:italic;color:var(--textd);margin-top:.2rem;">${EVENT.description||''}</div>
+  </div>`;
+}
+
+// ══ ADMIN AUTH ══
+function openLogin(){document.getElementById('ov-login').classList.add('on');}
+function doLogin(){
+  if(document.getElementById('login-pass').value===PASS){
+    isAdmin=true;
+    document.getElementById('login-pass').value='';
+    document.getElementById('login-err').style.display='none';
+    document.getElementById('btn-intendant').classList.add('active');
+    document.getElementById('admin-bar').classList.add('on');
+    closeAll();
+    renderTable();
+  } else {
+    document.getElementById('login-err').style.display='block';
+    document.getElementById('login-pass').value='';
+  }
+}
+function logout(){
+  isAdmin=false;
+  document.getElementById('btn-intendant').classList.remove('active');
+  document.getElementById('admin-bar').classList.remove('on');
+  renderTable();
+}
+
+// ══ OVERLAYS ══
+function closeAll(){document.querySelectorAll('.overlay').forEach(o=>o.classList.remove('on'));}
+function openSetup(){closeAll();document.getElementById('ov-setup').classList.add('on');}
+function openNew(){closeAll();document.getElementById('ov-new').classList.add('on');}
+function openEvent(){closeAll();renderEvCurrent();document.getElementById('ov-event').classList.add('on');}
+
+function openEdit(id){
+  if(!isAdmin) return;
+  editSym=id;
+  const d=DATA[id];
+  document.getElementById('edit-title').textContent=`Modifier : ${d.emoji} ${d.name}`;
+  document.getElementById('ed-achat').value=d.a;
+  document.getElementById('ed-vente').value=d.v;
+  document.getElementById('ed-dispo').value=d.dispo;
+  document.getElementById('ed-note').value=d.note;
+  document.getElementById('ok-edit').style.display='none';
+  document.getElementById('err-edit').style.display='none';
+  document.getElementById('ov-edit').classList.add('on');
+}
+
+// ══ SAVES ══
+async function saveEdit(){
+  const d=DATA[editSym];
+  const a=+document.getElementById('ed-achat').value;
+  const v=+document.getElementById('ed-vente').value;
+  const dispo=document.getElementById('ed-dispo').value;
+  const note=document.getElementById('ed-note').value.trim();
+  if(!a||!v||v<=a){alert('Prix invalides (citoyen doit être > rachat).');return;}
+  // Sauvegarder l'ancien prix dans l'historique
+  d.history.push(d.v);
+  if(d.history.length>8) d.history.shift();
+  // Mettre à jour
+  d.a=a;d.v=v;d.dispo=dispo;d.note=note;
+  renderTable();
+  await flash('ok-edit','err-edit',async()=>{
+    if(!sbOk) return;
+    await sbPatch('mk_bourse_commos',`?id=eq.${editSym}`,
+      {tarif_achat:a,tarif_vente:v,disponibilite:dispo,note_rp:note});
+    await sbPost('mk_bourse_sessions',{commodite_id:editSym,cloture:v});
+  });
+}
+
+async function saveNew(){
+  const id=document.getElementById('nw-sym').value.trim().toUpperCase();
+  const cat=document.getElementById('nw-cat').value;
+  const name=document.getElementById('nw-name').value.trim();
+  const emoji=document.getElementById('nw-emoji').value.trim()||'●';
+  const desc=document.getElementById('nw-desc').value.trim();
+  const a=+document.getElementById('nw-achat').value;
+  const v=+document.getElementById('nw-vente').value;
+  const dispo=document.getElementById('nw-dispo').value;
+  if(!id||id.length<2){alert('Symbole requis (2-4 lettres).');return;}
+  if(DATA[id]){alert(`"${id}" existe déjà.`);return;}
+  if(!name||!a||!v||v<=a){alert('Remplir tous les champs. Prix citoyen > Rachat.');return;}
+  DATA[id]={id,cat,name,emoji,desc,a,v,dispo,note:'',history:[v]};
+  CAT_MAP[id]=cat;
+  // Reset form
+  ['nw-sym','nw-name','nw-emoji','nw-desc','nw-achat','nw-vente'].forEach(x=>document.getElementById(x).value='');
+  renderTable();
+  await flash('ok-new','err-new',async()=>{
+    if(!sbOk) return;
+    await sbPost('mk_bourse_commos',[{id,name,emoji,description:desc,
+      tarif_achat:a,tarif_vente:v,disponibilite:dispo,note_rp:'',statut:'normal'}],true);
+    await sbPost('mk_bourse_sessions',{commodite_id:id,cloture:v});
+  });
+}
+
+async function saveEvent(){
+  const type=document.getElementById('ev-type').value;
+  const titre=document.getElementById('ev-titre-in').value.trim();
+  const description=document.getElementById('ev-desc-in').value.trim();
+  const effet=document.getElementById('ev-effet').value.trim();
+  const periode=document.getElementById('ev-dur').value.trim();
   if(!titre){alert('Titre requis.');return;}
-  const obj={type,titre,desc,effet,periode:dur,actif:true};CONDITIONS.push(obj);renderCond();renderCondManage();document.getElementById('seal').classList.add('on');
-  await flash('ok-cond','err-cond',async()=>{if(!sbOk)return;const res=await sbPost('mk_bourse_conditions',{type,titre,description:desc,effet,periode:dur,actif:true});if(res&&res[0])obj.dbid=res[0].id;});
+  EVENT={type,titre,description,effet,periode,actif:true};
+  renderEvent();
+  renderEvCurrent();
+  await flash('ok-ev','err-ev',async()=>{
+    if(!sbOk) return;
+    // Désactiver les précédents
+    await sbPatch('mk_bourse_conditions','?actif=eq.true',{actif:false});
+    await sbPost('mk_bourse_conditions',{type,titre,description,effet,periode,actif:true});
+  });
 }
+
+async function clearEvent(){
+  EVENT=null;
+  renderEvent();
+  renderEvCurrent();
+  await flash('ok-ev','err-ev',async()=>{
+    if(!sbOk) return;
+    await sbPatch('mk_bourse_conditions','?actif=eq.true',{actif:false});
+  });
+}
+
 async function seedData(){
-  try{
-    for(const p of PARAMS){
-      await sbPost('mk_bourse_commos',[{id:p.sym,name:p.name,emoji:p.emoji,description:p.desc,tarif_achat:p.tarif.achat,tarif_vente:p.tarif.vente,statut:p.statut}],true);
-      for(const s of genSess(p)) await sbPost('mk_bourse_sessions',{commodite_id:p.sym,session_label:s.d,ouverture:s.o,haut:s.h,bas:s.l,cloture:s.c,volume:s.v});
+  await flash('ok-setup','err-setup',async()=>{
+    for(const d of DEFAUT){
+      await sbPost('mk_bourse_commos',[{id:d.id,name:d.name,emoji:d.emoji,description:d.desc,
+        tarif_achat:d.a,tarif_vente:d.v,disponibilite:d.dispo,note_rp:d.note,statut:'normal'}],true);
+      await sbPost('mk_bourse_sessions',{commodite_id:d.id,cloture:d.v});
     }
-    for(const cd of LOCAL_COND) await sbPost('mk_bourse_conditions',{type:cd.type,titre:cd.titre,description:cd.desc,effet:cd.effet,periode:cd.periode,actif:cd.actif});
-    document.getElementById('ok-seed').style.display='block';
-    setTimeout(async()=>{await loadFromSB();buildTicker();buildTabs();render(cur);document.getElementById('ok-seed').style.display='none';},1500);
-  }catch(e){const el=document.getElementById('err-seed');el.textContent='Erreur : '+e.message;el.style.display='block';setTimeout(()=>el.style.display='none',4000);}
+    await loadSB();renderTable();renderEvent();
+  });
 }
-async function resetData(){if(!confirm('Vider toutes les tables de la bourse dans Supabase ?'))return;try{await sbDelete('mk_bourse_conditions','?id=gt.0');await sbDelete('mk_bourse_sessions','?id=gt.0');await sbDelete('mk_bourse_commos','?id=gt.0');alert('Tables vidées.');}catch(e){alert('Erreur : '+e.message);}}
-function copySql(){navigator.clipboard.writeText(SQL_SETUP).then(()=>alert('SQL copié.'));}
+
+async function resetData(){
+  if(!confirm('Vider toutes les tables de la bourse ?')) return;
+  await flash('ok-setup','err-setup',async()=>{
+    await sbDelete('mk_bourse_conditions','?id=gt.0');
+    await sbDelete('mk_bourse_sessions','?id=gt.0');
+    await sbDelete('mk_bourse_commos','?id=gt.0');
+    useFallback();renderTable();renderEvent();
+  });
+}
+
+function copySql(){navigator.clipboard.writeText(SQL).then(()=>alert('SQL copié.'));}
+
+// ══ UTILS ══
+function sf(n){
+  if(typeof n!=='number'||isNaN(n)) return '—';
+  if(n>=1000) return n.toLocaleString('fr-FR',{maximumFractionDigits:0});
+  if(n>=100)  return n.toFixed(0);
+  return n.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
 
 async function flash(okId,errId,fn){
-  try{await fn();const el=document.getElementById(okId);el.style.display='block';setTimeout(()=>el.style.display='none',2500);}
-  catch(e){const el=document.getElementById(errId);el.textContent='Erreur : '+(e.message||'inconnue');el.style.display='block';setTimeout(()=>el.style.display='none',4000);console.error(e);}
+  try{
+    await fn();
+    const el=document.getElementById(okId);
+    el.style.display='block';
+    setTimeout(()=>el.style.display='none',2500);
+  } catch(e){
+    const el=document.getElementById(errId);
+    el.textContent='Erreur : '+(e.message||'inconnue');
+    el.style.display='block';
+    setTimeout(()=>el.style.display='none',4000);
+    console.error(e);
+  }
 }
 
-function sf(n){if(typeof n!=='number'||isNaN(n))return '—';if(n>=1000)return n.toLocaleString('fr-FR',{maximumFractionDigits:0});if(n>=100)return n.toFixed(0);return n.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function setSB(state,txt){
+  document.getElementById('sb-dot').className='sb-dot '+state;
+  document.getElementById('sb-label').textContent=txt;
+}
 
-document.getElementById('adm-overlay').addEventListener('click',function(e){if(e.target===this)closeAdmin();});
-document.getElementById('adm-pass').addEventListener('keydown',function(e){if(e.key==='Enter')checkPass();});
+// Fermer les overlays en cliquant dehors
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',function(e){if(e.target===this)closeAll();}));
+document.getElementById('login-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 
 init();
 </script>
