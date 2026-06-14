@@ -824,7 +824,7 @@ td.act{text-align:center;white-space:nowrap;}
           <div class="form-field"><label>Prénom</label><input id="cour-prenom" type="text" placeholder="Prénom..."></div>
           <div class="form-field"><label>Nom</label><input id="cour-nom" type="text" placeholder="Nom..."></div>
           <div class="form-field"><label>Titre</label>
-            <select id="cour-titre"><option value="">— Sélectionner —</option><option>Jarl</option><option>Intendant</option><option>Chambellan</option><option>Capitaine de la Garde</option><option>Diplomate</option><option>Mage de la Cour</option><option>Prêtre</option><option>Huscarl</option><option>Juge de la Cour</option></select>
+            <select id="cour-titre"><option value="">— Sélectionner —</option><option>Jarl</option><optgroup label="── Civil ──"><option>Intendant</option><option>Mage de la Cour</option><option>Apprenti du Mage de la Cour</option><option>Barde de la Cour</option><option>Apprenti Barde</option><option>Cuisinier du Jarl</option><option>Apprenti Cuisinier</option><option>Maître Orfèvre de la Cour</option><option>Conservateur en Chef du Musée Dwemer</option><option>Conservateur du Musée Dwemer</option></optgroup><optgroup label="── Militaire ──"><option>Thane-Bouclier du Jarl</option><option>Thane de Folpertuis</option><option>Thane de Rorikbourg</option><option>Huscarl du Jarl</option><option>Huscarl d'un Thane</option></optgroup></select>
           </div>
         </div>
         <button class="btn-submit" onclick="addCour()">Nommer</button>
@@ -833,7 +833,7 @@ td.act{text-align:center;white-space:nowrap;}
     <div class="toolbar">
       <div class="search-wrap"><span style="color:var(--ink-faint);font-size:0.85rem;">🔍</span><input id="cour-search" type="text" placeholder="Rechercher un membre..." oninput="filterRows('cour-tbody',this.value)"></div>
       <select class="filter-sel" id="cour-filter-titre" onchange="filterRows('cour-tbody',document.getElementById('cour-search').value)">
-        <option value="">Tous les titres</option><option>Jarl</option><option>Intendant</option><option>Chambellan</option><option>Capitaine de la Garde</option><option>Diplomate</option><option>Mage de la Cour</option><option>Prêtre</option><option>Huscarl</option><option>Juge de la Cour</option>
+        <option value="">Tous les titres</option><option>Jarl</option><optgroup label="── Civil ──"><option>Intendant</option><option>Mage de la Cour</option><option>Apprenti du Mage de la Cour</option><option>Barde de la Cour</option><option>Apprenti Barde</option><option>Cuisinier du Jarl</option><option>Apprenti Cuisinier</option><option>Maître Orfèvre de la Cour</option><option>Conservateur en Chef du Musée Dwemer</option><option>Conservateur du Musée Dwemer</option></optgroup><optgroup label="── Militaire ──"><option>Thane-Bouclier du Jarl</option><option>Thane de Folpertuis</option><option>Thane de Rorikbourg</option><option>Huscarl du Jarl</option><option>Huscarl d'un Thane</option></optgroup>
       </select>
       <button class="btn-sort asc" id="cour-sort-btn" onclick="sortTable('cour-tbody','name','cour-sort-btn')">Nom</button>
     </div>
