@@ -477,7 +477,7 @@ td.act{text-align:center;white-space:nowrap;}
             <ul style="font-family:'IM Fell English',serif;font-size:.82rem;font-style:italic;color:var(--ink-mid);line-height:1.75;list-style:none;padding:0;">
               <li>🩸 <strong style="font-style:normal;color:var(--ink);">Naissance</strong> — deux parents citoyens de la châtellerie</li>
               <li>🛡 <strong style="font-style:normal;color:var(--ink);">Service</strong> — 1 mois dans la Garde de Pierre ou les Rôdeurs</li>
-              <li>💰 <strong style="font-style:normal;color:var(--ink);">Investissement</strong> — contribution jugée significative par le Jarl</li>
+              <li>💰 <strong style="font-style:normal;color:var(--ink);">Investissement</strong> — contribution économique ou militaire jugée significative par le Jarl ou un Intendant</li>
             </ul>
             <p style="font-family:'IM Fell English',serif;font-size:.74rem;font-style:italic;color:var(--ink-faint);margin-top:.4rem;border-top:1px solid var(--border-g);padding-top:.4rem;">Les Nordiques et Crevassais bénéficient d'une procédure allégée. Les autres races accèdent uniquement par voie service ou investissement.</p>
           </div>
@@ -533,6 +533,15 @@ td.act{text-align:center;white-space:nowrap;}
           <div class="form-field"><label>Métier</label>
             <select id="cit-metier"><option value="">— Sélectionner —</option><option>Mineur</option><option>Menuisier</option><option>Forgeron</option><option>Alchimiste</option><option>Chasseur</option><option>Cuisinier</option><option>Couturier</option><option>Guerrier</option><option>Sans métier</option></select>
           </div>
+          <div class="form-field"><label>Voie d'obtention</label>
+            <select id="cit-voie"><option value="">— Sélectionner —</option><option>Naissance</option><option>Service</option><option>Investissement</option></select>
+          </div>
+          <div class="form-field"><label>Statut</label>
+            <select id="cit-statut"><option value="Citoyen">✅ Citoyen actif</option><option value="Suspendu">⏸ Suspendu</option><option value="Révoqué">❌ Révoqué</option></select>
+          </div>
+          <div class="form-field"><label>Date d'obtention</label>
+            <input id="cit-date-obtention" type="date">
+          </div>
         </div>
         <button class="btn-submit" onclick="addCitoyen()">Inscrire au registre</button>
       </div>
@@ -542,6 +551,12 @@ td.act{text-align:center;white-space:nowrap;}
       <select class="filter-sel" id="cit-filter-race" onchange="filterRows('cit-tbody',document.getElementById('cit-search').value)">
         <option value="">Toutes les races</option><option>Nordique</option><option>Impériale</option><option>Bretonne</option><option>Rougegarde</option><option>Elfe des bois</option><option>Haut-Elfe</option><option>Elfe sombre</option><option>Orque</option><option>Argonien</option><option>Khajiit</option>
       </select>
+      <select class="filter-sel" id="cit-filter-statut" onchange="filterRows('cit-tbody',document.getElementById('cit-search').value)">
+        <option value="">Tous les statuts</option>
+        <option value="Citoyen">✅ Citoyen actif</option>
+        <option value="Suspendu">⏸ Suspendu</option>
+        <option value="Révoqué">❌ Révoqué</option>
+      </select>
       <select class="filter-sel" id="cit-filter-taxe" onchange="filterRows('cit-tbody',document.getElementById('cit-search').value)">
         <option value="">Tous les impôts</option>
         <option value="paye">✅ Impôt payé</option>
@@ -550,7 +565,7 @@ td.act{text-align:center;white-space:nowrap;}
       <button class="btn-sort asc" id="cit-sort-btn" onclick="sortTable('cit-tbody','name','cit-sort-btn')">Nom</button>
     </div>
     <div class="table-wrap">
-      <table><thead><tr><th>Prénom &amp; Nom</th><th>Race</th><th>Métier</th><th>Impôts</th><th id="cit-act-head" style="display:none;">Actions</th></tr></thead>
+      <table><thead><tr><th>Prénom &amp; Nom</th><th>Race</th><th>Métier</th><th>Voie</th><th>Statut</th><th>Obtention</th><th>Impôts</th><th id="cit-act-head" style="display:none;">Actions</th></tr></thead>
       <tbody id="cit-tbody"></tbody></table>
     </div>
   </div>
@@ -1526,17 +1541,32 @@ function renderCitoyens(rows){
   if(el_ko)el_ko.textContent=rows.length-payes;
   tbody.innerHTML=rows.map(r=>{
     const tp=!!r.taxe_payee;
-    const badge=tp
+    const statut=r.statut_citoyennete||'Citoyen';
+    const statutBadge=statut==='Citoyen'
+      ?`<span style="color:var(--green-dark);font-size:.8rem;">✅ Actif</span>`
+      :statut==='Suspendu'
+      ?`<span style="color:#8B6030;font-size:.8rem;">⏸ Suspendu</span>`
+      :`<span style="color:#8B3030;font-size:.8rem;">❌ Révoqué</span>`;
+    const voie=r.voie_citoyennete||'—';
+    const voieIcon=voie==='Naissance'?'🩸':voie==='Service'?'🛡':voie==='Investissement'?'💰':'—';
+    const dateObt=r.date_obtention?new Date(r.date_obtention).toLocaleDateString('fr-FR'):'—';
+    const taxeBadge=tp
       ?`<span style="color:var(--green-dark);font-size:.82rem;">✅ Payé</span>`
       :`<span style="color:#8B3030;font-size:.82rem;">❌ Dû</span>`;
-    const btn=canEdit
+    const taxeBtn=canEdit
       ?`<button onclick="toggleTaxe('${r.id}',${tp})" style="font-size:.68rem;padding:.12rem .45rem;margin-left:.4rem;font-family:'Eagle Lake',serif;cursor:pointer;background:transparent;border:1px solid var(--border-g);color:var(--ink-mid);">${tp?'Annuler':'Valider'}</button>`
       :'';
-    return `<tr data-search="${esc((r.prenom+' '+r.nom+' '+r.race+' '+(r.metier||'')).toLowerCase())}" data-race="${esc(r.race||'')}" data-taxe="${tp?'paye':'impaye'}">
+    const statutBtn=canEdit
+      ?`<button onclick="cycleStatut('${r.id}','${statut}')" style="font-size:.68rem;padding:.12rem .45rem;margin-left:.3rem;font-family:'Eagle Lake',serif;cursor:pointer;background:transparent;border:1px solid var(--border-g);color:var(--ink-mid);" title="Changer le statut">↻</button>`
+      :'';
+    return `<tr data-search="${esc((r.prenom+' '+r.nom+' '+r.race+' '+(r.metier||'')).toLowerCase())}" data-race="${esc(r.race||'')}" data-taxe="${tp?'paye':'impaye'}" data-statut="${esc(statut)}">
       <td class="cell-name">${esc(r.prenom)} ${esc(r.nom)}</td>
       <td class="cell-meta">${esc(r.race||'—')}</td>
       <td class="cell-meta">${esc(r.metier||'—')}</td>
-      <td class="cell-meta" style="white-space:nowrap;">${badge}${btn}</td>
+      <td class="cell-meta" style="white-space:nowrap;">${voieIcon} ${esc(voie)}</td>
+      <td class="cell-meta" style="white-space:nowrap;">${statutBadge}${statutBtn}</td>
+      <td class="cell-meta">${dateObt}</td>
+      <td class="cell-meta" style="white-space:nowrap;">${taxeBadge}${taxeBtn}</td>
       ${canEdit?`<td class="act"><button class="btn-del" onclick="delCitoyen('${r.id}')">Radier</button></td>`:''}
     </tr>`;
   }).join('');
@@ -1548,13 +1578,27 @@ async function toggleTaxe(id,current){
     toast(current?'Impôt marqué comme dû.':'Impôt acquitté.');
   }catch(e){toast('Erreur.');}
 }
+async function cycleStatut(id,current){
+  const next={Citoyen:'Suspendu',Suspendu:'Révoqué',Révoqué:'Citoyen'}[current]||'Citoyen';
+  try{await sbPatch('mk_citoyens',`?id=eq.${id}`,{statut_citoyennete:next});await loadCitoyens();toast(`Statut → ${next}.`);}
+  catch(e){toast('Erreur.');}
+}
 async function addCitoyen(){
   const prenom=document.getElementById('cit-prenom').value.trim();
   const nom=document.getElementById('cit-nom').value.trim();
   const race=document.getElementById('cit-race').value;
   const metier=document.getElementById('cit-metier').value;
+  const voie_citoyennete=document.getElementById('cit-voie').value;
+  const statut_citoyennete=document.getElementById('cit-statut').value||'Citoyen';
+  const date_obtention=document.getElementById('cit-date-obtention').value||null;
   if(!prenom||!nom){toast('Prénom et nom requis.');return;}
-  try{await sbPost('mk_citoyens',{prenom,nom,race,metier,taxe_payee:false});['cit-prenom','cit-nom'].forEach(id=>document.getElementById(id).value='');document.getElementById('cit-race').value='';document.getElementById('cit-metier').value='';toggleForm('cit-form');await loadCitoyens();toast(`${prenom} ${nom} inscrit.`);}catch(e){toast('Erreur.');}
+  try{
+    await sbPost('mk_citoyens',{prenom,nom,race,metier,voie_citoyennete,statut_citoyennete,date_obtention,taxe_payee:false});
+    ['cit-prenom','cit-nom'].forEach(id=>document.getElementById(id).value='');
+    ['cit-race','cit-metier','cit-voie','cit-statut'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('cit-date-obtention').value='';
+    toggleForm('cit-form');await loadCitoyens();toast(`${prenom} ${nom} inscrit.`);
+  }catch(e){toast('Erreur.');}
 }
 async function delCitoyen(id){if(!confirm('Radier ce citoyen ?'))return;try{await sbDelete('mk_citoyens',`?id=eq.${id}`);await loadCitoyens();toast('Citoyen radié.');}catch(e){toast('Erreur.');}}
 // ══════════════════════════════════════════════════════════════════════
@@ -1948,7 +1992,7 @@ function sortTable(tbodyId,mode,btnId){
 function filterRows(tbodyId,query){
   const tbody=document.getElementById(tbodyId);if(!tbody)return;
   const q=query.trim().toLowerCase();let extraFilters={};
-  if(tbodyId==='cit-tbody'){const race=document.getElementById('cit-filter-race').value;if(race)extraFilters.race=race;const taxe=(document.getElementById('cit-filter-taxe')||{}).value||'';if(taxe)extraFilters.taxe=taxe;}
+  if(tbodyId==='cit-tbody'){const race=document.getElementById('cit-filter-race').value;if(race)extraFilters.race=race;const taxe=(document.getElementById('cit-filter-taxe')||{}).value||'';if(taxe)extraFilters.taxe=taxe;const statut=(document.getElementById('cit-filter-statut')||{}).value||'';if(statut)extraFilters.statut=statut;}
   else if(tbodyId==='gar-tbody'){const grade=document.getElementById('gar-filter-grade').value;const comp=document.getElementById('gar-filter-comp').value;const spec=document.getElementById('gar-filter-spec').value;if(grade)extraFilters.grade=grade;if(comp)extraFilters.comp=comp;if(spec)extraFilters.spec=spec;}
   else if(tbodyId==='com-tbody'){const dom=document.getElementById('com-filter-dom').value;const statut=document.getElementById('com-filter-statut')?.value||'';if(dom)extraFilters.dom=dom;if(statut)extraFilters.statut=statut;}
   else if(tbodyId==='fon-tbody'){const type=document.getElementById('fon-filter-type').value;const statut=document.getElementById('fon-filter-statut').value;if(type)extraFilters.type=type;if(statut)extraFilters.statut=statut;}
