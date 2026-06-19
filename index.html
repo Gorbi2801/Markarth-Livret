@@ -610,18 +610,7 @@ td.act{text-align:center;white-space:nowrap;}
 
   <!-- ══ GARDE ══ -->
   <div class="section-page" id="page-garde">
-    <!-- Verrou Garde -->
-    <div id="gar-lock" style="background:var(--parch-dark);border:1px solid var(--border-g);border-top:2px solid var(--green);padding:2rem;max-width:360px;margin:1rem auto;text-align:center;">
-      <div style="font-size:1.5rem;margin-bottom:0.75rem;">🛡️</div>
-      <p style="font-family:'Eagle Lake',serif;font-size:0.82rem;color:var(--green-dark);margin-bottom:0.5rem;letter-spacing:0.06em;">Accès restreint</p>
-      <p style="font-size:0.85rem;color:var(--ink-faint);font-style:italic;margin-bottom:1rem;">Ce registre est réservé aux membres de la Garde de l'Aube.</p>
-      <div style="display:flex;gap:0.4rem;">
-        <input id="gar-lock-pass" type="password" placeholder="Mot de passe..." class="login-input" style="flex:1;" onkeydown="if(event.key==='Enter')checkGardePass()">
-        <button class="btn-login" onclick="checkGardePass()">Entrer</button>
-      </div>
-      <p id="gar-lock-err" style="color:#7A1010;font-size:0.78rem;font-style:italic;display:none;margin-top:0.4rem;">Mot de passe incorrect.</p>
-    </div>
-    <div id="gar-content" style="display:none;">
+    <div id="gar-content">
 
     <!-- Switcher de pages Garde -->
     <div style="display:flex;gap:.5rem;margin-bottom:1.25rem;border-bottom:2px solid var(--border-g);padding-bottom:.75rem;">
@@ -810,20 +799,8 @@ td.act{text-align:center;white-space:nowrap;}
         <div class="stat-chip">Épuisé : <strong id="inv-empty">—</strong></div>
       </div>
     </div>
-    <!-- Verrou viewer -->
-    <div id="inv-lock" style="background:var(--parch-dark);border:1px solid var(--border-g);border-top:2px solid var(--green);padding:2rem;max-width:360px;margin:1rem auto;text-align:center;">
-      <div style="font-size:1.5rem;margin-bottom:0.75rem;">🔒</div>
-      <p style="font-family:'Eagle Lake',serif;font-size:0.82rem;color:var(--green-dark);margin-bottom:0.5rem;letter-spacing:0.06em;">Accès restreint</p>
-      <p style="font-size:0.85rem;color:var(--ink-faint);font-style:italic;margin-bottom:1rem;">Cet inventaire est réservé aux membres autorisés de l'Ordre.</p>
-      <div style="display:flex;gap:0.4rem;">
-        <input id="inv-lock-pass" type="password" placeholder="Mot de passe..." class="login-input" style="flex:1;" onkeydown="if(event.key==='Enter')checkInvPass()">
-        <button class="btn-login" onclick="checkInvPass()">Entrer</button>
-      </div>
-      <p id="inv-lock-err" style="color:#7A1010;font-size:0.78rem;font-style:italic;display:none;margin-top:0.4rem;">Mot de passe incorrect.</p>
-    </div>
-
-    <!-- Contenu inventaire (caché jusqu'au déverrouillage) -->
-    <div id="inv-content" style="display:none;">
+    <!-- Contenu inventaire -->
+    <div id="inv-content">
     <div id="inv-add-wrap" class="add-form-wrap" style="display:none;">
       <div class="add-form-head" onclick="toggleForm('inv-form')"><span>+ Ajouter un item</span><span class="chev">▼</span></div>
       <div class="add-form-body" id="inv-form">
@@ -864,6 +841,69 @@ td.act{text-align:center;white-space:nowrap;}
       </div>
       <div style="display:none;margin-top:.75rem;background:rgba(226,212,168,0.25);border:1px solid var(--border-g);padding:1.5rem 2rem;text-align:center;">
         <p style="font-family:'IM Fell English',serif;font-size:1.05rem;font-style:italic;color:var(--ink);line-height:2;max-width:560px;margin:0 auto;">« L'aube se lève, et mon service commence avec elle. Je ne compte pas les moyens, seulement la fin. On me détestera. On me craindra. On me maudira, au village comme à la cour — et je resterai. Je ne sers aucune couronne, aucun temple, aucun dieu. Je sers la lumière, même quand mes mains sont sales pour la défendre. Je suis le couteau dans le noir que personne ne veut voir. Je suis le prix payé pour que d'autres dorment en paix. Tant qu'il y aura un Mal à abattre, je serai là pour l'abattre — par n'importe quel moyen, jusqu'à la dernière lumière du jour. »</p>
+      </div>
+    </div>
+    <!-- ══ TITRES HONORIFIQUES ══ -->
+    <div style="margin-bottom:1.25rem;">
+      <div onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none';this.querySelector('.charte-arr').textContent=this.nextElementSibling.style.display==='none'?'▶':'▼';"
+        style="cursor:pointer;display:flex;align-items:center;gap:.55rem;font-family:'Eagle Lake',serif;
+               font-size:.8rem;letter-spacing:.06em;color:var(--green-dark);padding:.45rem 0;
+               border-bottom:1px solid var(--border-g);">
+        <span class="charte-arr">▶</span> Les Titres Honorifiques
+        <span style="font-family:'IM Fell English',serif;font-style:italic;font-size:.72rem;color:var(--ink-faint);margin-left:.4rem;">(cliquer pour déplier)</span>
+      </div>
+      <div style="display:none;margin-top:.75rem;">
+        <p style="font-family:'IM Fell English',serif;font-style:italic;font-size:.82rem;color:var(--ink-mid);margin-bottom:1rem;padding:0 .2rem;">Ces titres ne figurent dans aucune charte. Ils ne s'accordent pas, ils se gagnent — et c'est l'Ordre tout entier qui finit par les reconnaître à un membre, rarement le Commandement seul.</p>
+
+        <div class="biblio-creature">
+          <div class="biblio-creature-name">LAME GRISE</div>
+          <p class="biblio-body">Porté par ceux qui ont survécu à un nombre d'opérations que plus personne ne prend la peine de compter. Le titre ne célèbre ni l'exploit ni l'habileté — il constate simplement une usure que la mort n'a pas encore réclamée.</p>
+        </div>
+
+        <div class="biblio-creature">
+          <div class="biblio-creature-name">SANS-SOMMEIL</div>
+          <p class="biblio-body">Réservé à qui a bâti, hors des murs de Fort Aube, une réputation de vigilance ou d'acharnement que même nos ennemis reconnaissent. Quand son nom suffit à faire hésiter une cible, l'Ordre considère le titre mérité.</p>
+        </div>
+
+        <div class="biblio-creature">
+          <div class="biblio-creature-name">PORTE-CICATRICE</div>
+          <p class="biblio-body">Un titre que personne ne demande, et que tous finissent par porter d'une manière ou d'une autre. Il revient à qui a payé dans sa chair pour un choix pris sur le terrain, et qui a continué de servir malgré tout.</p>
+        </div>
+
+        <div class="biblio-creature">
+          <div class="biblio-creature-name">LE SILENCIEUX / LA SILENCIEUSE</div>
+          <p class="biblio-body">Accordé à qui n'a jamais trahi un secret de l'Ordre, même mis à l'épreuve par la torture, la ruse ou la tentation. Un titre discret pour une qualité qui l'est tout autant — peu en parlent, mais tous savent qui le porte.</p>
+        </div>
+
+        <div class="biblio-creature">
+          <div class="biblio-creature-name">VÉTÉRAN DE LA BRÈCHE</div>
+          <p class="biblio-body">Référence directe à l'origine de l'Ordre. Réservé aux plus anciens membres encore en service, dont la mémoire couvre une portion suffisante de l'histoire de la Garde pour qu'on les considère comme un fragment vivant de ses archives.</p>
+        </div>
+
+        <div class="biblio-creature">
+          <div class="biblio-creature-name">L'INÉBRANLABLE</div>
+          <p class="biblio-body">Le titre le plus rarement décerné. Il distingue une loyauté qui n'a jamais vacillé, quelles qu'aient été les circonstances — ni la peur, ni la perte, ni le doute n'ont suffi à l'entamer. L'Ordre ne l'accorde qu'après l'avoir vu résister à une épreuve qu'il n'avait pas lui-même organisée.</p>
+        </div>
+      </div>
+    </div>
+    <!-- ══ VALEURS DE LA GARDE ══ -->
+    <div style="margin-bottom:1.25rem;">
+      <div onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none';this.querySelector('.charte-arr').textContent=this.nextElementSibling.style.display==='none'?'▶':'▼';"
+        style="cursor:pointer;display:flex;align-items:center;gap:.55rem;font-family:'Eagle Lake',serif;
+               font-size:.8rem;letter-spacing:.06em;color:var(--green-dark);padding:.45rem 0;
+               border-bottom:1px solid var(--border-g);">
+        <span class="charte-arr">▶</span> Les Valeurs de la Garde
+        <span style="font-family:'IM Fell English',serif;font-style:italic;font-size:.72rem;color:var(--ink-faint);margin-left:.4rem;">(cliquer pour déplier)</span>
+      </div>
+      <div style="display:none;margin-top:.75rem;">
+        <ul style="font-family:'IM Fell English',serif;font-size:.92rem;color:var(--ink);line-height:2;list-style:none;padding:0 .2rem;">
+          <li><strong>Courage</strong> — affronter ce que personne d'autre n'ose regarder en face.</li>
+          <li><strong>Vengeance</strong> — ne jamais laisser un tort impuni, même des années plus tard.</li>
+          <li><strong>Sacrifice</strong> — donner ce qu'il faut, y compris soi-même, sans en attendre le mérite.</li>
+          <li><strong>Discrétion</strong> — agir sans se montrer, et disparaître une fois la tâche faite.</li>
+          <li><strong>Loyauté</strong> — envers l'Ordre et ses frères d'armes, jamais envers une couronne.</li>
+          <li><strong>Détermination</strong> — finir ce qui a été commencé, quel qu'en soit le prix.</li>
+        </ul>
       </div>
     </div>
     <div id="lois-add-wrap" class="add-form-wrap" style="display:none;">
@@ -1858,66 +1898,6 @@ async function addLoi(){
   try{await sbPost('mk_lois',{titre,peine,sanction,description});['lois-titre','lois-sanction','lois-desc'].forEach(id=>document.getElementById(id).value='');document.getElementById('lois-peine').value='';toggleForm('lois-form');await loadLois();toast(`${titre} promulguée.`);}catch(e){toast('Erreur.');}
 }
 async function delLoi(id){if(!confirm('Abroger cette loi ?'))return;try{await sbDelete('mk_lois',`?id=eq.${id}`);await loadLois();toast('Loi abrogée.');}catch(e){toast('Erreur.');}}
-// ══════════════════════════════════════════════════════════════════════
-//  VERROU INVENTAIRE
-// ══════════════════════════════════════════════════════════════════════
-const INV_PASS = 'inv_aube';
-let invUnlocked = false;
-let gardeUnlocked = false;
-const GARDE_PASS = 'garde_aube';
-
-function checkInvPass(){
-  const val = document.getElementById('inv-lock-pass').value;
-  if(val === INV_PASS){
-    invUnlocked = true;
-    document.getElementById('inv-lock').style.display    = 'none';
-    document.getElementById('inv-content').style.display = 'block';
-    document.getElementById('inv-lock-pass').value = '';
-    loadInventaire();
-  } else {
-    document.getElementById('inv-lock-err').style.display = 'block';
-    document.getElementById('inv-lock-pass').value = '';
-    setTimeout(()=>{ document.getElementById('inv-lock-err').style.display='none'; }, 3000);
-  }
-}
-
-function unlockInvForAdmin(){
-  invUnlocked = true;
-  document.getElementById('inv-lock').style.display    = 'none';
-  document.getElementById('inv-content').style.display = 'block';
-}
-
-function checkGardePass(){
-  const val = document.getElementById('gar-lock-pass').value;
-  if(val === GARDE_PASS){
-    gardeUnlocked = true;
-    document.getElementById('gar-lock').style.display    = 'none';
-    document.getElementById('gar-content').style.display = 'block';
-    document.getElementById('gar-lock-pass').value = '';
-  } else {
-    document.getElementById('gar-lock-err').style.display = 'block';
-    document.getElementById('gar-lock-pass').value = '';
-    setTimeout(()=>{ document.getElementById('gar-lock-err').style.display='none'; }, 3000);
-  }
-}
-
-function unlockGardeForAdmin(){
-  gardeUnlocked = true;
-  document.getElementById('gar-lock').style.display    = 'none';
-  document.getElementById('gar-content').style.display = 'block';
-}
-
-function lockInv(){
-  invUnlocked = false;
-  document.getElementById('inv-lock').style.display    = 'block';
-  document.getElementById('inv-content').style.display = 'none';
-}
-
-function lockGarde(){
-  gardeUnlocked = false;
-  document.getElementById('gar-lock').style.display    = 'block';
-  document.getElementById('gar-content').style.display = 'none';
-}
 
 // ══════════════════════════════════════════════════════════════════════
 //  TRI
@@ -1971,17 +1951,12 @@ async function doLogin(){
     if(acc.section==='superadmin'){document.getElementById('saBlock').style.display='block';await renderAccountList();
       if(acc.first_login){const m=document.getElementById('sa-pass-msg');m.style.display='block';m.style.color='#7A1010';m.textContent='⚠ Mot de passe par défaut — changez-le.';}}
     updateAdminUI();toast(`Bienvenue, ${user}.`);renderInvHistory();
-    // Déverrouiller l'inventaire et la garde automatiquement pour les admins
-    unlockInvForAdmin();
-    unlockGardeForAdmin();
   }catch(e){document.getElementById('loginErr').textContent='Erreur réseau.';document.getElementById('loginErr').style.display='block';}
 }
 function doLogout(){
   session=null;document.getElementById('loginBlock').style.display='block';document.getElementById('sessionBlock').style.display='none';document.getElementById('saBlock').style.display='none';
   document.getElementById('loginUser').value='';document.getElementById('loginPass').value='';document.getElementById('loginErr').style.display='none';updateAdminUI();
   if(document.getElementById('adminPanel').classList.contains('open'))togglePanel();
-  lockInv();
-  lockGarde();
   toast('Déconnexion effectuée.');
 }
 function togglePanel(){document.getElementById('adminPanel').classList.toggle('open');document.getElementById('adminToggle').classList.toggle('active');document.querySelector('.content').classList.toggle('panel-open');}
