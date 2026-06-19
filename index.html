@@ -650,7 +650,7 @@ td.act{text-align:center;white-space:nowrap;}
             <select id="gar-race"><option value="">— Sélectionner —</option><option>Nordique</option><option>Impériale</option><option>Bretonne</option><option>Rougegarde</option><option>Elfe des bois</option><option>Haut-Elfe</option><option>Elfe sombre</option><option>Orque</option><option>Argonien</option><option>Khajiit</option></select>
           </div>
           <div class="form-field"><label>Grade</label>
-            <select id="gar-grade"><option value="">— Sélectionner —</option><option>Commandeur de l'Aube</option><option>Veilleur de l'Aube</option><option>Exécuteur de la Garde</option><option>Traqueur de la Garde</option><option>Patrouilleur de la Garde</option><option>Aspirant de la Garde</option><optgroup label="Spécialité"><option>Artisan de la Garde</option><option>Confrère de la Garde</option><option>Mage de la Garde</option><option>Barde de la Garde</option></optgroup></select>
+            <select id="gar-grade"><option value="">— Sélectionner —</option><option>Commandeur de l'Aube</option><option>Sénéchal de l'Aube</option><option>Exécuteur de la Garde</option><option>Traqueur de la Garde</option><option>Patrouilleur de la Garde</option><option>Aspirant de la Garde</option><optgroup label="Spécialité"><option>Artisan de la Garde</option><option>Confrère de la Garde</option><option>Mage de la Garde</option><option>Barde de la Garde</option></optgroup></select>
           </div>
           <div class="form-field"><label>Date de recrutement</label>
             <input id="gar-date-recrutement" type="date">
@@ -665,7 +665,7 @@ td.act{text-align:center;white-space:nowrap;}
     <div class="toolbar">
       <div class="search-wrap"><span style="color:var(--ink-faint);font-size:0.85rem;">🔍</span><input id="gar-search" type="text" placeholder="Rechercher un garde..." oninput="filterRows('gar-tbody',this.value)"></div>
       <select class="filter-sel" id="gar-filter-grade" onchange="filterRows('gar-tbody',document.getElementById('gar-search').value)">
-        <option value="">Tous les grades</option><option>Commandeur de l'Aube</option><option>Veilleur de l'Aube</option><option>Exécuteur de la Garde</option><option>Traqueur de la Garde</option><option>Patrouilleur de la Garde</option><option>Aspirant de la Garde</option><optgroup label="Spécialité"><option>Artisan de la Garde</option><option>Confrère de la Garde</option><option>Mage de la Garde</option><option>Barde de la Garde</option></optgroup>
+        <option value="">Tous les grades</option><option>Commandeur de l'Aube</option><option>Sénéchal de l'Aube</option><option>Exécuteur de la Garde</option><option>Traqueur de la Garde</option><option>Patrouilleur de la Garde</option><option>Aspirant de la Garde</option><optgroup label="Spécialité"><option>Artisan de la Garde</option><option>Confrère de la Garde</option><option>Mage de la Garde</option><option>Barde de la Garde</option></optgroup>
       </select>
       <button class="btn-sort asc" id="gar-sort-btn" onclick="sortTable('gar-tbody','name','gar-sort-btn')">Nom</button>
       <button class="btn-sort asc" id="gar-sort-grade-btn" onclick="sortTable('gar-tbody','grade','gar-sort-grade-btn')">Grade</button>
@@ -954,15 +954,15 @@ td.act{text-align:center;white-space:nowrap;}
           <span class="biblio-arr">▶</span>
           <div class="biblio-book-meta">
             <span class="biblio-book-title">Guide de l'Aspirant</span>
-            <span class="biblio-book-sub">Connaissances de l'Ordre sur les ténèbres de Bordeciel — compilé par Aldric Brise-Garde, Veilleur de l'Aube</span>
+            <span class="biblio-book-sub">Connaissances de l'Ordre sur les ténèbres de Bordeciel — compilé par Aldric Brise-Garde, Sénéchal de l'Aube</span>
           </div>
         </div>
         <div class="biblio-book-body">
         <!-- Avant-propos -->
-        <p class="biblio-fore">Ce guide n'est pas un grimoire de vérités absolues. C'est la somme de ce que des générations de Traqueurs, d'Exécuteurs et de Veilleurs ont observé, rapporté, et parfois mal interprété, sur le terrain — pas dans un livre savant d'un collège de mages.</p>
+        <p class="biblio-fore">Ce guide n'est pas un grimoire de vérités absolues. C'est la somme de ce que des générations de Traqueurs, d'Exécuteurs et de Sénéchaux ont observé, rapporté, et parfois mal interprété, sur le terrain — pas dans un livre savant d'un collège de mages.</p>
         <p class="biblio-fore">Certaines de ces pages contrediront peut-être ce qu'un érudit de l'Académie de Fortdhiver affirmerait avec assurance depuis sa tour. Tant mieux. Nous ne sommes pas des érudits, nous sommes des chasseurs, et un chasseur qui se fie aveuglément à un livre fini généralement plus vite qu'un chasseur qui se fie à ses propres yeux, et à ceux de ses frères d'armes.</p>
         <p class="biblio-fore">Apprenez ce guide par cœur. Puis oubliez-le dès l'instant où le terrain vous prouve qu'il avait tort. Ce sera toujours préférable à une confiance aveugle envers de l'encre sur du papier.</p>
-        <p class="biblio-sign">— Aldric Brise-Garde, Veilleur de l'Aube</p>
+        <p class="biblio-sign">— Aldric Brise-Garde, Sénéchal de l'Aube</p>
 
         <h4 class="biblio-h4">Bestiaire des ténèbres connues</h4>
         <p class="biblio-intro">Cinq menaces reviennent le plus souvent dans nos rapports d'incident. Ce ne sont pas les seules qui rôdent sous le ciel de Bordeciel — seulement celles que l'Ordre a le mieux documentées, à défaut de les avoir pleinement comprises.</p>
@@ -1031,7 +1031,7 @@ td.act{text-align:center;white-space:nowrap;}
           <li>La possibilité réelle de guérir un vampire ou un lycanthrope sans recourir à des méthodes extrêmes.</li>
           <li>L'étendue véritable du territoire contrôlé par les ténèbres sous nos pieds, dans des profondeurs qu'aucun Traqueur n'a encore explorées.</li>
         </ul>
-        <p class="biblio-intro">Si le terrain vous apprend une réponse à l'une de ces questions, rapportez-la au Veilleur. Ce guide ne vaut que ce que nous continuons à y ajouter.</p>
+        <p class="biblio-intro">Si le terrain vous apprend une réponse à l'une de ces questions, rapportez-la au Sénéchal. Ce guide ne vaut que ce que nous continuons à y ajouter.</p>
         </div>
       </div>
       <!-- ══ /GUIDE DE L'ASPIRANT ══ -->
@@ -1084,7 +1084,7 @@ td.act{text-align:center;white-space:nowrap;}
           <div class="biblio-creature-name">V. LE COMMANDEMENT DE JOREN LAME-GRISE</div>
           <div class="biblio-creature-sub">Après 4E 201</div>
           <p class="biblio-body">Isran ne vit pas le jour où la lumière qu'il avait ranimée put briller sans lui veiller dessus. À sa mort, le commandement de l'Ordre échut à Joren Lame-Grise, qui poursuivit son œuvre avec la même rigueur, sinon la même légende.</p>
-          <p class="biblio-body">Sous cette nouvelle direction, la hiérarchie que l'on connaît aujourd'hui — Commandeur, Veilleur, Exécuteurs, Traqueurs, Patrouilleurs, Aspirants — acheva de se structurer, tandis que la province elle-même, ravagée par des années de guerre civile, replongeait dans le chaos qu'Isran avait déjà connu à son retour.</p>
+          <p class="biblio-body">Sous cette nouvelle direction, la hiérarchie que l'on connaît aujourd'hui — Commandeur, Sénéchal, Exécuteurs, Traqueurs, Patrouilleurs, Aspirants — acheva de se structurer, tandis que la province elle-même, ravagée par des années de guerre civile, replongeait dans le chaos qu'Isran avait déjà connu à son retour.</p>
           <p class="biblio-note">Note des archivistes — le nom du Commandeur actuel est provisoire et pourra être ajusté ultérieurement.</p>
         </div>
 
@@ -1093,7 +1093,7 @@ td.act{text-align:center;white-space:nowrap;}
           <div class="biblio-creature-sub">4E 226</div>
           <p class="biblio-body">Vingt-cinq années ont passé depuis la chute d'Alduin, et dix-neuf depuis que les cendres du Bosquet de Kyne ont scellé l'issue de la guerre civile. Bordeciel se reconstruit, lentement : les routes reprennent vie, les marchés retrouvent leur agitation, et dans les grandes villes, on commence à parler de la guerre comme d'un souvenir plutôt que d'une blessure ouverte.</p>
           <p class="biblio-body">Mais l'Ordre sait, mieux que quiconque, que cette paix n'est qu'une surface. Dans les montagnes et les forêts reculées, des partisans sombrages oubliés rêvent encore d'une rébellion qu'ils ont pourtant déjà perdue. Et dans l'ombre plus profonde encore — celle que ni l'Empire ni les Jarls ne savent voir — d'autres forces continuent de s'enraciner, patientes, indifférentes aux traités de paix et aux frontières politiques.</p>
-          <p class="biblio-body">C'est là, précisément, que se trouve la place de la Garde de l'Aube : non dans les chroniques officielles de Bordeciel, mais dans les marges qu'elles refusent de documenter. Sous le commandement de Joren Lame-Grise et la vigilance de son Veilleur, Aldric Brise-Garde, l'Ordre continue de frapper dans l'ombre — pour que d'autres, ignorants jusqu'au bout du prix payé pour leur tranquillité, puissent continuer à marcher dans la lumière, sans jamais savoir qu'un Ordre presque aussi vieux que Bordeciel elle-même veille encore sur eux dans l'ombre.</p>
+          <p class="biblio-body">C'est là, précisément, que se trouve la place de la Garde de l'Aube : non dans les chroniques officielles de Bordeciel, mais dans les marges qu'elles refusent de documenter. Sous le commandement de Joren Lame-Grise et la vigilance de son Sénéchal, Aldric Brise-Garde, l'Ordre continue de frapper dans l'ombre — pour que d'autres, ignorants jusqu'au bout du prix payé pour leur tranquillité, puissent continuer à marcher dans la lumière, sans jamais savoir qu'un Ordre presque aussi vieux que Bordeciel elle-même veille encore sur eux dans l'ombre.</p>
         </div>
 
         </div>
@@ -1125,7 +1125,7 @@ td.act{text-align:center;white-space:nowrap;}
 
           <div class="biblio-creature">
             <div class="biblio-creature-name">III. L'Épreuve des Convictions</div>
-            <p class="biblio-body">Vient ensuite un entretien, mené par le Veilleur ou, plus rarement, par le Commandeur lui-même. On y interroge moins les faits d'armes que les raisons qui les motivent. Ce que l'Ordre redoute le plus n'est pas l'Aspirant médiocre, mais celui qui n'est venu chercher que la gloire d'un nom ou l'image d'un héros — car celui-là, le jour où la tâche exigera l'anonymat et le mépris plutôt que la reconnaissance, reculera.</p>
+            <p class="biblio-body">Vient ensuite un entretien, mené par le Sénéchal ou, plus rarement, par le Commandeur lui-même. On y interroge moins les faits d'armes que les raisons qui les motivent. Ce que l'Ordre redoute le plus n'est pas l'Aspirant médiocre, mais celui qui n'est venu chercher que la gloire d'un nom ou l'image d'un héros — car celui-là, le jour où la tâche exigera l'anonymat et le mépris plutôt que la reconnaissance, reculera.</p>
           </div>
 
           <div class="biblio-creature">
@@ -1163,7 +1163,7 @@ td.act{text-align:center;white-space:nowrap;}
             <div class="biblio-label">Ce que l'on sait</div>
             <p class="biblio-body">Prince de la domination et de l'asservissement des âmes mortelles. La tradition la plus répandue au sein de l'Ordre lui attribue l'origine même du sang vampirique — un don empoisonné offert à une mortelle devenue la première de cette engeance. Ses cultes recherchent rarement la discrétion : leurs rituels exigent souvent une victime, consentante ou non, et laissent des scènes que nos Traqueurs reconnaissent sans confusion possible.</p>
             <div class="biblio-label">Incertitudes du Commandement</div>
-            <p class="biblio-quote">Le Commandement ignore si l'attribution du fléau vampirique à Molag Bal relève d'un fait avéré ou d'une légende commode, transmise de Veilleur en Veilleur depuis trop longtemps pour être vérifiée à la source.</p>
+            <p class="biblio-quote">Le Commandement ignore si l'attribution du fléau vampirique à Molag Bal relève d'un fait avéré ou d'une légende commode, transmise de Sénéchal en Sénéchal depuis trop longtemps pour être vérifiée à la source.</p>
           </div>
 
           <div class="biblio-creature">
@@ -1225,7 +1225,7 @@ td.act{text-align:center;white-space:nowrap;}
           </ul>
 
           <p class="biblio-intro">Le Commandement rappelle que l'existence d'un culte ne suffit pas à justifier une intervention. Notre mandat porte sur la menace réelle qu'un culte représente pour les vivants — non sur le nom qu'il invoque. Confondre les deux a, par le passé, coûté du temps et des hommes que nous n'avions pas à perdre.</p>
-          <p class="biblio-sign">— Compilé sous l'autorité du Veilleur de l'Aube, à partir des rapports d'incident archivés par l'Ordre.</p>
+          <p class="biblio-sign">— Compilé sous l'autorité du Sénéchal de l'Aube, à partir des rapports d'incident archivés par l'Ordre.</p>
         </div>
       </div>
       <!-- ══ /LES PRINCES DAEDRIQUES ET LEURS CULTES ══ -->
@@ -1362,7 +1362,7 @@ function renderOrganigramme(){
   // au plus sourd (troupe) — la Spécialité sort de la chaîne et porte une teinte à part.
   const LEVELS = [
     { label:'Commandement',       total:2,  accent:'var(--gold)',       accentLight:'var(--gold-light)', bg:'var(--parch)',
-      grades:[["Commandeur de l'Aube",1],["Veilleur de l'Aube",1]] },
+      grades:[["Commandeur de l'Aube",1],["Sénéchal de l'Aube",1]] },
     { label:'Officiers',          total:4,  accent:'#6B5234',           accentLight:'#D4BD8C', bg:'var(--parch)',
       grades:[['Exécuteur de la Garde',4]] },
     { label:'Sous-officiers',     total:6,  accent:'#54402A',           accentLight:'#BCA67C', bg:'var(--parch)',
@@ -1626,7 +1626,7 @@ async function delCitoyen(id){if(!confirm('Radier ce civil ?'))return;try{await 
 async function loadGardes(){
   try{const rows=await sbGet('mk_gardes','?order=nom.asc');renderGardes(rows);}catch(e){console.error(e);}
 }
-const SALAIRES={"Commandeur de l'Aube":300,"Veilleur de l'Aube":250,"Exécuteur de la Garde":200,"Traqueur de la Garde":150,"Patrouilleur de la Garde":100,"Aspirant de la Garde":50,"Artisan de la Garde":240,"Confrère de la Garde":240,"Mage de la Garde":240,"Barde de la Garde":240};
+const SALAIRES={"Commandeur de l'Aube":300,"Sénéchal de l'Aube":250,"Exécuteur de la Garde":200,"Traqueur de la Garde":150,"Patrouilleur de la Garde":100,"Aspirant de la Garde":50,"Artisan de la Garde":240,"Confrère de la Garde":240,"Mage de la Garde":240,"Barde de la Garde":240};
 
 function renderGardes(rows){
   gardeRows=rows;
@@ -1906,7 +1906,7 @@ async function delLoi(id){if(!confirm('Abroger cette loi ?'))return;try{await sb
 // ══════════════════════════════════════════════════════════════════════
 //  TRI
 // ══════════════════════════════════════════════════════════════════════
-const GRADE_ORDER=["Commandeur de l'Aube","Veilleur de l'Aube","Exécuteur de la Garde","Traqueur de la Garde","Patrouilleur de la Garde","Aspirant de la Garde","Artisan de la Garde","Confrère de la Garde","Mage de la Garde","Barde de la Garde"];
+const GRADE_ORDER=["Commandeur de l'Aube","Sénéchal de l'Aube","Exécuteur de la Garde","Traqueur de la Garde","Patrouilleur de la Garde","Aspirant de la Garde","Artisan de la Garde","Confrère de la Garde","Mage de la Garde","Barde de la Garde"];
 const PEINE_ORDER=['Infraction mineure','Infraction majeure','Crime','Crime capital','Haute trahison'];
 function sortTable(tbodyId,mode,btnId){
   const tbody=document.getElementById(tbodyId);const btn=document.getElementById(btnId);if(!tbody||!btn)return;
