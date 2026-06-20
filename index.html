@@ -808,6 +808,9 @@ td.act{text-align:center;white-space:nowrap;}
       <div class="add-form-body" id="inv-form">
         <div class="form-grid">
           <div class="form-field"><label>Nom de l'item</label><input id="inv-nom" type="text" placeholder="Nom..."></div>
+          <div class="form-field"><label>Catégorie</label>
+            <select id="inv-categorie"><option value="">— Sélectionner —</option><option>Équipement</option><option>Potions</option><option>Nourriture</option><option>Ingrédient</option><option>Livres</option><option>Matériaux</option></select>
+          </div>
           <div class="form-field"><label>Quantité initiale</label><input id="inv-qty" type="number" min="0" value="0"></div>
         </div>
         <button class="btn-submit" onclick="addInvItem()">Ajouter au stock</button>
@@ -818,10 +821,13 @@ td.act{text-align:center;white-space:nowrap;}
       <select class="filter-sel" id="inv-filter-stock" onchange="filterRows('inv-tbody',document.getElementById('inv-search').value)">
         <option value="">Tous les stocks</option><option value="dispo">Disponible</option><option value="vide">Épuisé</option>
       </select>
+      <select class="filter-sel" id="inv-filter-cat" onchange="filterRows('inv-tbody',document.getElementById('inv-search').value)">
+        <option value="">Toutes les catégories</option><option>Équipement</option><option>Potions</option><option>Nourriture</option><option>Ingrédient</option><option>Livres</option><option>Matériaux</option>
+      </select>
       <button class="btn-sort asc" id="inv-sort-btn" onclick="sortTable('inv-tbody','name','inv-sort-btn')">Nom</button>
     </div>
     <div class="table-wrap">
-      <table><thead><tr><th>Item</th><th>Quantité</th><th id="inv-act-head" style="display:none;">Actions</th></tr></thead>
+      <table><thead><tr><th>Item</th><th>Catégorie</th><th>Quantité</th><th id="inv-act-head" style="display:none;">Actions</th></tr></thead>
       <tbody id="inv-tbody"></tbody></table>
     </div>
   </div>
@@ -1856,15 +1862,16 @@ function renderInventaire(rows){
   const tbody=document.getElementById('inv-tbody');const canAdmin=canEditSection('inventaire');
   const empty=rows.filter(r=>r.quantite<=0).length;
   document.getElementById('inv-total').textContent=rows.length;document.getElementById('inv-empty').textContent=empty;document.getElementById('inv-act-head').style.display=canAdmin?'':'none';
-  tbody.innerHTML=rows.map(r=>`<tr data-search="${esc(r.nom.toLowerCase())}" data-stock="${r.quantite<=0?'vide':'dispo'}">
+  tbody.innerHTML=rows.map(r=>`<tr data-search="${esc(r.nom.toLowerCase())}" data-stock="${r.quantite<=0?'vide':'dispo'}" data-cat="${esc(r.categorie||'')}">
     <td class="cell-name">${esc(r.nom)}</td>
+    <td class="cell-meta">${r.categorie?`<span class="badge badge-tag">${esc(r.categorie)}</span>`:'—'}</td>
     <td>${canAdmin?`<div style="display:flex;align-items:center;gap:0.5rem;"><button class="btn-del" style="border-color:var(--border-g);color:var(--ink-mid);font-size:1rem;width:26px;height:26px;display:flex;align-items:center;justify-content:center;padding:0;" onclick="updateQty('${r.id}','${esc(r.nom)}',${r.quantite},-1)">−</button><span style="font-family:'Eagle Lake',serif;font-size:1rem;min-width:2.5rem;text-align:center;color:${r.quantite<=0?'#7A1010':'var(--green-dark)'};">${r.quantite}</span><button class="btn-del" style="border-color:var(--border-g);color:var(--ink-mid);font-size:1rem;width:26px;height:26px;display:flex;align-items:center;justify-content:center;padding:0;" onclick="updateQty('${r.id}','${esc(r.nom)}',${r.quantite},1)">+</button></div>`:`<span style="font-family:'Eagle Lake',serif;font-size:1rem;color:${r.quantite<=0?'#7A1010':'var(--green-dark)'};">${r.quantite}</span>`}</td>
     ${canAdmin?`<td class="act"><button class="btn-del" onclick="delInvItem('${r.id}')">Suppr.</button></td>`:''}</tr>`).join('');
 }
 async function addInvItem(){
-  const nom=document.getElementById('inv-nom').value.trim();const quantite=Math.max(0,parseInt(document.getElementById('inv-qty').value)||0);
+  const nom=document.getElementById('inv-nom').value.trim();const categorie=document.getElementById('inv-categorie').value;const quantite=Math.max(0,parseInt(document.getElementById('inv-qty').value)||0);
   if(!nom){toast('Nom requis.');return;}
-  try{await sbPost('mk_inventaire',{nom,quantite});document.getElementById('inv-nom').value='';document.getElementById('inv-qty').value='0';toggleForm('inv-form');await loadInventaire();toast(`${nom} ajouté.`);}catch(e){toast('Erreur.');}
+  try{await sbPost('mk_inventaire',{nom,categorie,quantite});document.getElementById('inv-nom').value='';document.getElementById('inv-categorie').value='';document.getElementById('inv-qty').value='0';toggleForm('inv-form');await loadInventaire();toast(`${nom} ajouté.`);}catch(e){toast('Erreur.');}
 }
 async function updateQty(id,nom,current,delta){
   const newQty=Math.max(0,current+delta);if(newQty===current)return;
@@ -1970,7 +1977,7 @@ function filterRows(tbodyId,query){
   else if(tbodyId==='gar-tbody'){const grade=document.getElementById('gar-filter-grade').value;if(grade)extraFilters.grade=grade;}
   else if(tbodyId==='com-tbody'){const type=document.getElementById('com-filter-type').value;const statut=document.getElementById('com-filter-statut')?.value||'';if(type)extraFilters.type=type;if(statut)extraFilters.statut=statut;}
   else if(tbodyId==='cour-tbody'){const titre=document.getElementById('cour-filter-titre').value;if(titre)extraFilters.titre=titre;}
-  else if(tbodyId==='inv-tbody'){const stock=document.getElementById('inv-filter-stock').value;if(stock)extraFilters.stock=stock;}
+  else if(tbodyId==='inv-tbody'){const stock=document.getElementById('inv-filter-stock').value;if(stock)extraFilters.stock=stock;const cat=document.getElementById('inv-filter-cat').value;if(cat)extraFilters.cat=cat;}
   else if(tbodyId==='lois-tbody'){const peine=document.getElementById('lois-filter-peine').value;if(peine)extraFilters.peine=peine;}
   tbody.querySelectorAll('tr').forEach(tr=>{
     const search=tr.getAttribute('data-search')||'';const matchQ=!q||search.includes(q);
@@ -2107,7 +2114,7 @@ async function exportSection(){
     else if(activeSection==='garde'){const r=await sbGet('mk_gardes','?order=nom.asc');csv='Prénom,Nom,Race,Grade\n'+r.map(x=>`"${x.prenom}","${x.nom}","${x.race||''}","${x.grade||''}"`).join('\n');filename='garde_aube.csv';}
     else if(activeSection==='commerces'){const r=await sbGet('mk_transactions','?order=date.desc');csv='Date,Type,Partie Fort-Aube,Autre partie,Objet,Valeur,Statut,Notes\n'+r.map(x=>`"${x.date||''}","${x.type||''}","${x.partie_aube||''}","${x.partie_externe||''}","${(x.objet||'').replace(/"/g,"'")}","${(x.valeur||'').replace(/"/g,"'")}","${x.statut||''}","${(x.notes||'').replace(/"/g,"'")}"`).join('\n');filename='transactions_aube.csv';}
     else if(activeSection==='cour'){const r=await sbGet('mk_cour','?order=titre.asc');csv='Prénom,Nom,Titre\n'+r.map(x=>`"${x.prenom}","${x.nom}","${x.titre||''}"`).join('\n');filename='cour_aube.csv';}
-    else if(activeSection==='inventaire'){const r=await sbGet('mk_inventaire','?order=nom.asc');csv='Item,Quantité\n'+r.map(x=>`"${x.nom}",${x.quantite}`).join('\n');filename='inventaire_aube.csv';}
+    else if(activeSection==='inventaire'){const r=await sbGet('mk_inventaire','?order=nom.asc');csv='Item,Catégorie,Quantité\n'+r.map(x=>`"${x.nom}","${x.categorie||''}",${x.quantite}`).join('\n');filename='inventaire_aube.csv';}
     else if(activeSection==='lois'){const r=await sbGet('mk_lois','?order=created_at.asc');csv='Titre,Peine,Sanction,Description\n'+r.map(x=>`"${x.titre}","${x.peine||''}","${x.sanction||''}","${(x.description||'').replace(/"/g,"'")}"`).join('\n');filename='reglement_aube.csv';}
     else{toast('Export non disponible pour cette section.');return;}
     const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'}));a.download=filename;a.click();
