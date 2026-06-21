@@ -662,6 +662,9 @@ td.act{text-align:center;white-space:nowrap;}
           <div class="form-field"><label>Recruté par</label>
             <input id="gar-recruteur" type="text" placeholder="Nom du recruteur...">
           </div>
+          <div class="form-field"><label>Spécialité</label>
+            <select id="gar-specialite"><option>Artisan</option><option>Mage</option><option>Confrère</option><option>Barde</option><option selected>Soldat</option></select>
+          </div>
           <div class="form-field" style="justify-content:flex-end;">
             <label style="display:flex;align-items:center;gap:.5rem;font-size:1rem;font-style:italic;color:var(--ink-mid);cursor:pointer;">
               <input type="checkbox" id="gar-arbaletrier"> Arbalétrier (a reçu l'arme unique)
@@ -683,7 +686,7 @@ td.act{text-align:center;white-space:nowrap;}
       <button class="btn-sort asc" id="gar-sort-grade-btn" onclick="sortTable('gar-tbody','grade','gar-sort-grade-btn')">Grade</button>
     </div>
     <div class="table-wrap">
-      <table><thead><tr><th>Prénom &amp; Nom</th><th>Race</th><th>Grade</th><th>Salaire</th><th>Versé</th><th>Recrutement</th><th>Arbalétrier</th><th id="gar-act-head" style="display:none;">Actions</th></tr></thead>
+      <table><thead><tr><th>Prénom &amp; Nom</th><th>Race</th><th>Grade</th><th>Salaire</th><th>Versé</th><th>Recrutement</th><th>Spécialité</th><th>Arbalétrier</th><th id="gar-act-head" style="display:none;">Actions</th></tr></thead>
       <tbody id="gar-tbody"></tbody></table>
     </div>
     </div><!-- /gar-page-1 -->
@@ -1752,6 +1755,7 @@ function renderGardes(rows){
       ?new Date(r.date_recrutement).toLocaleDateString('fr-FR')
       :'—';
     const recruteur=r.recruteur?esc(r.recruteur):'—';
+    const specialite=r.specialite||'Soldat';
     const arba=!!r.arbaletrier;
     const arbaBadge=arba
       ?`<span style="color:var(--green-dark);font-size:1rem;">✅ Oui</span>`
@@ -1759,7 +1763,7 @@ function renderGardes(rows){
     const arbaBtn=canEdit
       ?`<button onclick="toggleArbaletrier('${r.id}',${arba})" style="font-size:1rem;padding:.12rem .45rem;margin-left:.4rem;font-family:'Eagle Lake',serif;cursor:pointer;background:transparent;border:1px solid var(--border-g);color:var(--ink-mid);">${arba?'Retirer':'Donner'}</button>`
       :'';
-    return `<tr data-search="${esc((r.prenom+' '+r.nom+' '+r.race+' '+r.grade).toLowerCase())}" data-grade="${esc(r.grade||'')}" data-arbaletrier="${arba?'oui':'non'}">
+    return `<tr data-search="${esc((r.prenom+' '+r.nom+' '+r.race+' '+r.grade+' '+specialite).toLowerCase())}" data-grade="${esc(r.grade||'')}" data-arbaletrier="${arba?'oui':'non'}">
       <td class="cell-name">${esc(r.prenom)}${r.nom?" "+esc(r.nom):""}</td>
       <td class="cell-meta">${r.race?`<span class="badge badge-tag">${esc(r.race)}</span>`:'—'}</td>
       <td class="cell-meta">${r.grade?`<span class="badge badge-tag">${esc(r.grade)}</span>`:'—'}</td>
@@ -1769,6 +1773,7 @@ function renderGardes(rows){
         <span style="display:block;">${dateRecr}</span>
         <span style="color:var(--ink-faint);font-style:italic;font-size:1rem;">par ${recruteur}</span>
       </td>
+      <td class="cell-meta"><span class="badge badge-tag">${esc(specialite)}</span></td>
       <td class="cell-meta" style="white-space:nowrap;">${arbaBadge}${arbaBtn}</td>
       ${canEdit?`<td class="act"><button class="btn-del" onclick="editGarde('${r.id}')">Modifier</button> <button class="btn-del" onclick="delGarde('${r.id}')">Révoquer</button></td>`:''}
     </tr>`;
@@ -1793,6 +1798,7 @@ function editGarde(id){
   document.getElementById('gar-grade').value=row.grade||'';
   document.getElementById('gar-date-recrutement').value=row.date_recrutement||'';
   document.getElementById('gar-recruteur').value=row.recruteur||'';
+  document.getElementById('gar-specialite').value=row.specialite||'Soldat';
   document.getElementById('gar-arbaletrier').checked=!!row.arbaletrier;
   document.getElementById('gar-submit-btn').textContent='Mettre à jour';
   openFormById('gar-form');
@@ -1804,15 +1810,17 @@ async function addGarde(){
   const grade=document.getElementById('gar-grade').value;
   const date_recrutement=document.getElementById('gar-date-recrutement').value||null;
   const recruteur=document.getElementById('gar-recruteur').value.trim()||null;
+  const specialite=document.getElementById('gar-specialite').value||'Soldat';
   const arbaletrier=document.getElementById('gar-arbaletrier').checked;
   if(!prenom){toast('Prénom requis.');return;}
   try{
     const isEdit=editState&&editState.type==='garde';
-    if(isEdit)await sbPatch('mk_gardes',`?id=eq.${editState.id}`,{prenom,nom,race,grade,date_recrutement,recruteur,arbaletrier});
-    else await sbPost('mk_gardes',{prenom,nom,race,grade,date_recrutement,recruteur,arbaletrier,salaire_paye:false});
+    if(isEdit)await sbPatch('mk_gardes',`?id=eq.${editState.id}`,{prenom,nom,race,grade,date_recrutement,recruteur,specialite,arbaletrier});
+    else await sbPost('mk_gardes',{prenom,nom,race,grade,date_recrutement,recruteur,specialite,arbaletrier,salaire_paye:false});
     ['gar-prenom','gar-nom','gar-recruteur'].forEach(id=>document.getElementById(id).value='');
     ['gar-race','gar-grade'].forEach(id=>document.getElementById(id).value='');
     document.getElementById('gar-date-recrutement').value='';
+    document.getElementById('gar-specialite').value='Soldat';
     document.getElementById('gar-arbaletrier').checked=false;
     clearEditState('gar-form');
     toggleForm('gar-form');await loadGardes();toast(`${prenom}${nom?' '+nom:''} ${isEdit?'mis à jour':'enrôlé'}.`);
@@ -2349,7 +2357,7 @@ async function exportSection(){
   try{
     let csv='',filename='';
     if(activeSection==='citoyens'){const r=await sbGet('mk_citoyens','?order=nom.asc');csv='Prénom,Nom,Race,Métier\n'+r.map(x=>`"${x.prenom}","${x.nom}","${x.race||''}","${x.metier||''}"`).join('\n');filename='civils_aube.csv';}
-    else if(activeSection==='garde'){const r=await sbGet('mk_gardes','?order=nom.asc');csv='Prénom,Nom,Race,Grade,Arbalétrier\n'+r.map(x=>`"${x.prenom}","${x.nom}","${x.race||''}","${x.grade||''}","${x.arbaletrier?'Oui':'Non'}"`).join('\n');filename='garde_aube.csv';}
+    else if(activeSection==='garde'){const r=await sbGet('mk_gardes','?order=nom.asc');csv='Prénom,Nom,Race,Grade,Spécialité,Arbalétrier\n'+r.map(x=>`"${x.prenom}","${x.nom}","${x.race||''}","${x.grade||''}","${x.specialite||'Soldat'}","${x.arbaletrier?'Oui':'Non'}"`).join('\n');filename='garde_aube.csv';}
     else if(activeSection==='commerces'){const r=await sbGet('mk_transactions','?order=date.desc');csv='Date,Type,Objet,Prix,Vendeur/Acheteur,Garde\n'+r.map(x=>`"${x.date||''}","${x.type||''}","${(x.objet||'').replace(/"/g,"'")}","${(x.valeur||'').replace(/"/g,"'")}","${(x.partie_externe||'').replace(/"/g,"'")}","${(x.enregistre_par||'').replace(/"/g,"'")}"`).join('\n');filename='transactions_aube.csv';}
     else if(activeSection==='cour'){const r=await sbGet('mk_cour','?order=titre.asc');csv='Prénom,Nom,Titre\n'+r.map(x=>`"${x.prenom}","${x.nom}","${x.titre||''}"`).join('\n');filename='cour_aube.csv';}
     else if(activeSection==='inventaire'){const r=await sbGet('mk_inventaire','?order=nom.asc');csv='Objet,Catégorie,Quantité\n'+r.map(x=>`"${x.nom}","${x.categorie||''}",${x.quantite}`).join('\n');filename='inventaire_aube.csv';}
