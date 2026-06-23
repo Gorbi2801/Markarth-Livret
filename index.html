@@ -765,7 +765,7 @@ td.act{text-align:center;white-space:nowrap;}
           <div class="form-field"><label>Prénom</label><input id="cour-prenom" type="text" placeholder="Prénom..."></div>
           <div class="form-field"><label>Nom</label><input id="cour-nom" type="text" placeholder="Nom..."></div>
           <div class="form-field"><label>Titre</label>
-            <select id="cour-titre"><option value="">— Sélectionner —</option><option>Intendant de Fort-Aube</option><option>Émissaire de l'Aube</option><option>Trésorier de l'Ordre</option><option>Maître des Secrets</option></select>
+            <select id="cour-titre"><option value="">— Sélectionner —</option><option>Intendant de Fort-Aube</option><option>Émissaire de l'Aube</option><option>Trésorier de l'Ordre</option><option>Maître des Secrets</option><option>Maître des Forges</option></select>
           </div>
         </div>
         <button class="btn-submit" id="cour-submit-btn" onclick="addCour()">Nommer</button>
@@ -774,7 +774,7 @@ td.act{text-align:center;white-space:nowrap;}
     <div class="toolbar">
       <div class="search-wrap"><span style="color:var(--ink-faint);font-size:1rem;">🔍</span><input id="cour-search" type="text" placeholder="Rechercher un membre..." oninput="filterRows('cour-tbody',this.value)"></div>
       <select class="filter-sel" id="cour-filter-titre" onchange="filterRows('cour-tbody',document.getElementById('cour-search').value)">
-        <option value="">Tous les titres</option><option>Intendant de Fort-Aube</option><option>Émissaire de l'Aube</option><option>Trésorier de l'Ordre</option><option>Maître des Secrets</option>
+        <option value="">Tous les titres</option><option>Intendant de Fort-Aube</option><option>Émissaire de l'Aube</option><option>Trésorier de l'Ordre</option><option>Maître des Secrets</option><option>Maître des Forges</option>
       </select>
       <button class="btn-sort asc" id="cour-sort-btn" onclick="sortTable('cour-tbody','name','cour-sort-btn')">Nom</button>
     </div>
@@ -1899,6 +1899,7 @@ const TITRE_DESC={
   "Émissaire de l'Aube":"Relations extérieures, négociations avec les autres châtelleries et factions.",
   "Trésorier de l'Ordre":"Gestion des fonds, financement des opérations et des primes versées aux Traqueurs.",
   "Maître des Secrets":"Renseignement, informateurs, surveillance des cibles avant intervention.",
+  "Maître des Forges":"Gestion de la forge et de l'armurerie de Fort-Aube : production, entretien et distribution des armes et équipements.",
 };
 function renderCour(rows){
   courRows=rows;
