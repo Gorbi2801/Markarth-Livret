@@ -65,7 +65,7 @@ header{background:linear-gradient(180deg,var(--green-dark) 0%,var(--green) 100%)
 .nav-btn.active{color:var(--gold-light);border-bottom-color:var(--gold);background:rgba(201,168,76,0.08);}
 .nav-btn .nav-icon{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;flex:0 0 auto;}
 .nav-btn .nav-icon img{display:block;width:32px;height:32px;object-fit:contain;}
-.nav-admin-mark{border:1px solid rgba(201,168,76,0.55);border-radius:50%;font-size:0.85rem;color:var(--gold);letter-spacing:0;}
+.nav-btn .nav-icon.nav-icon-large{width:44px;height:44px;}
 
 /* ── LAYOUT ── */
 .main-layout{position:relative;z-index:1;}
@@ -136,6 +136,34 @@ header{background:linear-gradient(180deg,var(--green-dark) 0%,var(--green) 100%)
   .superadmin-grid{grid-template-columns:1fr;}
   .superadmin-server-card{grid-column:auto;}
   .superadmin-danger{align-items:flex-start;flex-direction:column;}
+}
+
+/* ── MISSIVES ── */
+.missive-grid{display:grid;grid-template-columns:minmax(320px,0.85fr) minmax(420px,1.15fr);gap:1.25rem;align-items:start;}
+.missive-list-card,.missive-detail-card,.missive-compose-card{min-width:0;}
+.missive-compose-card{grid-column:1/-1;}
+.missive-tabs{display:flex;gap:0.35rem;flex-wrap:wrap;margin-bottom:0.8rem;}
+.missive-tab{font-family:'Eagle Lake',serif;font-size:0.9rem;letter-spacing:0.04em;background:transparent;border:1px solid var(--border-g);color:var(--ink-mid);padding:0.35rem 0.65rem;cursor:pointer;}
+.missive-tab.active{background:var(--green-dark);border-color:var(--green);color:var(--gold-light);}
+.missive-list{max-height:min(58vh,540px);overflow:auto;border:1px solid var(--border-g);background:rgba(226,212,168,0.24);}
+.missive-item{display:block;width:100%;border:0;border-bottom:1px solid var(--border-g);background:transparent;color:var(--ink);text-align:left;padding:0.75rem 0.85rem;cursor:pointer;font-family:'IM Fell English',serif;}
+.missive-item:last-child{border-bottom:none;}
+.missive-item:hover,.missive-item.active{background:rgba(212,194,138,0.55);}
+.missive-item.unread{border-left:3px solid var(--gold);background:rgba(201,168,76,0.18);}
+.missive-item-head{display:flex;align-items:flex-start;justify-content:space-between;gap:0.7rem;}
+.missive-item-head strong{font-family:'Eagle Lake',serif;font-size:1rem;line-height:1.25;color:var(--green-dark);}
+.missive-item-head small{white-space:nowrap;color:var(--ink-faint);font-size:0.9rem;}
+.missive-item-meta{display:block;margin-top:0.35rem;color:var(--ink-mid);font-style:italic;font-size:1rem;}
+.missive-details{margin-bottom:1rem;}
+.missive-details dd span{color:var(--ink-faint);font-style:italic;margin-left:0.4rem;}
+.missive-body{border:1px solid var(--border-g);border-left:3px solid var(--gold);background:rgba(240,230,200,0.52);padding:1rem;line-height:1.65;white-space:normal;word-break:break-word;}
+.missive-compose-grid{grid-template-columns:minmax(220px,0.7fr) minmax(260px,1.3fr);margin-bottom:0.7rem;}
+.missive-textarea{background:var(--parch);border:1px solid var(--border-g);color:var(--ink);font-family:'IM Fell English',serif;font-size:1rem;padding:0.55rem 0.65rem;resize:vertical;min-height:150px;}
+.missive-textarea:focus{outline:none;border-color:var(--green);}
+@media (max-width:900px){
+  .missive-grid{grid-template-columns:1fr;}
+  .missive-compose-card{grid-column:auto;}
+  .missive-compose-grid{grid-template-columns:1fr;}
 }
 
 /* ── SEARCH & FILTERS ── */

@@ -18,6 +18,7 @@
     addInvItem, saveInventaire:addInvItem, editInvItem, delInvItem, updateQty, setQty, ajusterQuantite:updateQty,
     revertInvEntry, undoInvChange:revertInvEntry,
     addLoi, saveLoi:addLoi, delLoi,
+    loadMissives, setMissiveTab, filterMissives, selectMissive, sendMissive,
     saveNoteModal, saveNote:saveNoteModal, openNoteModal, closeNoteModal,
     showTab, toggleFiche, toggleRap, toggleAdd, toggleRelForm, removeRel,
     renderTab, goToFiche, saveFiche, deleteFiche, openEditFiche,
