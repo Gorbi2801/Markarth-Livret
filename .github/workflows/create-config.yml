@@ -31,7 +31,7 @@ jobs:
           echo "  supabaseUrl: \"${SUPABASE_URL}\"," >> scripts/config.js
           echo "  supabaseKey: \"${SUPABASE_KEY}\"," >> scripts/config.js
           echo "  authEmailDomain: \"${AUTH_EMAIL_DOMAIN}\"," >> scripts/config.js
-          echo '  sections: ["citoyens","biblio","garde","commerces","diplomatie","cour","inventaire","lois","renseignements"]' >> scripts/config.js
+          echo '  sections: ["citoyens","biblio","garde","commerces","diplomatie","cour","inventaire","lois","missives","presences","renseignements"]' >> scripts/config.js
           echo '});' >> scripts/config.js
           echo "Generated scripts/config.js"
 
