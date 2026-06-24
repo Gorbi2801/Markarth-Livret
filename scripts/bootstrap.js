@@ -1,0 +1,31 @@
+// ══════════════════════════════════════════════════════════════════════
+//  EXPOSITION CONTRÔLÉE — fonctions nécessaires aux onclick HTML.
+//  Les droits réels seront renforcés côté Supabase/RLS dans l'étape sécurité.
+// ══════════════════════════════════════════════════════════════════════
+(function exposePublic(){
+  const pub = {
+    entrerGrimoire,
+    switchSection, showProfilePage, toggleForm, sortTable, filterRows,
+    garSwitchTab,
+    doLogin, doLogout,
+    addCitoyen, saveCitoyen:addCitoyen, delCitoyen, editCitoyen, cycleStatut, updateStatutCitoyen:cycleStatut,
+    addGarde, saveGarde:addGarde, delGarde, editGarde,
+    addCommerce, saveCommerce:addCommerce, delCommerce, editCommerce,
+    saveRelation, loadDiplomatie,
+    addCour, saveCour:addCour, delCour, editCour,
+    addOrdreFab, saveOrdreFab:addOrdreFab, delOrdreFab, incrementOrdreFab, setOrdreFabAvancement, updateAvancement:incrementOrdreFab,
+    addRecette, saveRecette:addRecette, delRecette,
+    addInvItem, saveInventaire:addInvItem, editInvItem, delInvItem, updateQty, setQty, ajusterQuantite:updateQty,
+    revertInvEntry, undoInvChange:revertInvEntry,
+    addLoi, saveLoi:addLoi, delLoi,
+    saveNoteModal, saveNote:saveNoteModal, openNoteModal, closeNoteModal,
+    showTab, toggleFiche, toggleRap, toggleAdd, toggleRelForm, removeRel,
+    renderTab, goToFiche, saveFiche, deleteFiche, openEditFiche,
+    saveRapport, deleteRapport, addRelation, deleteRelation,
+    rensSearch, rensFilter,
+    escH, escJs, esc, showMsg, toast,
+  };
+  Object.entries(pub).forEach(([k,v])=>{ if(typeof v==='function') window[k]=v; });
+})();
+
+init();

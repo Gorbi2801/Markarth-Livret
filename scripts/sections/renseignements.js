@@ -1,0 +1,425 @@
+// ══════════════════════════════════════════════════════════════════════
+//  RENSEIGNEMENTS — Supabase
+// ══════════════════════════════════════════════════════════════════════
+
+// ── State ────────────────────────────────────────────────────────────
+const RENS = {
+  fiches:    [],   // mk_rens_fiches
+  rapports:  [],   // mk_rens_rapports
+  relations: [],   // mk_rens_relations
+  activeTab: 'lieux',
+  searchQ:   '',
+  filterStatut: ''
+};
+
+// ── Helpers UI ───────────────────────────────────────────────────────
+function showTab(id, el){
+  RENS.activeTab = id;
+  document.querySelectorAll('[id^="tab-"]').forEach(t=>t.style.display='none');
+  const tab = document.getElementById('tab-'+id);
+  if(tab) tab.style.display='block';
+  document.querySelectorAll('#page-renseignements .tab').forEach(t=>t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  renderTab(id);
+}
+
+function toggleFiche(id){
+  const el = document.getElementById(id);
+  if(el) el.classList.toggle('open');
+}
+function toggleRap(id){
+  const el = document.getElementById(id);
+  if(el) el.classList.toggle('open');
+}
+function toggleAdd(id){
+  const el = document.getElementById(id);
+  if(el) el.classList.toggle('open');
+}
+function toggleRelForm(id){
+  const el = document.getElementById(id);
+  if(el) el.classList.toggle('open');
+}
+
+function goToFiche(ficheId, tab){
+  const tabBtns = document.querySelectorAll('#page-renseignements .tab');
+  const idx = ['lieux','individus','groupes'].indexOf(tab);
+  if(idx >= 0 && tabBtns[idx]) showTab(tab, tabBtns[idx]);
+  setTimeout(()=>{
+    const target = document.getElementById('fiche-'+ficheId);
+    if(!target) return;
+    target.classList.add('open');
+    target.scrollIntoView({behavior:'smooth', block:'start'});
+    target.classList.add('highlight');
+    setTimeout(()=>target.classList.remove('highlight'), 1500);
+  }, 120);
+}
+
+// ── Chargement Supabase ──────────────────────────────────────────────
+async function rensLoad(){
+  const [rf, rr, rl] = await Promise.all([
+    sbGet('mk_rens_fiches','?select=*&order=created_at.desc'),
+    sbGet('mk_rens_rapports','?select=*&order=created_at.desc'),
+    sbGet('mk_rens_relations','?select=*')
+  ]);
+  RENS.fiches    = rf  || [];
+  RENS.rapports  = rr  || [];
+  RENS.relations = rl  || [];
+  rensRenderAll();
+}
+
+// ── Rendu complet ────────────────────────────────────────────────────
+function rensRenderAll(){
+  rensRenderStats();
+  renderTab(RENS.activeTab);
+}
+
+function rensRenderStats(){
+  const total     = RENS.fiches.length;
+  const lieux     = RENS.fiches.filter(f=>f.type==='lieux').length;
+  const individus = RENS.fiches.filter(f=>f.type==='individus').length;
+  const groupes   = RENS.fiches.filter(f=>f.type==='groupes').length;
+  const urgents   = RENS.fiches.filter(f=>f.urgente).length;
+  const nbRap     = RENS.rapports.length;
+  const statsEl   = document.getElementById('rens-stats');
+  if(!statsEl) return;
+  statsEl.innerHTML = `
+    <div class="stat">Lieux : <strong>${lieux}</strong></div>
+    <div class="stat">Individus : <strong>${individus}</strong></div>
+    <div class="stat">Groupes : <strong>${groupes}</strong></div>
+    ${urgents>0?`<div class="stat" style="color:#7A1010;">🔴 Urgents : <strong>${urgents}</strong></div>`:''}
+    <div class="stat">Rapports total : <strong>${nbRap}</strong></div>`;
+}
+
+function renderTab(type){
+  const container = document.getElementById('tab-'+type);
+  if(!container) return;
+  let fiches = RENS.fiches.filter(f=>f.type===type);
+  // Filtre recherche
+  if(RENS.searchQ){
+    const q = RENS.searchQ.toLowerCase();
+    fiches = fiches.filter(f=>f.nom.toLowerCase().includes(q)||(f.sous_titre||'').toLowerCase().includes(q));
+  }
+  // Filtre statut
+  if(RENS.filterStatut) fiches = fiches.filter(f=>f.statut===RENS.filterStatut);
+
+  const labelEl = container.querySelector('.section-label');
+  if(labelEl) labelEl.textContent = `${fiches.length} ${type==='lieux'?'lieu(x)':type==='individus'?'individu(s)':'groupe(s)'} recensé(s)`;
+
+  const listEl = container.querySelector('.fiches-list');
+  if(!listEl) return;
+  if(fiches.length===0){
+    listEl.innerHTML = '<p style="font-style:italic;color:var(--ink-faint);font-size:.92rem;padding:.5rem 0;">Aucune fiche.</p>';
+    return;
+  }
+  listEl.innerHTML = fiches.map(f=>buildFicheHTML(f)).join('');
+}
+
+// ── Construction HTML d'une fiche ────────────────────────────────────
+function buildFicheHTML(f){
+  const raps = RENS.rapports.filter(r=>r.fiche_id===f.id);
+  const rels = RENS.relations.filter(r=>r.fiche_source===f.id || r.fiche_cible===f.id);
+
+  const badgeUrgente = f.urgente ? `<span class="badge badge-urgente">🔴 Urgente</span>` : '';
+  const badgeStatut  = f.statut && f.statut!=='neutre'
+    ? `<span class="badge badge-${f.statut==='surveillance'?'surveille':f.statut==='recherche'?'recherche':'neutralise'}">${f.statut==='surveillance'?'Surveillance active':f.statut==='recherche'?'Recherché':'Neutralisé'}</span>` : '';
+  const badgeType    = f.type_label ? `<span class="badge badge-type">${f.type_label}</span>` : '';
+
+  // Champs rapides depuis meta JSON
+  const meta = f.meta || {};
+  const quickFields = Object.entries(meta).map(([k,v])=>`
+    <div class="fiche-qf"><label>${k}</label><span>${v}</span></div>`).join('');
+
+  // Relations HTML
+  const relsHTML = buildRelationsHTML(f, rels);
+
+  // Rapports HTML
+  const rapsHTML = raps.map(r=>buildRapportHTML(r)).join('');
+
+  const peutModifier = canEditSection('renseignements');
+
+  return `
+  <div class="fiche${f.urgente?' urgente':''}" id="fiche-${f.id}" data-id="${f.id}" data-tab="${f.type}">
+    <div class="fiche-header" onclick="toggleFiche('fiche-${f.id}')">
+      <div class="fiche-left">
+        <span class="fiche-chevron">▶</span>
+        <div>
+          <div class="fiche-nom">${escH(f.nom)}</div>
+          ${f.sous_titre?`<div class="fiche-sub">${escH(f.sous_titre)} · ${raps.length} rapport(s)</div>`:''}
+        </div>
+      </div>
+      <div class="fiche-badges">
+        ${badgeType}${badgeUrgente}${badgeStatut}
+        ${peutModifier?`<button class="btn-sm" style="margin-left:.5rem;" onclick="event.stopPropagation();openEditFiche('${f.id}')">Modifier</button>
+        <button class="btn-sm" style="color:#7A1010;" onclick="event.stopPropagation();deleteFiche('${f.id}')">Suppr.</button>`:''}
+      </div>
+    </div>
+    <div class="fiche-body">
+      ${quickFields?`<div class="fiche-quick">${quickFields}</div>`:''}
+      ${relsHTML}
+      <div class="rapports-section">
+        <div class="rapports-title">
+          Rapports &amp; renseignements
+          ${peutModifier?`<button class="btn-sm" onclick="toggleAdd('addrap-${f.id}')">+ Déposer un rapport</button>`:''}
+        </div>
+        ${raps.length===0?'<p style="font-style:italic;color:var(--ink-faint);font-size:.92rem;">Aucun rapport déposé.</p>':''}
+        ${rapsHTML}
+        ${peutModifier?buildAddRapportFormHTML(f.id):''}
+      </div>
+      ${peutModifier?buildAddFicheNotes(f):''}
+    </div>
+  </div>`;
+}
+
+function buildRelationsHTML(f, rels){
+  const peutModifier = canEditSection('renseignements');
+  const linksHTML = rels.map(rel=>{
+    const otherId = rel.fiche_source===f.id ? rel.fiche_cible : rel.fiche_source;
+    const relId   = rel.id;
+    const other   = RENS.fiches.find(x=>x.id===otherId);
+    if(!other) return '';
+    const typeLabel = other.type==='lieux'?'Lieu':other.type==='individus'?'Individu':'Groupe';
+    return `<a class="fiche-link" onclick="goToFiche('${other.id}','${other.type}')">
+      <span class="fl-type">${typeLabel} ·</span> ${escH(other.nom)}
+      ${peutModifier?`<span class="fl-del" onclick="event.stopPropagation();deleteRelation('${relId}','${f.id}')" title="Supprimer ce lien">×</span>`:''}
+    </a>`;
+  }).join('');
+
+  // Options disponibles pour le select (toutes fiches sauf soi-même et déjà liées)
+  const dejalie = rels.map(r=>r.fiche_source===f.id?r.fiche_cible:r.fiche_source);
+  const opts = ['lieux','individus','groupes'].map(type=>{
+    const dispo = RENS.fiches.filter(x=>x.type===type && x.id!==f.id && !dejalie.includes(x.id));
+    if(!dispo.length) return '';
+    return `<optgroup label="${type==='lieux'?'Lieux':type==='individus'?'Individus':'Groupes'}">
+      ${dispo.map(x=>`<option value="${x.id}">${escH(x.nom)}</option>`).join('')}
+    </optgroup>`;
+  }).join('');
+
+  return `
+  <div class="relations-section">
+    <div class="relations-title">
+      Fiches liées
+      ${peutModifier?`<button class="btn-sm" onclick="toggleRelForm('relform-${f.id}')">+ Ajouter une relation</button>`:''}
+    </div>
+    <div class="relations-list" id="rels-${f.id}">
+      ${linksHTML || '<span style="font-style:italic;color:var(--ink-faint);font-size:.88rem;">Aucune fiche liée.</span>'}
+    </div>
+    ${peutModifier?`
+    <div class="add-relation-form" id="relform-${f.id}">
+      <label>Lier à :</label>
+      <select id="relsel-${f.id}">
+        <option value="">— Sélectionner une fiche —</option>
+        ${opts||'<option disabled>Aucune fiche disponible</option>'}
+      </select>
+      <button class="btn-add" style="font-size:.78rem;padding:.28rem .7rem;" onclick="addRelation('${f.id}')">Lier</button>
+      <button class="btn-sm" onclick="toggleRelForm('relform-${f.id}')">Annuler</button>
+    </div>`:''}
+  </div>`;
+}
+
+function buildRapportHTML(r){
+  const peutModifier = canEditSection('renseignements');
+  const ficheLabel = {confirme:'✅ Confirmée', nonverif:'⚠ Non vérifiée', urgente:'🔴 Urgente'}[r.fiabilite]||r.fiabilite;
+  const date = r.created_at ? new Date(r.created_at).toLocaleDateString('fr-FR') : '';
+  const preview = (r.contenu||'').substring(0,60)+(r.contenu&&r.contenu.length>60?'…':'');
+  return `
+  <div class="rapport-accordion ${r.fiabilite||''}" id="rap-${r.id}">
+    <div class="rapport-acc-head" onclick="toggleRap('rap-${r.id}')">
+      <div class="rapport-acc-left">
+        <span class="rapport-acc-chevron">▶</span>
+        <span class="rapport-acc-date">${date}</span>
+        <span class="badge badge-${r.fiabilite||'nonverif'}">${ficheLabel}</span>
+        <span class="rapport-acc-source">${escH(r.source||'Inconnu')}</span>
+        <span class="rapport-acc-preview">${escH(preview)}</span>
+      </div>
+      <div style="display:flex;gap:.3rem;">
+        ${peutModifier?`<button class="btn-sm" onclick="event.stopPropagation();deleteRapport('${r.id}','${r.fiche_id}')">Suppr.</button>`:''}
+      </div>
+    </div>
+    <div class="rapport-acc-body">
+      <div class="rapport-contenu">${escH(r.contenu||'')}</div>
+      ${r.action_recommandee?`
+      <div class="rapport-action">
+        <label>Action recommandée</label>
+        <p>${escH(r.action_recommandee)}</p>
+      </div>`:''}
+    </div>
+  </div>`;
+}
+
+function buildAddRapportFormHTML(ficheId){
+  return `
+  <div class="add-rapport" id="addrap-${ficheId}">
+    <div style="font-family:'Eagle Lake',serif;font-size:.85rem;color:var(--green-dark);margin-bottom:.75rem;">Déposer un nouveau rapport</div>
+    <div class="form-row">
+      <div class="field"><label>Source</label><input type="text" id="raf-src-${ficheId}" placeholder="Garde ou informateur..."></div>
+      <div class="field"><label>Fiabilité</label>
+        <select id="raf-fib-${ficheId}">
+          <option value="confirme">✅ Confirmée</option>
+          <option value="nonverif" selected>⚠ Non vérifiée</option>
+          <option value="urgente">🔴 Urgente</option>
+        </select>
+      </div>
+    </div>
+    <label>Contenu</label>
+    <textarea id="raf-cnt-${ficheId}" rows="7" placeholder="Faits, témoignages, observations..."></textarea>
+    <label>Action recommandée <span style="font-style:italic;font-weight:normal;font-family:'IM Fell English',serif;font-size:.88rem;color:var(--ink-faint);">(facultatif)</span></label>
+    <textarea id="raf-act-${ficheId}" rows="3"></textarea>
+    <div style="display:flex;gap:.5rem;margin-top:.65rem;">
+      <button class="btn-add" style="font-size:.82rem;padding:.3rem .8rem;" onclick="saveRapport('${ficheId}')">Enregistrer</button>
+      <button class="btn-sm" onclick="toggleAdd('addrap-${ficheId}')">Annuler</button>
+    </div>
+  </div>`;
+}
+
+function buildAddFicheNotes(f){
+  return ''; // Notes inline non implémentées (via modal edit)
+}
+
+// ── Formulaire nouvelle fiche ─────────────────────────────────────────
+function buildNewFicheFormHTML(){
+  return `
+  <div id="rens-add-form" style="display:none;background:rgba(28,26,24,.04);border:1px dashed var(--border-g);padding:1rem;margin-top:.75rem;">
+    <div style="font-family:'Eagle Lake',serif;font-size:.9rem;color:var(--green-dark);margin-bottom:.75rem;">Nouvelle fiche</div>
+    <div class="form-row">
+      <div class="field"><label>Nom *</label><input type="text" id="nf-nom" placeholder="Nom de la cible..."></div>
+      <div class="field"><label>Type *</label>
+        <select id="nf-type">
+          <option value="lieux">Lieu</option>
+          <option value="individus">Individu</option>
+          <option value="groupes">Groupe</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>Sous-titre / description courte</label><input type="text" id="nf-sub" placeholder="Ex: Grotte · Châtellerie de Blancherive"></div>
+      <div class="field"><label>Label de type</label><input type="text" id="nf-typelabel" placeholder="Ex: Repaire suspecté, Suspect, Vampires..."></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>Statut</label>
+        <select id="nf-statut">
+          <option value="neutre">Neutre</option>
+          <option value="surveillance">Surveillance active</option>
+          <option value="recherche">Recherché</option>
+          <option value="neutralise">Neutralisé</option>
+        </select>
+      </div>
+      <div class="field"><label style="display:flex;align-items:center;gap:.5rem;"><input type="checkbox" id="nf-urgente"> Marquer comme urgente</label></div>
+    </div>
+    <label>Notes / contexte</label>
+    <textarea id="nf-notes" rows="4" placeholder="Informations générales, contexte..."></textarea>
+    <div style="display:flex;gap:.5rem;margin-top:.65rem;">
+      <button class="btn-add" style="font-size:.82rem;padding:.3rem .8rem;" onclick="saveFiche()">Créer la fiche</button>
+      <button class="btn-sm" onclick="document.getElementById('rens-add-form').style.display='none'">Annuler</button>
+    </div>
+  </div>`;
+}
+
+// ── CRUD Fiches ──────────────────────────────────────────────────────
+async function saveFiche(){
+  const nom = document.getElementById('nf-nom').value.trim();
+  const type= document.getElementById('nf-type').value;
+  if(!nom){ alert('Le nom est obligatoire.'); return; }
+  const payload = {
+    nom, type,
+    sous_titre:   document.getElementById('nf-sub').value.trim()||null,
+    type_label:   document.getElementById('nf-typelabel').value.trim()||null,
+    statut:       document.getElementById('nf-statut').value,
+    urgente:      document.getElementById('nf-urgente').checked,
+    notes:        document.getElementById('nf-notes').value.trim()||null,
+    meta:         {}
+  };
+  try{await sbPost('mk_rens_fiches',payload);}
+  catch(error){ alert('Erreur : '+error.message); return; }
+  document.getElementById('rens-add-form').style.display='none';
+  await rensLoad();
+  // Aller sur le bon onglet
+  const tabBtns = document.querySelectorAll('#page-renseignements .tab');
+  const idx = ['lieux','individus','groupes'].indexOf(type);
+  if(idx>=0 && tabBtns[idx]) showTab(type, tabBtns[idx]);
+}
+
+async function deleteFiche(id){
+  if(!confirm('Supprimer cette fiche ? Tous ses rapports et relations seront supprimés.')) return;
+  try{await sbDelete('mk_rens_fiches',`?id=eq.${id}`);}
+  catch(error){ alert('Erreur : '+error.message); return; }
+  await rensLoad();
+}
+
+// ── Modification fiche (simple) ────────────────────────────────────
+function openEditFiche(id){
+  const f = RENS.fiches.find(x=>x.id===id);
+  if(!f) return;
+  const newNom    = prompt('Nom :', f.nom);
+  if(newNom===null) return;
+  const newSub    = prompt('Sous-titre :', f.sous_titre||'');
+  const newStatus = prompt('Statut (neutre / surveillance / recherche / neutralise) :', f.statut||'neutre');
+  const urgente   = confirm('Marquer comme urgente ?');
+  sbPatch('mk_rens_fiches',`?id=eq.${id}`,{nom:newNom.trim(), sous_titre:newSub||null, statut:newStatus||'neutre', urgente})
+    .then(()=>rensLoad())
+    .catch(error=>alert('Erreur : '+error.message));
+}
+
+// ── CRUD Rapports ────────────────────────────────────────────────────
+async function saveRapport(ficheId){
+  const source   = document.getElementById('raf-src-'+ficheId).value.trim();
+  const fiabilite= document.getElementById('raf-fib-'+ficheId).value;
+  const contenu  = document.getElementById('raf-cnt-'+ficheId).value.trim();
+  const action   = document.getElementById('raf-act-'+ficheId).value.trim();
+  if(!contenu){ alert('Le contenu est obligatoire.'); return; }
+  try{await sbPost('mk_rens_rapports',{fiche_id: ficheId, source: source||null, fiabilite, contenu, action_recommandee: action||null});}
+  catch(error){ alert('Erreur : '+error.message); return; }
+  await rensLoad();
+}
+
+async function deleteRapport(rapId, ficheId){
+  if(!confirm('Supprimer ce rapport ?')) return;
+  try{await sbDelete('mk_rens_rapports',`?id=eq.${rapId}`);}
+  catch(error){ alert('Erreur : '+error.message); return; }
+  await rensLoad();
+}
+
+// ── CRUD Relations ───────────────────────────────────────────────────
+async function addRelation(ficheSourceId){
+  const sel = document.getElementById('relsel-'+ficheSourceId);
+  const cibleId = sel ? sel.value : '';
+  if(!cibleId){ alert('Sélectionne une fiche cible.'); return; }
+  try{await sbPost('mk_rens_relations',{fiche_source: ficheSourceId, fiche_cible: cibleId});}
+  catch(error){ alert('Erreur : '+error.message); return; }
+  await rensLoad();
+}
+
+async function deleteRelation(relId, ficheId){
+  if(!confirm('Supprimer ce lien ?')) return;
+  try{await sbDelete('mk_rens_relations',`?id=eq.${relId}`);}
+  catch(error){ alert('Erreur : '+error.message); return; }
+  await rensLoad();
+}
+
+// ── removeRel (alias fallback) ────────────────────────────────────
+function removeRel(btn){ btn.closest('.fiche-link').remove(); }
+
+// ── Recherche & filtre ────────────────────────────────────────────
+function rensSearch(q){ RENS.searchQ = q; renderTab(RENS.activeTab); }
+function rensFilter(v){ RENS.filterStatut = v==='Tous les statuts'?'':v; renderTab(RENS.activeTab); }
+
+// ── Init renseignements (appelé depuis init() Supabase) ───────────
+async function initRenseignements(){
+  // Injecter le formulaire "Nouvelle fiche" si admin
+  const wrap = document.getElementById('rens-add-wrap');
+  if(wrap && canEditSection('renseignements')){
+    wrap.innerHTML = `
+      <button class="btn-add" onclick="document.getElementById('rens-add-form').style.display=document.getElementById('rens-add-form').style.display==='none'?'block':'none'">+ Nouvelle fiche</button>
+      ${buildNewFicheFormHTML()}`;
+  }
+  // Brancher recherche et filtre
+  const srch = document.getElementById('rens-search');
+  if(srch) srch.addEventListener('input', e=>rensSearch(e.target.value));
+  const filt = document.getElementById('rens-filter');
+  if(filt) filt.addEventListener('change', e=>rensFilter(e.target.value));
+  // Charger les données
+  await rensLoad();
+}
+
+// ── Escape HTML ───────────────────────────────────────────────────
+function escH(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
