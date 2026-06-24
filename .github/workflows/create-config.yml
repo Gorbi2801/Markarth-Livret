@@ -1,12 +1,17 @@
-name: Create config from secrets (and build)
+name: Build and deploy Pages with generated config
 
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
-  build:
+  build_and_deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -23,10 +28,27 @@ jobs:
           echo "  supabaseUrl: \"${SUPABASE_URL}\"," >> scripts/config.js
           echo "  supabaseKey: \"${SUPABASE_KEY}\"," >> scripts/config.js
           echo "  authEmailDomain: \"${AUTH_EMAIL_DOMAIN}\"," >> scripts/config.js
-          echo "  sections: [\"citoyens\",\"biblio\",\"garde\",\"commerces\",\"diplomatie\",\"cour\",\"inventaire\",\"lois\",\"renseignements\"]" >> scripts/config.js
+          echo '  sections: ["citoyens","biblio","garde","commerces","diplomatie","cour","inventaire","lois","renseignements"]' >> scripts/config.js
           echo '});' >> scripts/config.js
+          echo "Generated scripts/config.js:" && cat scripts/config.js
 
-      - name: Build / Deploy (placeholder)
+      - name: Prepare site directory
         run: |
-          echo "scripts/config.js généré :"
-          ls -l scripts/config.js
+          rm -rf site
+          mkdir site
+          # Copy repository files to site/ (exclude workflow files)
+          shopt -s dotglob || true
+          cp -r ./* site/ || true
+          rm -rf site/.github || true
+          rm -rf site/.git || true
+
+      - name: List site files
+        run: ls -la site | sed -n '1,200p'
+
+      - name: Upload artifact for GitHub Pages
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: site
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v1
