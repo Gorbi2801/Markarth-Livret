@@ -23,7 +23,7 @@
     startPresence, stopPresence,
     saveNoteModal, saveNote:saveNoteModal, openNoteModal, closeNoteModal,
     showTab, toggleFiche, toggleRap, toggleAdd, toggleRelForm, removeRel,
-    renderTab, goToFiche, saveFiche, deleteFiche, openEditFiche,
+    renderTab, goToFiche, saveFiche, deleteFiche, openEditFiche, saveEditFiche,
     saveRapport, deleteRapport, addRelation, deleteRelation,
     rensSearch, rensFilter,
     loadSuperadmin, filterSuperadminGardes, selectSuperadminGarde, selectSuperadminProfile,
