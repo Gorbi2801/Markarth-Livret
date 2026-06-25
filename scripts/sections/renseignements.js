@@ -20,6 +20,9 @@ function showTab(id, el){
   if(tab) tab.style.display='block';
   document.querySelectorAll('#page-renseignements .tab').forEach(t=>t.classList.remove('active'));
   if(el) el.classList.add('active');
+  // Cacher le bouton "Nouvelle fiche" sur l'onglet carte
+  const addWrap = document.getElementById('rens-add-wrap');
+  if(addWrap) addWrap.style.display = id==='carte' ? 'none' : '';
   if(id==='carte') renderCarte();
   else renderTab(id);
 }
@@ -497,10 +500,10 @@ function injectCarteTab(){
   // Bouton tab
   const firstTab = document.querySelector('#page-renseignements .tab');
   if(!firstTab) return;
-  if(!document.getElementById('tab-btn-carte')){
+  if(!document.getElementById('btn-carte-rens')){
     const btn = document.createElement('button');
     btn.className = 'tab';
-    btn.id = 'tab-btn-carte';
+    btn.id = 'btn-carte-rens';
     btn.textContent = '🗺 Carte';
     btn.onclick = () => showTab('carte', btn);
     firstTab.parentElement.appendChild(btn);
