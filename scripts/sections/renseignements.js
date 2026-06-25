@@ -317,6 +317,21 @@ function buildNewFicheFormHTML(){
   </div>`;
 }
 
+// ── Notification Discord ─────────────────────────────────────────────
+async function notifyDiscordRenseignement(){
+  const url = window.GrimoireConfig?.discordRenseignementWebhook;
+  if(!url) return;
+  try{
+    await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        content: '<:corbeau:1517815921258008697> **Nouveau renseignement disponible**\n-# *Une nouvelle fiche vient d\'être versée aux archives de Fort-Aube.*\n\n<:aube:1516926588359540856> Consultez la fiche ci-dessus et transmettez tout élément complémentaire à votre supérieur.'
+      })
+    });
+  }catch(e){ console.warn('Discord webhook renseignement :', e); }
+}
+
 // ── CRUD Fiches ──────────────────────────────────────────────────────
 async function saveFiche(){
   const nom = document.getElementById('nf-nom').value.trim();
@@ -333,6 +348,7 @@ async function saveFiche(){
   };
   try{await sbPost('mk_rens_fiches',payload);}
   catch(error){ alert('Erreur : '+error.message); return; }
+  await notifyDiscordRenseignement();
   document.getElementById('rens-add-form').style.display='none';
   await rensLoad();
   // Aller sur le bon onglet
