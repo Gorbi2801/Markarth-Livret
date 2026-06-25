@@ -171,7 +171,9 @@ async function showAppShell(){
 
 function configuredSections(){
   const configured=window.GrimoireConfig?.sections;
-  const sections=Array.isArray(configured)?configured:DEFAULT_SECTION_ORDER;
+  const sections=Array.isArray(configured)
+    ?[...DEFAULT_SECTION_ORDER,...configured.filter(sec=>!DEFAULT_SECTION_ORDER.includes(sec))]
+    :DEFAULT_SECTION_ORDER;
   return sections.filter(sectionFeatureEnabled);
 }
 
