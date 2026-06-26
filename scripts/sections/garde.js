@@ -177,8 +177,8 @@ function renderGardes(rows){
       :'—';
     const recruteur=r.recruteur?esc(r.recruteur):'—';
     const specialite=r.specialite||'Soldat';
-    return `<tr data-search="${esc((r.prenom+' '+r.nom+' '+r.race+' '+r.grade+' '+specialite).toLowerCase())}" data-grade="${esc(r.grade||'')}">
-      <td class="cell-name">${typeof renderPresenceDot==='function'?renderPresenceDot(r.user_id):''}${esc(r.prenom)}${r.nom?" "+esc(r.nom):""}</td>
+    return `<tr data-search="${esc((r.prenom+' '+r.nom+' '+r.race+' '+r.grade+' '+specialite).toLowerCase())}" data-grade="${esc(r.grade||'')}" data-statut="${esc(r.statut||'actif')}">
+      <td class="cell-name">${typeof renderPresenceDot==='function'?renderPresenceDot(r.user_id):''}${esc(r.prenom)}${r.nom?" "+esc(r.nom):""}${r.statut==='absent'?'<span class="badge" style="background:rgba(122,16,16,.12);color:#7A1010;border:1px solid #7A1010;margin-left:.4rem;font-size:.78rem;">⚠ Absent</span>':''}</td>
       <td class="cell-meta">${r.race?`<span class="badge badge-tag">${esc(r.race)}</span>`:'—'}</td>
       <td class="cell-meta">${r.grade?`<span class="badge badge-tag">${esc(r.grade)}</span>`:'—'}</td>
       <td class="cell-meta" style="font-size:1rem;">
@@ -186,14 +186,17 @@ function renderGardes(rows){
         <span style="color:var(--ink-faint);font-style:italic;font-size:1rem;">par ${recruteur}</span>
       </td>
       <td class="cell-meta"><span class="badge badge-tag">${esc(specialite)}</span></td>
-      ${showActions?`<td class="act">${canFollow?`<button class="btn-action btn-gold" onclick="openGardeSuivi('${r.id}')">Suivi</button>`:''}${canEdit?`<button class="btn-del" onclick="editGarde('${r.id}')">Modifier</button> <button class="btn-del" onclick="delGarde('${r.id}')">Révoquer</button>`:''}</td>`:''}
+      ${showActions?`<td class="act">${canFollow?`<button class="btn-action btn-gold" onclick="openGardeSuivi('${r.id}')">Suivi</button>`:''}${canEdit?`<button class="btn-del" onclick="toggleAbsenceGarde('${r.id}','${r.statut||'actif'}')">${r.statut==='absent'?'Réactiver':'Absenter'}</button> <button class="btn-del" onclick="editGarde('${r.id}')">Modifier</button> <button class="btn-del" onclick="delGarde('${r.id}')">Révoquer</button>`:''}</td>`:''}
     </tr>`;
   }).join('');
-  // Tri par défaut : par grade, selon la hiérarchie de l'Ordre
+  // Tri par défaut : par grade, selon la hiérarchie de l'Ordre — absents en bas
   const sortedRows=Array.from(tbody.querySelectorAll('tr'));
   sortedRows.sort((a,b)=>{
     const ga=(a.getAttribute('data-grade')||'').trim();
     const gb=(b.getAttribute('data-grade')||'').trim();
+    const absa=a.getAttribute('data-statut')==='absent'?1:0;
+    const absb=b.getAttribute('data-statut')==='absent'?1:0;
+    if(absa!==absb) return absa-absb;
     const ia=GRADE_ORDER.indexOf(ga)===-1?99:GRADE_ORDER.indexOf(ga);
     const ib=GRADE_ORDER.indexOf(gb)===-1?99:GRADE_ORDER.indexOf(gb);
     return ia-ib;
@@ -233,5 +236,15 @@ async function addGarde(){
     clearEditState('gar-form');
     toggleForm('gar-form');await loadGardes();toast(`${prenom}${nom?' '+nom:''} ${isEdit?'mis à jour':'enrôlé'}.`);
   }catch(e){toast('Erreur Supabase : '+(e.message||e).slice(0,80));}
+}
+async function toggleAbsenceGarde(id, statutActuel){
+  const nouveauStatut = statutActuel==='absent' ? 'actif' : 'absent';
+  const msg = nouveauStatut==='absent' ? 'Marquer ce garde comme absent ?' : 'Réactiver ce garde ?';
+  if(!confirm(msg)) return;
+  try{
+    await sbPatch('mk_gardes',`?id=eq.${id}`,{statut: nouveauStatut});
+    await loadGardes();
+    toast(nouveauStatut==='absent' ? 'Garde marqué absent.' : 'Garde réactivé.');
+  }catch(e){ toast('Erreur.'); }
 }
 async function delGarde(id){if(!confirm('Révoquer ce garde ?'))return;try{await sbDelete('mk_gardes',`?id=eq.${id}`);await loadGardes();toast('Garde révoqué.');}catch(e){toast('Erreur.');}}
