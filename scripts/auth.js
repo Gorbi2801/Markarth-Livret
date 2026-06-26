@@ -214,7 +214,10 @@ function sectionLabel(value){
 
 function updateAdminUI(){
   const ids={citoyens:'cit-add-wrap',garde:'gar-add-wrap',commerces:'com-add-wrap',cour:'cour-add-wrap',inventaire:'inv-add-wrap',lois:'lois-add-wrap',carte:'carte-add-wrap',renseignements:'rens-add-wrap'};
-  ['citoyens','garde','commerces','cour','inventaire','lois','carte','renseignements'].forEach(s=>{const w=document.getElementById(ids[s]);if(w)w.style.display=canEditSection(s)?'block':'none';});
+  ['citoyens','garde','commerces','cour','inventaire','lois','carte','renseignements'].forEach(s=>{
+    const w=document.getElementById(ids[s]);
+    if(w)w.style.display=(s==='renseignements'?canAccessSection(s):canEditSection(s))?'block':'none';
+  });
   const fonWrap=document.getElementById('fon-add-wrap');if(fonWrap)fonWrap.style.display=canEditSection('commerces')?'block':'none';
   const ordreFabWrap=document.getElementById('ordre-fab-wrap');if(ordreFabWrap)ordreFabWrap.style.display=canEditSection('inventaire')?'block':'none';
   const recetteWrap=document.getElementById('recette-add-wrap');if(recetteWrap)recetteWrap.style.display=canEditSection('inventaire')?'block':'none';

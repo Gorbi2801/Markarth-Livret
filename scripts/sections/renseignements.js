@@ -184,8 +184,9 @@ function buildFicheHTML(f){
   // Rapports HTML
   const rapsHTML = raps.map(r=>buildRapportHTML(r)).join('');
 
-  const peutModifier = canAccessSection('renseignements');
-  const peutSupprimer = canEditSection('renseignements');
+  const peutAjouter = rensCanWrite();
+  const peutModifier = rensCanEditOwn(f);
+  const peutSupprimer = rensCanDelete();
 
   return `
   <div class="fiche${f.urgente?' urgente':''}" id="fiche-${f.id}" data-id="${f.id}" data-tab="${f.type}">
@@ -210,11 +211,11 @@ function buildFicheHTML(f){
       <div class="rapports-section">
         <div class="rapports-title">
           Rapports &amp; renseignements
-          ${peutModifier?`<button class="btn-sm" onclick="toggleAdd('addrap-${f.id}')">+ Déposer un rapport</button>`:''}
+          ${peutAjouter?`<button class="btn-sm" onclick="toggleAdd('addrap-${f.id}')">+ Déposer un rapport</button>`:''}
         </div>
         ${raps.length===0?'<p style="font-style:italic;color:var(--ink-faint);font-size:.92rem;">Aucun rapport déposé.</p>':''}
         ${rapsHTML}
-        ${peutModifier?buildAddRapportFormHTML(f.id):''}
+        ${peutAjouter?buildAddRapportFormHTML(f.id):''}
       </div>
       ${peutModifier?buildAddFicheNotes(f):''}
     </div>
@@ -222,8 +223,8 @@ function buildFicheHTML(f){
 }
 
 function buildRelationsHTML(f, rels){
-  const peutModifier = canAccessSection('renseignements');
-  const peutSupprimer = canEditSection('renseignements');
+  const peutModifier = rensCanWrite();
+  const peutSupprimer = rensCanDelete();
   const linksHTML = rels.map(rel=>{
     const otherId = rel.fiche_source===f.id ? rel.fiche_cible : rel.fiche_source;
     const relId   = rel.id;
@@ -269,8 +270,8 @@ function buildRelationsHTML(f, rels){
 }
 
 function buildRapportHTML(r){
-  const peutModifier = canAccessSection('renseignements');
-  const peutSupprimer = canEditSection('renseignements');
+  const peutModifier = rensCanEditOwn(r);
+  const peutSupprimer = rensCanDelete();
   const ficheLabel = {confirme:'✅ Confirmée', nonverif:'⚠ Non vérifiée', urgente:'🔴 Urgente'}[r.fiabilite]||r.fiabilite;
   const date = r.created_at ? new Date(r.created_at).toLocaleDateString('fr-FR') : '';
   const preview = (r.contenu||'').substring(0,60)+(r.contenu&&r.contenu.length>60?'…':'');
@@ -287,6 +288,7 @@ function buildRapportHTML(r){
         ${author?`<span class="rapport-acc-author">- ${escH(author)}</span>`:''}
       </div>
       <div style="display:flex;gap:.3rem;">
+        ${peutModifier?`<button class="btn-sm" onclick="event.stopPropagation();openEditRapport('${r.id}')">Modifier</button>`:''}
         ${peutSupprimer?`<button class="btn-sm" onclick="event.stopPropagation();deleteRapport('${r.id}','${r.fiche_id}')">Suppr.</button>`:''}
       </div>
     </div>
@@ -297,6 +299,7 @@ function buildRapportHTML(r){
         <label>Action recommandée</label>
         <p>${escH(r.action_recommandee)}</p>
       </div>`:''}
+      ${peutModifier?buildEditRapportFormHTML(r):''}
     </div>
   </div>`;
 }
@@ -313,6 +316,22 @@ function rensAuthorLabel(row){
   const grade = row?.created_by_grade || '';
   if(name&&grade&&grade!=='—')return `${name} (${grade})`;
   return name||'';
+}
+
+function rensCanWrite(){
+  return canAccessSection('renseignements');
+}
+
+function rensCanDelete(){
+  return canEditSection('renseignements');
+}
+
+function rensIsOwner(row){
+  return !!row?.created_by && !!session?.user?.id && row.created_by===session.user.id;
+}
+
+function rensCanEditOwn(row){
+  return rensCanDelete() || rensIsOwner(row);
 }
 
 function buildAddRapportFormHTML(ficheId){
@@ -336,6 +355,31 @@ function buildAddRapportFormHTML(ficheId){
     <div style="display:flex;gap:.5rem;margin-top:.65rem;">
       <button class="btn-add" style="font-size:.82rem;padding:.3rem .8rem;" onclick="saveRapport('${ficheId}')">Enregistrer</button>
       <button class="btn-sm" onclick="toggleAdd('addrap-${ficheId}')">Annuler</button>
+    </div>
+  </div>`;
+}
+
+function buildEditRapportFormHTML(r){
+  return `
+  <div class="add-rapport" id="editrap-${r.id}" style="display:none;margin-top:.75rem;">
+    <div style="font-family:'Eagle Lake',serif;font-size:.85rem;color:var(--green-dark);margin-bottom:.75rem;">Modifier le rapport</div>
+    <div class="form-row">
+      <div class="field"><label>Source</label><input type="text" id="er-src-${r.id}" value="${escH(r.source||'')}" placeholder="Garde ou informateur..."></div>
+      <div class="field"><label>Fiabilité</label>
+        <select id="er-fib-${r.id}">
+          <option value="confirme"${r.fiabilite==='confirme'?' selected':''}>✅ Confirmée</option>
+          <option value="nonverif"${r.fiabilite==='nonverif'?' selected':''}>⚠ Non vérifiée</option>
+          <option value="urgente"${r.fiabilite==='urgente'?' selected':''}>🔴 Urgente</option>
+        </select>
+      </div>
+    </div>
+    <label>Contenu</label>
+    <textarea id="er-cnt-${r.id}" rows="7" placeholder="Faits, témoignages, observations...">${escH(r.contenu||'')}</textarea>
+    <label>Action recommandée <span style="font-style:italic;font-weight:normal;font-family:'IM Fell English',serif;font-size:.88rem;color:var(--ink-faint);">(facultatif)</span></label>
+    <textarea id="er-act-${r.id}" rows="3">${escH(r.action_recommandee||'')}</textarea>
+    <div style="display:flex;gap:.5rem;margin-top:.65rem;">
+      <button class="btn-add" style="font-size:.82rem;padding:.3rem .8rem;" onclick="saveEditRapport('${r.id}')">Enregistrer</button>
+      <button class="btn-sm" onclick="openEditRapport('${r.id}')">Annuler</button>
     </div>
   </div>`;
 }
@@ -400,6 +444,7 @@ async function notifyDiscordRenseignement(){
 
 // ── CRUD Fiches ──────────────────────────────────────────────────────
 async function saveFiche(){
+  if(!rensCanWrite())return;
   const nom = document.getElementById('nf-nom').value.trim();
   const type= document.getElementById('nf-type').value;
   if(!nom){ alert('Le nom est obligatoire.'); return; }
@@ -410,10 +455,15 @@ async function saveFiche(){
     statut:       document.getElementById('nf-statut').value,
     urgente:      document.getElementById('nf-urgente').checked,
     notes:        document.getElementById('nf-notes').value.trim()||null,
-    meta:         {}
+    meta:         {},
+    created_by:   session?.user?.id||null
   };
   try{await sbPost('mk_rens_fiches',payload);}
-  catch(error){ alert('Erreur : '+error.message); return; }
+  catch(error){
+    const {created_by, ...fallbackPayload} = payload;
+    try{await sbPost('mk_rens_fiches',fallbackPayload);}
+    catch(fallbackError){ alert('Erreur : '+fallbackError.message); return; }
+  }
   await notifyDiscordRenseignement();
   document.getElementById('rens-add-form').style.display='none';
   await rensLoad();
@@ -424,6 +474,7 @@ async function saveFiche(){
 }
 
 async function deleteFiche(id){
+  if(!rensCanDelete())return;
   if(!confirm('Supprimer cette fiche ? Tous ses rapports et relations seront supprimés.')) return;
   try{await sbDelete('mk_rens_fiches',`?id=eq.${id}`);}
   catch(error){ alert('Erreur : '+error.message); return; }
@@ -463,11 +514,11 @@ function buildEditFicheFormHTML(f){
 }
 
 function openEditFiche(id){
+  const f = RENS.fiches.find(x=>x.id===id);
+  if(!f || !rensCanEditOwn(f))return;
   const formEl = document.getElementById('editform-'+id);
   if(formEl){ formEl.style.display = formEl.style.display==='none'?'block':'none'; return; }
   // Formulaire pas encore injecté — rare, mais fallback sécurisé
-  const f = RENS.fiches.find(x=>x.id===id);
-  if(!f) return;
   const body = document.querySelector(`#fiche-${id} .fiche-body`);
   if(!body) return;
   const div = document.createElement('div');
@@ -477,6 +528,8 @@ function openEditFiche(id){
 }
 
 async function saveEditFiche(id){
+  const fiche = RENS.fiches.find(f=>f.id===id);
+  if(!fiche || !rensCanEditOwn(fiche))return;
   const nom = document.getElementById('ef-nom-'+id)?.value.trim();
   if(!nom){ alert('Le nom est obligatoire.'); return; }
   const payload = {
@@ -494,6 +547,7 @@ async function saveEditFiche(id){
 
 // ── CRUD Rapports ────────────────────────────────────────────────────
 async function saveRapport(ficheId){
+  if(!rensCanWrite())return;
   const source   = document.getElementById('raf-src-'+ficheId).value.trim();
   const fiabilite= document.getElementById('raf-fib-'+ficheId).value;
   const contenu  = document.getElementById('raf-cnt-'+ficheId).value.trim();
@@ -515,7 +569,31 @@ async function saveRapport(ficheId){
   await rensLoad();
 }
 
+function openEditRapport(rapId){
+  const report = RENS.rapports.find(r=>r.id===rapId);
+  if(!report || !rensCanEditOwn(report))return;
+  const form = document.getElementById('editrap-'+rapId);
+  if(form)form.style.display = form.style.display==='none' ? 'block' : 'none';
+}
+
+async function saveEditRapport(rapId){
+  const report = RENS.rapports.find(r=>r.id===rapId);
+  if(!report || !rensCanEditOwn(report))return;
+  const contenu = document.getElementById('er-cnt-'+rapId)?.value.trim();
+  if(!contenu){ alert('Le contenu est obligatoire.'); return; }
+  const payload = {
+    source: document.getElementById('er-src-'+rapId)?.value.trim()||null,
+    fiabilite: document.getElementById('er-fib-'+rapId)?.value||'nonverif',
+    contenu,
+    action_recommandee: document.getElementById('er-act-'+rapId)?.value.trim()||null,
+  };
+  try{ await sbPatch('mk_rens_rapports',`?id=eq.${encodeURIComponent(rapId)}`,payload); }
+  catch(error){ alert('Erreur : '+error.message); return; }
+  await rensLoad();
+}
+
 async function deleteRapport(rapId, ficheId){
+  if(!rensCanDelete())return;
   if(!confirm('Supprimer ce rapport ?')) return;
   try{await sbDelete('mk_rens_rapports',`?id=eq.${rapId}`);}
   catch(error){ alert('Erreur : '+error.message); return; }
@@ -524,6 +602,7 @@ async function deleteRapport(rapId, ficheId){
 
 // ── CRUD Relations ───────────────────────────────────────────────────
 async function addRelation(ficheSourceId){
+  if(!rensCanWrite())return;
   const sel = document.getElementById('relsel-'+ficheSourceId);
   const cibleId = sel ? sel.value : '';
   if(!cibleId){ alert('Sélectionne une fiche cible.'); return; }
@@ -533,6 +612,7 @@ async function addRelation(ficheSourceId){
 }
 
 async function deleteRelation(relId, ficheId){
+  if(!rensCanDelete())return;
   if(!confirm('Supprimer ce lien ?')) return;
   try{await sbDelete('mk_rens_relations',`?id=eq.${relId}`);}
   catch(error){ alert('Erreur : '+error.message); return; }
@@ -556,9 +636,9 @@ function rensFilter(v){
 
 // ── Init renseignements (appelé depuis init() Supabase) ───────────
 async function initRenseignements(){
-  // Injecter le formulaire "Nouvelle fiche" si admin
+  // Les lecteurs de la section peuvent créer du contenu, les éditeurs peuvent supprimer.
   const wrap = document.getElementById('rens-add-wrap');
-  if(wrap && canEditSection('renseignements')){
+  if(wrap && rensCanWrite()){
     wrap.innerHTML = `
       <button class="btn-add" onclick="document.getElementById('rens-add-form').style.display=document.getElementById('rens-add-form').style.display==='none'?'block':'none'">+ Nouvelle fiche</button>
       ${buildNewFicheFormHTML()}`;
@@ -598,12 +678,12 @@ function injectCarteTab(){
     div.innerHTML = `
       <div class="rens-map-notice">Carte mentale des rapports : ajoutez les rapports utiles au tableau, déplacez-les librement, reliez les indices avec des fils colorés. Double-cliquez sur une carte pour ouvrir le rapport.</div>
       <div class="rens-map-toolbar">
-        ${canEditSection('renseignements')?`
+        ${rensCanWrite()?`
           <button type="button" class="btn-add" onclick="rensOpenMapReportPicker()">+ Ajouter rapport</button>
           <button type="button" class="btn-sm" onclick="rensStartMapLink()">Relier deux rapports</button>
           <button type="button" class="btn-sm" onclick="rensCancelMapLink()">Annuler liaison</button>
           <label class="rens-map-color">Couleur du fil <input id="rensMapLinkColor" type="color" value="#8A1010" onchange="rensSetMapLinkColor(this.value)"></label>
-          <button type="button" class="btn-sm btn-danger-soft" onclick="rensDeleteSelectedMapItem()">Supprimer sélection</button>
+          ${rensCanDelete()?`<button type="button" class="btn-sm btn-danger-soft" onclick="rensDeleteSelectedMapItem()">Supprimer sélection</button>`:''}
         `:''}
         <span id="rensMapModeLabel" class="rens-map-mode">Déplacez les cartes comme sur un tableau d'enquête.</span>
       </div>
@@ -682,7 +762,7 @@ function rensRenderMapPicker(){
 }
 
 function rensOpenMapReportPicker(){
-  if(!canEditSection('renseignements'))return;
+  if(!rensCanWrite())return;
   const picker = document.getElementById('rensMapPicker');
   if(!picker)return;
   picker.hidden = !picker.hidden;
@@ -712,7 +792,7 @@ function rensDefaultMapPosition(index = RENS.mapNodes.length){
 }
 
 async function rensSpawnMapReport(reportId){
-  if(!canEditSection('renseignements'))return;
+  if(!rensCanWrite())return;
   if(!RENS.mapReady){toast('Applique le SQL de carte mentale des renseignements avant.');return;}
   const existing = RENS.mapNodes.find(node=>node.report_id===reportId);
   if(existing){
@@ -739,8 +819,8 @@ async function rensSpawnMapReport(reportId){
 }
 
 async function rensSaveMapNodePosition(nodeId, x, y){
-  if(!canEditSection('renseignements')||!RENS.mapReady)return;
   const node = RENS.mapNodes.find(row=>row.id===nodeId);
+  if(!rensCanEditOwn(node)||!RENS.mapReady)return;
   if(node){node.x=x;node.y=y;}
   try{
     await sbPatch('mk_rens_map_nodes',`?id=eq.${encodeURIComponent(nodeId)}`,{
@@ -755,7 +835,7 @@ async function rensSaveMapNodePosition(nodeId, x, y){
 }
 
 function rensStartMapLink(){
-  if(!canEditSection('renseignements'))return;
+  if(!rensCanWrite())return;
   RENS.mapLinkMode = true;
   RENS.mapLinkSource = '';
   RENS.mapLinkColor = document.getElementById('rensMapLinkColor')?.value || RENS.mapLinkColor;
@@ -769,7 +849,7 @@ function rensCancelMapLink(){
 }
 
 async function rensCreateMapLink(sourceId, targetId){
-  if(!canEditSection('renseignements')||!RENS.mapReady||sourceId===targetId)return;
+  if(!rensCanWrite()||!RENS.mapReady||sourceId===targetId)return;
   try{
     await sbPost('mk_rens_map_links',{
       source_node_id: sourceId,
@@ -788,7 +868,7 @@ async function rensCreateMapLink(sourceId, targetId){
 }
 
 async function rensDeleteSelectedMapItem(){
-  if(!canEditSection('renseignements'))return;
+  if(!rensCanDelete())return;
   if(RENS.selectedMapNode){
     if(!confirm('Retirer ce rapport de la carte mentale ?'))return;
     await sbDelete('mk_rens_map_nodes',`?id=eq.${encodeURIComponent(RENS.selectedMapNode)}`);
@@ -858,7 +938,7 @@ function rensRenderCarte(){
 
     const options = {
       physics:false,
-      interaction:{dragNodes:canEditSection('renseignements'),zoomView:true,dragView:true,hover:true},
+      interaction:{dragNodes:rensCanWrite(),zoomView:true,dragView:true,hover:true},
       nodes:{chosen:false},
       edges:{chosen:false},
     };

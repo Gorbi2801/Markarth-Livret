@@ -97,7 +97,7 @@ for insert
 to authenticated
 with check (
   created_by = auth.uid()
-  and public.can_edit_section('renseignements')
+  and public.can_access_section('renseignements')
 );
 
 drop policy if exists "update rens map nodes" on public.mk_rens_map_nodes;
@@ -105,8 +105,8 @@ create policy "update rens map nodes"
 on public.mk_rens_map_nodes
 for update
 to authenticated
-using (public.can_edit_section('renseignements'))
-with check (public.can_edit_section('renseignements'));
+using (created_by = auth.uid() or public.can_edit_section('renseignements'))
+with check (created_by = auth.uid() or public.can_edit_section('renseignements'));
 
 drop policy if exists "delete rens map nodes" on public.mk_rens_map_nodes;
 create policy "delete rens map nodes"
@@ -129,7 +129,7 @@ for insert
 to authenticated
 with check (
   created_by = auth.uid()
-  and public.can_edit_section('renseignements')
+  and public.can_access_section('renseignements')
 );
 
 drop policy if exists "update rens map links" on public.mk_rens_map_links;
@@ -137,8 +137,8 @@ create policy "update rens map links"
 on public.mk_rens_map_links
 for update
 to authenticated
-using (public.can_edit_section('renseignements'))
-with check (public.can_edit_section('renseignements'));
+using (created_by = auth.uid() or public.can_edit_section('renseignements'))
+with check (created_by = auth.uid() or public.can_edit_section('renseignements'));
 
 drop policy if exists "delete rens map links" on public.mk_rens_map_links;
 create policy "delete rens map links"
