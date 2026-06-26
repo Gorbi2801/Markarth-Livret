@@ -32,7 +32,7 @@
     showTab, toggleFiche, toggleRap, toggleAdd, toggleRelForm, removeRel,
     renderTab, goToFiche, saveFiche, deleteFiche, openEditFiche, saveEditFiche,
     saveRapport, openEditRapport, saveEditRapport, deleteRapport, addRelation, deleteRelation,
-    addRapportLien, deleteRapportLien,
+    addRapportLien, deleteRapportLien, deleteRapportRapport,
     goToRapport, rensOpenMapReportPicker, rensSetMapReportType, rensSpawnMapReport,
     rensStartMapLink, rensCancelMapLink, rensSetMapLinkColor, rensDeleteSelectedMapItem,
     rensSearch, rensFilter,

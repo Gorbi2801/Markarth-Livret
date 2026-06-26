@@ -4,12 +4,13 @@
 
 // ── State ────────────────────────────────────────────────────────────
 const RENS = {
-  fiches:       [],   // mk_rens_fiches
-  rapports:     [],   // mk_rens_rapports
-  relations:    [],   // mk_rens_relations
-  rapportLiens: [],   // mk_rens_rapport_liens
-  mapNodes:     [],   // mk_rens_map_nodes
-  mapLinks:     [],   // mk_rens_map_links
+  fiches:         [],   // mk_rens_fiches
+  rapports:       [],   // mk_rens_rapports
+  relations:      [],   // mk_rens_relations
+  rapportLiens:   [],   // mk_rens_rapport_liens (rapport → fiche)
+  rapportRapport: [],   // mk_rens_rapport_rapport (rapport → rapport)
+  mapNodes:       [],   // mk_rens_map_nodes
+  mapLinks:       [],   // mk_rens_map_links
   activeTab: 'lieux',
   searchQ:   '',
   filterStatut: '',
@@ -98,20 +99,22 @@ async function rensOptionalGet(table, params = ''){
 
 async function rensLoad(){
   RENS.mapReady = true;
-  const [rf, rr, rl, rpl, mn, ml] = await Promise.all([
+  const [rf, rr, rl, rpl, rrp, mn, ml] = await Promise.all([
     sbGet('mk_rens_fiches','?select=*&order=created_at.desc'),
     sbGet('mk_rens_rapports','?select=*&order=created_at.desc'),
     sbGet('mk_rens_relations','?select=*'),
     rensOptionalGet('mk_rens_rapport_liens','?select=*'),
+    rensOptionalGet('mk_rens_rapport_rapport','?select=*'),
     rensOptionalGet('mk_rens_map_nodes','?select=*&order=created_at.asc'),
     rensOptionalGet('mk_rens_map_links','?select=*')
   ]);
-  RENS.fiches        = rf  || [];
-  RENS.rapports      = rr  || [];
-  RENS.relations     = rl  || [];
-  RENS.rapportLiens  = rpl || [];
-  RENS.mapNodes      = mn  || [];
-  RENS.mapLinks      = ml  || [];
+  RENS.fiches          = rf  || [];
+  RENS.rapports        = rr  || [];
+  RENS.relations       = rl  || [];
+  RENS.rapportLiens    = rpl || [];
+  RENS.rapportRapport  = rrp || [];
+  RENS.mapNodes        = mn  || [];
+  RENS.mapLinks        = ml  || [];
   rensRenderAll();
 }
 
@@ -310,8 +313,9 @@ function buildRapportHTML(r){
 function buildRapportLiensHTML(r){
   const peutModifier  = rensCanWrite();
   const peutSupprimer = rensCanDelete();
-  const liens = RENS.rapportLiens.filter(l=>l.rapport_id===r.id);
 
+  // ── Liens vers fiches ───────────────────────────────────────────────
+  const liens = RENS.rapportLiens.filter(l=>l.rapport_id===r.id);
   const liensHTML = liens.map(l=>{
     const fiche = RENS.fiches.find(f=>f.id===l.fiche_id);
     if(!fiche) return '';
@@ -322,30 +326,63 @@ function buildRapportLiensHTML(r){
     </a>`;
   }).join('');
 
-  const dejalie = liens.map(l=>l.fiche_id);
-  const opts = ['lieux','individus','groupes'].map(type=>{
-    const dispo = RENS.fiches.filter(x=>x.type===type && x.id!==r.fiche_id && !dejalie.includes(x.id));
+  // ── Liens vers rapports ─────────────────────────────────────────────
+  const rapliens = RENS.rapportRapport.filter(l=>l.rapport_a===r.id||l.rapport_b===r.id);
+  const rapliensHTML = rapliens.map(l=>{
+    const autreId = l.rapport_a===r.id ? l.rapport_b : l.rapport_a;
+    const autre   = RENS.rapports.find(x=>x.id===autreId);
+    if(!autre) return '';
+    const ficheLiee = RENS.fiches.find(f=>f.id===autre.fiche_id);
+    const date = autre.created_at ? new Date(autre.created_at).toLocaleDateString('fr-FR') : '';
+    const label = `${date} — ${escH(autre.source||'Inconnu')} · ${escH((autre.contenu||'').substring(0,40))}…`;
+    return `<a class="fiche-link" onclick="goToRapport('${autre.id}')">
+      <span class="fl-type">Rapport ·</span> ${ficheLiee?escH(ficheLiee.nom)+' — ':''} ${label}
+      ${peutSupprimer?`<span class="fl-del" onclick="event.stopPropagation();deleteRapportRapport('${l.id}')" title="Supprimer ce lien">×</span>`:''}
+    </a>`;
+  }).join('');
+
+  const toutHTML = [liensHTML, rapliensHTML].filter(Boolean).join('');
+
+  // ── Options select : fiches groupées + rapports ─────────────────────
+  const dejalieFiches   = liens.map(l=>l.fiche_id);
+  const dejalieRapports = rapliens.map(l=>l.rapport_a===r.id?l.rapport_b:l.rapport_a);
+
+  const optsFiches = ['lieux','individus','groupes'].map(type=>{
+    const dispo = RENS.fiches.filter(x=>x.type===type && x.id!==r.fiche_id && !dejalieFiches.includes(x.id));
     if(!dispo.length) return '';
     return `<optgroup label="${type==='lieux'?'Lieux':type==='individus'?'Individus':'Groupes'}">
-      ${dispo.map(x=>`<option value="${x.id}">${escH(x.nom)}</option>`).join('')}
+      ${dispo.map(x=>`<option value="f:${x.id}">${escH(x.nom)}</option>`).join('')}
     </optgroup>`;
   }).join('');
+
+  const optsRapports = (()=>{
+    const dispo = RENS.rapports.filter(x=>x.id!==r.id && !dejalieRapports.includes(x.id));
+    if(!dispo.length) return '';
+    return `<optgroup label="Rapports">
+      ${dispo.map(x=>{
+        const fiche = RENS.fiches.find(f=>f.id===x.fiche_id);
+        const date  = x.created_at ? new Date(x.created_at).toLocaleDateString('fr-FR') : '';
+        const label = `${date} — ${x.source||'Inconnu'} · ${(x.contenu||'').substring(0,35)}…`;
+        return `<option value="r:${x.id}">${fiche?escH(fiche.nom)+' / ':''} ${escH(label)}</option>`;
+      }).join('')}
+    </optgroup>`;
+  })();
 
   return `
   <div class="relations-section">
     <div class="relations-title">
-      Fiches liées à ce rapport
+      Éléments liés à ce rapport
       ${peutModifier?`<button class="btn-sm" onclick="toggleRelForm('rlform-${r.id}')">+ Ajouter une relation</button>`:''}
     </div>
     <div class="relations-list" id="rl-list-${r.id}">
-      ${liensHTML||'<span style="font-style:italic;color:var(--ink-faint);font-size:.88rem;">Aucune fiche liée.</span>'}
+      ${toutHTML||'<span style="font-style:italic;color:var(--ink-faint);font-size:.88rem;">Aucun élément lié.</span>'}
     </div>
     ${peutModifier?`
     <div class="add-relation-form" id="rlform-${r.id}">
       <label>Lier à :</label>
       <select id="rl-sel-${r.id}">
-        <option value="">— Sélectionner une fiche —</option>
-        ${opts||'<option disabled>Aucune fiche disponible</option>'}
+        <option value="">— Sélectionner —</option>
+        ${optsFiches}${optsRapports}
       </select>
       <button class="btn-add" style="font-size:.78rem;padding:.28rem .7rem;" onclick="addRapportLien('${r.id}')">Lier</button>
       <button class="btn-sm" onclick="toggleRelForm('rlform-${r.id}')">Annuler</button>
@@ -356,10 +393,16 @@ function buildRapportLiensHTML(r){
 
 async function addRapportLien(rapportId){
   const sel = document.getElementById('rl-sel-'+rapportId);
-  const ficheId = sel?.value;
-  if(!ficheId){ toast('Sélectionne une fiche.'); return; }
+  const val = sel?.value;
+  if(!val){ toast('Sélectionne un élément.'); return; }
   try{
-    await sbPost('mk_rens_rapport_liens',{rapport_id:rapportId, fiche_id:ficheId});
+    if(val.startsWith('f:')){
+      // Lien vers une fiche
+      await sbPost('mk_rens_rapport_liens',{rapport_id:rapportId, fiche_id:val.slice(2)});
+    } else if(val.startsWith('r:')){
+      // Lien vers un rapport
+      await sbPost('mk_rens_rapport_rapport',{rapport_a:rapportId, rapport_b:val.slice(2)});
+    }
     await rensLoad();
   }catch(error){ alert('Erreur : '+error.message); }
 }
@@ -371,6 +414,15 @@ async function deleteRapportLien(lienId){
     await rensLoad();
   }catch(error){ alert('Erreur : '+error.message); }
 }
+
+async function deleteRapportRapport(lienId){
+  if(!confirm('Supprimer ce lien ?')) return;
+  try{
+    await sbDelete('mk_rens_rapport_rapport',`?id=eq.${lienId}`);
+    await rensLoad();
+  }catch(error){ alert('Erreur : '+error.message); }
+}
+
 function rensCurrentAuthor(){
   if(!session)return {};
   const name = [session.garde?.prenom,session.garde?.nom].filter(Boolean).join(' ') || session.displayName || session.username || '';
