@@ -313,8 +313,8 @@ function buildNewFicheFormHTML(){
       </div>
       <div class="field"><label style="display:flex;align-items:center;gap:.5rem;"><input type="checkbox" id="nf-urgente"> Marquer comme urgente</label></div>
     </div>
-    <label>Notes / contexte</label>
-    <textarea id="nf-notes" rows="4" placeholder="Informations générales, contexte..."></textarea>
+    <label>Notes</label>
+    <textarea id="nf-notes" rows="4" placeholder="Description de la fiche — précisez ce qu'elle représente et ce qu'elle est susceptible de contenir."></textarea>
     <div style="display:flex;gap:.5rem;margin-top:.65rem;">
       <button class="btn-add" style="font-size:.82rem;padding:.3rem .8rem;" onclick="saveFiche()">Créer la fiche</button>
       <button class="btn-sm" onclick="document.getElementById('rens-add-form').style.display='none'">Annuler</button>
@@ -392,8 +392,8 @@ function buildEditFicheFormHTML(f){
     <div class="form-row">
       <div class="field"><label style="display:flex;align-items:center;gap:.5rem;"><input type="checkbox" id="ef-urgente-${f.id}"${f.urgente?' checked':''}> Marquer comme urgente</label></div>
     </div>
-    <label>Notes / contexte</label>
-    <textarea id="ef-notes-${f.id}" rows="4" placeholder="Informations générales, contexte...">${escH(f.notes||'')}</textarea>
+    <label>Notes</label>
+    <textarea id="ef-notes-${f.id}" rows="4" placeholder="Description de la fiche — précisez ce qu'elle représente et ce qu'elle est susceptible de contenir.">${escH(f.notes||'')}</textarea>
     <div style="display:flex;gap:.5rem;margin-top:.65rem;">
       <button class="btn-add" style="font-size:.82rem;padding:.3rem .8rem;" onclick="saveEditFiche('${f.id}')">Enregistrer</button>
       <button class="btn-sm" onclick="document.getElementById('editform-${f.id}').style.display='none'">Annuler</button>
