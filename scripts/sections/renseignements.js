@@ -23,7 +23,7 @@ function showTab(id, el){
   // Cacher le bouton "Nouvelle fiche" sur l'onglet carte
   const addWrap = document.getElementById('rens-add-wrap');
   if(addWrap) addWrap.style.display = id==='carte' ? 'none' : '';
-  if(id==='carte') renderCarte();
+  if(id==='carte') rensRenderCarte();
   else renderTab(id);
 }
 
@@ -74,7 +74,8 @@ async function rensLoad(){
 // ── Rendu complet ────────────────────────────────────────────────────
 function rensRenderAll(){
   rensRenderStats();
-  renderTab(RENS.activeTab);
+  if(RENS.activeTab==='carte') rensRenderCarte();
+  else renderTab(RENS.activeTab);
 }
 
 function rensRenderStats(){
@@ -498,8 +499,16 @@ async function deleteRelation(relId, ficheId){
 function removeRel(btn){ btn.closest('.fiche-link').remove(); }
 
 // ── Recherche & filtre ────────────────────────────────────────────
-function rensSearch(q){ RENS.searchQ = q; renderTab(RENS.activeTab); }
-function rensFilter(v){ RENS.filterStatut = v==='Tous les statuts'?'':v; renderTab(RENS.activeTab); }
+function rensSearch(q){
+  RENS.searchQ = q;
+  if(RENS.activeTab==='carte') rensRenderCarte();
+  else renderTab(RENS.activeTab);
+}
+function rensFilter(v){
+  RENS.filterStatut = v==='Tous les statuts'?'':v;
+  if(RENS.activeTab==='carte') rensRenderCarte();
+  else renderTab(RENS.activeTab);
+}
 
 // ── Init renseignements (appelé depuis init() Supabase) ───────────
 async function initRenseignements(){
@@ -555,20 +564,25 @@ function injectCarteTab(){
   }
 }
 
-function loadVisNetwork(callback){
+function rensLoadVisNetwork(callback){
   if(window.vis){ callback(); return; }
   const s = document.createElement('script');
   s.src = 'https://unpkg.com/vis-network/standalone/umd/vis-network.min.js';
   s.onload = callback;
-  s.onerror = ()=>console.error('Impossible de charger vis-network');
+  s.onerror = ()=>{
+    const container = document.getElementById('rens-network');
+    if(container)container.innerHTML = '<p class="sa-empty" style="padding:1rem;">Impossible de charger la carte des renseignements.</p>';
+    console.error('Impossible de charger vis-network');
+  };
   document.head.appendChild(s);
 }
 
-function renderCarte(){
+function rensRenderCarte(){
   const container = document.getElementById('rens-network');
   if(!container) return;
+  container.innerHTML = '<p class="sa-empty" style="padding:1rem;">Chargement de la carte des renseignements...</p>';
 
-  loadVisNetwork(()=>{
+  rensLoadVisNetwork(()=>{
     // Couleurs par type
     const TC = {
       lieux:     { bg:'#c8b89a', border:'#8a6a3a', hbg:'#d8c8aa', hborder:'#6a4a2a' },
