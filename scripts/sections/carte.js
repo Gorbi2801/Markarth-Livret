@@ -66,7 +66,7 @@ function carteColor(row){
 function carteReportLabel(report){
   const fiche=carteState.fiches.find(row=>row.id===report.fiche_id);
   const target=fiche?.nom||fiche?.type||'Fiche';
-  const source=report.source||'Rapport';
+  const source=report.titre||'Rapport';
   return `${target} — ${source} — ${carteDate(report.created_at)}`;
 }
 
@@ -318,7 +318,7 @@ async function loadCarte(){
       sbGet('mk_map_zones','?select=*&order=created_at.desc'),
       sbGet('mk_map_pin_reports','?select=*'),
       sbGet('mk_map_zone_reports','?select=*'),
-      sbGet('mk_rens_rapports','?select=id,fiche_id,source,fiabilite,contenu,created_at&order=created_at.desc&limit=200'),
+      sbGet('mk_rens_rapports','?select=id,fiche_id,titre,fiabilite,contenu,created_at&order=created_at.desc&limit=200'),
       sbGet('mk_rens_fiches','?select=id,type,nom&order=nom.asc'),
       sbGet('mk_patrouilles','?select=id,title,location,objective,started_at,planned_duration_minutes,status&status=eq.active&order=started_at.desc'),
     ]);
