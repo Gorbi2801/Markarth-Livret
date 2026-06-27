@@ -286,7 +286,7 @@ function buildRapportHTML(r){
       <div class="rapport-acc-left">
         <span class="rapport-acc-chevron">▶</span>
         <span class="rapport-acc-date">${date}</span>
-        <span class="badge badge-${r.fiabilite||'nonverif'}">${ficheLabel}</span>
+        <span class="badge badge-${r.fiabilite==="fausse"?"invalidee":r.fiabilite||"nonverif"}">${ficheLabel}</span>
         <span class="rapport-acc-source">${escH(r.source||'Inconnu')}</span>
         <span class="rapport-acc-preview">${escH(preview)}</span>
         ${author?`<span class="rapport-acc-author">- ${escH(author)}</span>`:''}
