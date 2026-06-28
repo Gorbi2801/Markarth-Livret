@@ -24,7 +24,7 @@ const CHATELERIES=[
     summary:"Une convergence de moyens, jamais de doctrine. L'Ordre tolère leur existence tant qu'elle ne s'attaque jamais à l'un des siens."},
   {key:'academie',label:"Académie de Fort-d'Hiver",cat:'faction',
     summary:"Alliés ponctuels pour la recherche arcanique, en particulier sur les artefacts daedriques. L'Ordre se méfie cependant d'une dépendance excessive à la sorcellerie."},
-  {key:'bardes',label:'Académie des Bardes',cat:'faction',
+  {key:'academie_solitude',label:'Académie de Solitude',cat:'faction',
     summary:"Aucune relation directe. L'Ordre se tient à distance respectueuse d'une institution qui vit de récits — l'exact inverse de sa propre doctrine du silence."},
   {key:'compagnons',label:'Les Compagnons',cat:'faction',
     summary:"Guilde de mercenaires respectée à Blancherive. L'Ordre n'a aucune raison de s'y intéresser tant qu'aucune menace concrète n'en émane."},

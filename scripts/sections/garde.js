@@ -26,20 +26,27 @@ function renderOrganigramme(){
   const el = document.getElementById('gar-organigramme-content');
   if(!el) return;
 
-  // Grouper les joueurs par grade
+  // Grouper les joueurs par grade et par spécialité.
   const byGrade = {};
+  const bySpecialite = {};
   gardeRows.forEach(r => {
+    const name = `${r.prenom||''} ${r.nom||''}`.trim();
     const g = (r.grade||'').trim();
     if(!byGrade[g]) byGrade[g] = [];
-    byGrade[g].push((r.prenom||'')+' '+(r.nom||''));
+    byGrade[g].push(name);
+
+    const s = (r.specialite||'Sans spécialité').trim();
+    if(!bySpecialite[s]) bySpecialite[s] = [];
+    bySpecialite[s].push(name);
   });
 
   const total = gardeRows.length;
   const count = (grades) => grades.reduce((s,g)=>(byGrade[g]||[]).length+s,0);
+  const countSpecialites = (specialites) => specialites.reduce((s,g)=>(bySpecialite[g]||[]).length+s,0);
   const POSTES_ENCADRES = 30;
 
   // Chaque palier porte sa propre teinte d'accent, du plus clair (commandement)
-  // au plus sourd (troupe) — la Spécialité sort de la chaîne et porte une teinte à part.
+  // au plus sourd (troupe) — les spécialités sortent de la chaîne et portent une teinte à part.
   const LEVELS = [
     { label:'Commandement',       total:2,  accent:'var(--gold)',       accentLight:'var(--gold-light)', bg:'var(--parch)',
       grades:[["Commandeur de l'Aube",1],["Sénéchal de l'Aube",1]] },
@@ -49,8 +56,8 @@ function renderOrganigramme(){
       grades:[['Traqueur de la Garde',6]] },
     { label:'Troupe',             total:18, accent:'#3D2F1F',           accentLight:'#A8927A', bg:'var(--parch)',
       grades:[['Patrouilleur de la Garde',null],['Aspirant de la Garde',null]] },
-    { label:'Spécialité',         total:null, accent:'#4A3B28',         accentLight:'#B0A080', bg:'var(--parch-dark)',
-      grades:[['Artisan de la Garde','—'],['Confrère de la Garde','—'],['Mage de la Garde','—'],['Barde de la Garde','—']] },
+    { label:'Spécialités',        total:null, accent:'#4A3B28',         accentLight:'#B0A080', bg:'var(--parch-dark)', by:'specialite',
+      grades:[['Sans spécialité','—'],['Minage','—'],['Menuiserie','—'],['Forge','—'],['Alchimie','—'],['Chasse','—'],['Cuisine','—'],['Couture','—'],['Guerrier','—']] },
   ];
 
   let h = `
@@ -64,7 +71,7 @@ function renderOrganigramme(){
     <div style="display:flex;flex-direction:column;align-items:stretch;gap:0;max-width:760px;margin:0 auto;">`;
 
   LEVELS.forEach((lv, li) => {
-    const used = count(lv.grades.map(g=>g[0]));
+    const used = lv.by==='specialite' ? countSpecialites(lv.grades.map(g=>g[0])) : count(lv.grades.map(g=>g[0]));
     const isLast = li===LEVELS.length-1;
 
     h += `
@@ -81,7 +88,20 @@ function renderOrganigramme(){
     // à mettre à jour à la main. Un grade sans titulaire affiche une carte
     // « Vacant » unique pour rester visible dans la hiérarchie.
     lv.grades.forEach(([grade, slots]) => {
-      const list = byGrade[grade]||[];
+      const list = (lv.by==='specialite' ? bySpecialite[grade] : byGrade[grade])||[];
+      if(lv.by==='specialite'){
+        const n = list.length;
+        h += `
+          <div style="flex:1 1 140px;max-width:180px;background:${lv.bg};
+                      border:1px solid var(--border-g);border-top:3px solid ${n>0?lv.accent:'var(--border-g)'};
+                      padding:.85rem 1rem;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+            <div style="font-family:'IM Fell English',serif;font-size:1rem;font-style:italic;
+                        text-transform:uppercase;letter-spacing:.05em;color:var(--ink-faint);margin-bottom:.35rem;">${grade}</div>
+            <div style="font-family:'Eagle Lake',serif;font-size:1.35rem;color:${n>0?'var(--green-dark)':'var(--ink-faint)'};line-height:1.15;">${n}</div>
+            <div style="font-family:'IM Fell English',serif;font-size:.95rem;color:var(--ink-mid);font-style:italic;margin-top:.2rem;">${n>1?'gardes':'garde'}</div>
+          </div>`;
+        return;
+      }
       const badge = slots===null ? '' : `
             <div style="display:inline-block;font-family:'IM Fell English',serif;font-size:1rem;font-style:italic;font-weight:600;
                         color:${lv.accent};background:${lv.accentLight};padding:.18rem .65rem;border-radius:2px;margin-top:.4rem;">
@@ -182,7 +202,7 @@ function renderGardes(rows){
       :'—';
     const recruteur=r.recruteur?esc(r.recruteur):'—';
     const specialite=r.specialite||'Guerrier';
-    return `<tr data-search="${esc((r.prenom+' '+r.nom+' '+r.race+' '+r.grade+' '+specialite).toLowerCase())}" data-grade="${esc(r.grade||'')}" data-statut="${esc(r.statut||'actif')}">
+    return `<tr data-search="${esc((r.prenom+' '+r.nom+' '+r.race+' '+r.grade+' '+specialite).toLowerCase())}" data-grade="${esc(r.grade||'')}" data-specialite="${esc(specialite)}" data-statut="${esc(r.statut||'actif')}">
       <td class="cell-name">${typeof renderPresenceDot==='function'?renderPresenceDot(r.user_id):''}${esc(r.prenom)}${r.nom?" "+esc(r.nom):""}${r.statut==='absent'?'<span class="badge" style="background:rgba(122,16,16,.12);color:#7A1010;border:1px solid #7A1010;margin-left:.4rem;font-size:.78rem;">⚠ Absent</span>':''}</td>
       <td class="cell-meta">${r.race?`<span class="badge badge-tag">${esc(r.race)}</span>`:'—'}</td>
       <td class="cell-meta">${r.grade?`<span class="badge badge-tag">${esc(r.grade)}</span>`:'—'}</td>

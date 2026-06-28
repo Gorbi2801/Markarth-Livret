@@ -10,10 +10,6 @@ as $$
     when 'Traqueur de la Garde' then 2
     when 'Patrouilleur de la Garde' then 1
     when 'Aspirant de la Garde' then 1
-    when 'Artisan de la Garde' then 1
-    when 'Confrère de la Garde' then 1
-    when 'Mage de la Garde' then 1
-    when 'Barde de la Garde' then 1
     else 0
   end;
 $$;

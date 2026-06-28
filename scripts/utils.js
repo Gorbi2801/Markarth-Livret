@@ -1,7 +1,8 @@
 // ══════════════════════════════════════════════════════════════════════
 //  TRI
 // ══════════════════════════════════════════════════════════════════════
-const GRADE_ORDER=["Commandeur de l'Aube","Sénéchal de l'Aube","Exécuteur de la Garde","Traqueur de la Garde","Patrouilleur de la Garde","Aspirant de la Garde","Artisan de la Garde","Confrère de la Garde","Mage de la Garde","Barde de la Garde"];
+const GRADE_ORDER=["Commandeur de l'Aube","Sénéchal de l'Aube","Exécuteur de la Garde","Traqueur de la Garde","Patrouilleur de la Garde","Aspirant de la Garde"];
+const SPECIALITE_ORDER=["Sans spécialité","Minage","Menuiserie","Forge","Alchimie","Chasse","Cuisine","Couture","Guerrier"];
 const PEINE_ORDER=['Infraction mineure','Infraction majeure','Crime','Crime capital','Haute trahison'];
 function sortTable(tbodyId,mode,btnId){
   const tbody=document.getElementById(tbodyId);const btn=document.getElementById(btnId);if(!tbody||!btn)return;
@@ -10,6 +11,7 @@ function sortTable(tbodyId,mode,btnId){
   const rows=Array.from(tbody.querySelectorAll('tr:not(.lois-cat-row)'));
   rows.sort((a,b)=>{
     if(mode==='grade'){const ga=(a.getAttribute('data-grade')||'').trim();const gb=(b.getAttribute('data-grade')||'').trim();const ia=GRADE_ORDER.indexOf(ga)===-1?99:GRADE_ORDER.indexOf(ga);const ib=GRADE_ORDER.indexOf(gb)===-1?99:GRADE_ORDER.indexOf(gb);return dir==='asc'?ia-ib:ib-ia;}
+    else if(mode==='specialite'){const sa=(a.getAttribute('data-specialite')||'').trim();const sb=(b.getAttribute('data-specialite')||'').trim();const ia=SPECIALITE_ORDER.indexOf(sa)===-1?99:SPECIALITE_ORDER.indexOf(sa);const ib=SPECIALITE_ORDER.indexOf(sb)===-1?99:SPECIALITE_ORDER.indexOf(sb);return ia===ib?(dir==='asc'?sa.localeCompare(sb,'fr'):sb.localeCompare(sa,'fr')):(dir==='asc'?ia-ib:ib-ia);}
     else if(mode==='peine'){const pa=(a.getAttribute('data-peine')||'').trim();const pb=(b.getAttribute('data-peine')||'').trim();const ia=PEINE_ORDER.indexOf(pa)===-1?99:PEINE_ORDER.indexOf(pa);const ib=PEINE_ORDER.indexOf(pb)===-1?99:PEINE_ORDER.indexOf(pb);return dir==='asc'?ia-ib:ib-ia;}
     else if(mode==='date'){const da=(a.getAttribute('data-date')||'');const db=(b.getAttribute('data-date')||'');return dir==='asc'?da.localeCompare(db):db.localeCompare(da);}
     else{const va=(a.getAttribute('data-search')||'').trim();const vb=(b.getAttribute('data-search')||'').trim();return dir==='asc'?va.localeCompare(vb,'fr'):vb.localeCompare(va,'fr');}

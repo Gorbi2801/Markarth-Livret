@@ -187,7 +187,7 @@
             <div style="font-family:'Eagle Lake',serif;font-size:1rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#8A6D1F;margin-bottom:.6rem;">Droits du protégé</div>
             <ul style="font-family:'IM Fell English',serif;font-size:1rem;color:var(--ink);line-height:1.8;list-style:none;padding:0;">
               <li>Logement dans l'enceinte de Fort Aube</li>
-              <li>Accès aux soins du Confrère de la Garde</li>
+              <li>Accès aux soins de la garnison</li>
               <li>Échanger avec les commerces de la garnison</li>
               <li>Accès aux établis et lieux de travail de Fort-Aube</li>
               <li>Droit de requête auprès de l'Intendant de Fort-Aube</li>
@@ -234,7 +234,7 @@
           <p style="font-family:'Eagle Lake',serif;font-size:1rem;color:var(--ink-faint);margin-bottom:0.5rem;">Concession d'exploitation (optionnel)</p>
           <div class="form-grid">
             <div class="form-field"><label>Type</label>
-              <select id="cit-con-type"><option value="">— Aucune —</option><option>Agricole</option><option>Minière</option><option>Artisanale</option><option>Faunique</option></select>
+              <select id="cit-con-type"><option value="">— Aucune —</option><option>Agricole</option><option>Minière</option><option>Atelier</option><option>Faunique</option></select>
             </div>
             <div class="form-field"><label>Ressource / Lieu concédé</label><input id="cit-con-ressource" type="text" placeholder="Ex: Champ à l'est du fort, Forge n°2..."></div>
             <div class="form-field"><label>Contrepartie négociée</label><input id="cit-con-contrepartie" type="text" placeholder="Ex: Renseignement + 20% de la production..."></div>
@@ -309,7 +309,7 @@
             <select id="gar-race"><option value="">— Sélectionner —</option><option>Nordique</option><option>Impériale</option><option>Bretonne</option><option>Rougegarde</option><option>Elfe des bois</option><option>Haut-Elfe</option><option>Elfe sombre</option><option>Orque</option><option>Argonien</option><option>Khajiit</option></select>
           </div>
           <div class="form-field"><label>Grade</label>
-            <select id="gar-grade"><option value="">— Sélectionner —</option><option>Commandeur de l'Aube</option><option>Sénéchal de l'Aube</option><option>Exécuteur de la Garde</option><option>Traqueur de la Garde</option><option>Patrouilleur de la Garde</option><option>Aspirant de la Garde</option><optgroup label="Spécialité"><option>Artisan de la Garde</option><option>Confrère de la Garde</option><option>Mage de la Garde</option><option>Barde de la Garde</option></optgroup></select>
+            <select id="gar-grade"><option value="">— Sélectionner —</option><option>Commandeur de l'Aube</option><option>Sénéchal de l'Aube</option><option>Exécuteur de la Garde</option><option>Traqueur de la Garde</option><option>Patrouilleur de la Garde</option><option>Aspirant de la Garde</option></select>
           </div>
           <div class="form-field"><label>Date de recrutement</label>
             <input id="gar-date-recrutement" type="date">
@@ -327,9 +327,10 @@
     <div class="toolbar">
       <div class="search-wrap"><span style="color:var(--ink-faint);font-size:1rem;">🔍</span><input id="gar-search" type="text" placeholder="Rechercher un garde..." oninput="filterRows('gar-tbody',this.value)"></div>
       <select class="filter-sel" id="gar-filter-grade" onchange="filterRows('gar-tbody',document.getElementById('gar-search').value)">
-        <option value="">Tous les grades</option><option>Commandeur de l'Aube</option><option>Sénéchal de l'Aube</option><option>Exécuteur de la Garde</option><option>Traqueur de la Garde</option><option>Patrouilleur de la Garde</option><option>Aspirant de la Garde</option><optgroup label="Spécialité"><option>Artisan de la Garde</option><option>Confrère de la Garde</option><option>Mage de la Garde</option><option>Barde de la Garde</option></optgroup>
+        <option value="">Tous les grades</option><option>Commandeur de l'Aube</option><option>Sénéchal de l'Aube</option><option>Exécuteur de la Garde</option><option>Traqueur de la Garde</option><option>Patrouilleur de la Garde</option><option>Aspirant de la Garde</option>
       </select>
       <button class="btn-sort asc" id="gar-sort-btn" onclick="sortTable('gar-tbody','name','gar-sort-btn')">Nom</button>
+      <button class="btn-sort asc" id="gar-sort-specialite-btn" onclick="sortTable('gar-tbody','specialite','gar-sort-specialite-btn')">Spécialité</button>
       <button class="btn-sort asc" id="gar-sort-grade-btn" onclick="sortTable('gar-tbody','grade','gar-sort-grade-btn')">Grade</button>
     </div>
     <div class="table-wrap">
@@ -726,7 +727,7 @@
           <p class="biblio-body">Êtres autrefois mortels, frappés d'une malédiction de sang dont l'origine la plus communément admise remonte à un pacte daedrique scellé par une noble corrompue, devenue elle-même la première de leur engeance. Ils craignent la lumière directe du soleil, qui affaiblit leurs pouvoirs et peut, à forte exposition, leur être fatale — c'est de cette faiblesse que l'Ordre tire son nom et sa raison d'être.</p>
           <p class="biblio-body">Ils se nourrissent de sang pour préserver une apparence mortelle convaincante. Plus ils s'en privent, plus leur état se dégrade et trahit leur vraie nature : peau qui blêmit, regard qui se met à rougeoyer dans la pénombre, traits qui se creusent à mesure que la faim les ronge. Un vampire repu se confond avec n'importe quel mortel ; un vampire affamé ne trompe plus personne.</p>
           <p class="biblio-body">C'est sur cette dégradation visible que repose notre principal moyen de les démasquer : le hall de Fort-Aube, dont le toit s'ouvre à volonté, expose tout nouvel arrivant à la pleine lumière du jour. Un vampire ordinaire s'y trahit aussitôt. Seuls les plus puissants d'entre eux, capables de revêtir une forme qui leur rend le jour supportable, échappent à cette épreuve — l'Ordre ne s'y fie donc jamais aveuglément face à une menace de premier rang.</p>
-          <p class="biblio-body">Trois faiblesses guident nos méthodes de combat. Le soleil reste la plus redoutable, déjà évoquée plus haut. Le feu vient juste après : ses dégâts redoublent sur une créature affaiblie par le jeûne, et une simple torche peut suffire là où une lame ordinaire échouerait. L'argent, enfin, inflige des blessures plus profondes qu'un métal ordinaire, et semble freiner leur capacité à s'en remettre — un avantage plus discret que le feu, mais tout aussi fiable en armement courant. La magie de guérison, détournée de son usage premier, complète cet arsenal avec une violence que peu d'écoles égalent — c'est elle qui arme l'essentiel de nos Confrères sur le terrain.</p>
+          <p class="biblio-body">Trois faiblesses guident nos méthodes de combat. Le soleil reste la plus redoutable, déjà évoquée plus haut. Le feu vient juste après : ses dégâts redoublent sur une créature affaiblie par le jeûne, et une simple torche peut suffire là où une lame ordinaire échouerait. L'argent, enfin, inflige des blessures plus profondes qu'un métal ordinaire, et semble freiner leur capacité à s'en remettre — un avantage plus discret que le feu, mais tout aussi fiable en armement courant. La magie de guérison, détournée de son usage premier, complète cet arsenal avec une violence que peu d'écoles égalent sur le terrain.</p>
           <div class="biblio-label">Incertitudes du Commandement</div>
           <p class="biblio-quote">On ignore combien de lignées vampiriques subsistent aujourd'hui en Bordeciel. Le clan Volkihar, jadis recensé dans nos archives politiques, a depuis disparu de nos registres diplomatiques officiels — par discrétion, par disparition réelle, ou par simple incapacité de nos services à le localiser. Nul ne le sait avec certitude. Nos rapports sur leur hiérarchie interne et la possibilité réelle de « guérir » un vampire restent fragmentaires, et parfois contradictoires d'un Traqueur à l'autre.</p>
         </div>
@@ -1251,7 +1252,7 @@
           </label>
           <label class="form-field">
             <span>Grade</span>
-            <select id="superadminCreateGrade"><option value="">— Sélectionner —</option><option>Commandeur de l'Aube</option><option>Sénéchal de l'Aube</option><option>Exécuteur de la Garde</option><option>Traqueur de la Garde</option><option>Patrouilleur de la Garde</option><option>Aspirant de la Garde</option><optgroup label="Spécialité"><option>Artisan de la Garde</option><option>Confrère de la Garde</option><option>Mage de la Garde</option><option>Barde de la Garde</option></optgroup></select>
+            <select id="superadminCreateGrade"><option value="">— Sélectionner —</option><option>Commandeur de l'Aube</option><option>Sénéchal de l'Aube</option><option>Exécuteur de la Garde</option><option>Traqueur de la Garde</option><option>Patrouilleur de la Garde</option><option>Aspirant de la Garde</option></select>
           </label>
           <label class="form-field">
             <span>Date de recrutement</span>

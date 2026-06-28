@@ -34,10 +34,6 @@ function suiviGradeLevel(grade){
   if([
     'Patrouilleur de la Garde',
     'Aspirant de la Garde',
-    'Artisan de la Garde',
-    'Confrère de la Garde',
-    'Mage de la Garde',
-    'Barde de la Garde',
   ].includes(normalized))return 1;
   return 0;
 }
