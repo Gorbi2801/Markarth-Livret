@@ -5,115 +5,73 @@ function loadInvHistory(){try{return JSON.parse(localStorage.getItem('mk_inv_his
 function saveInvHistory(h){try{localStorage.setItem('mk_inv_history',JSON.stringify(h.slice(0,200)));}catch(e){}}
 
 // ── État filtres inventaire ───────────────────────────────────────────
-let invActiveCat  = 'tout';
-let invShowEmpty  = true;
-let invActiveTab  = 1;  // 1=Inventaire, 2=Fabrication, 3=Recettes
+let invActiveCat = 'tout';
 
 const CATEGORIES = ['Équipement','Potions','Nourriture','Ingrédient','Livres','Matériaux'];
 const CAT_SLUG   = {'Équipement':'cat-equip','Potions':'cat-potions','Nourriture':'cat-nourriture','Ingrédient':'cat-ingredient','Livres':'cat-livres','Matériaux':'cat-materiaux'};
 
-// ── Onglets (Inventaire / Fabrication / Recettes) ─────────────────────
-function invSwitchTab(n){
-  invActiveTab = n;
-  const sections = {1:'inv-section-stock', 2:'inv-section-fab', 3:'inv-section-recettes'};
-  Object.entries(sections).forEach(([k,id])=>{
-    const el = document.getElementById(id);
-    if(el) el.style.display = (Number(k)===n)?'block':'none';
-  });
-  document.querySelectorAll('.inv-tab-btn').forEach((btn,i)=>{
-    const active = i+1===n;
-    btn.style.background   = active?'var(--green-dark)':'transparent';
-    btn.style.color        = active?'var(--gold-light)':'var(--ink-mid)';
-    btn.style.borderColor  = active?'var(--green)':'var(--border-g)';
-  });
-}
+// ── Onglets catégorie — injectés dynamiquement avant le tableau ────────
+function renderInvCatTabs(rows){
+  // Trouver les catégories qui ont des items
+  const catsPresentes = [...new Set(rows.map(r=>r.categorie).filter(Boolean))];
+  const orderedCats = CATEGORIES.filter(c=>catsPresentes.includes(c));
 
-function renderInvTabs(){
-  const canEdit = canEditSection('inventaire');
-  const wrap = document.getElementById('inv-tabs-wrap');
-  if(!wrap) return;
-  if(!canEdit){
-    wrap.innerHTML = '';
-    return;
-  }
-  wrap.innerHTML = `
-    <div style="display:flex;gap:.4rem;margin-bottom:1rem;flex-wrap:wrap;">
-      <button class="inv-tab-btn" onclick="invSwitchTab(1)"
-        style="font-family:'Eagle Lake',serif;font-size:.85rem;padding:.3rem .9rem;border:1px solid var(--border-g);background:var(--green-dark);color:var(--gold-light);cursor:pointer;border-radius:2px;">
-        📦 Stock
-      </button>
-      <button class="inv-tab-btn" onclick="invSwitchTab(2)"
-        style="font-family:'Eagle Lake',serif;font-size:.85rem;padding:.3rem .9rem;border:1px solid var(--border-g);background:transparent;color:var(--ink-mid);cursor:pointer;border-radius:2px;">
-        ⚒️ Fabrication
-      </button>
-      <button class="inv-tab-btn" onclick="invSwitchTab(3)"
-        style="font-family:'Eagle Lake',serif;font-size:.85rem;padding:.3rem .9rem;border:1px solid var(--border-g);background:transparent;color:var(--ink-mid);cursor:pointer;border-radius:2px;">
-        📜 Recettes
-      </button>
-    </div>`;
-  // S'assurer que seul l'onglet actif est visible
-  invSwitchTab(invActiveTab);
-}
-
-// ── Pills de filtre par catégorie ─────────────────────────────────────
-function renderInvFilterPills(){
-  const wrap = document.getElementById('inv-filter-pills');
-  if(!wrap) return;
-
-  const pills = [
-    {key:'tout',   label:'Tout'},
-    ...CATEGORIES.map(c=>({key:c, label:c})),
-    {key:'epuise', label:'Épuisés'},
+  const tabs = [
+    {key:'tout', label:'Tout', count:rows.length},
+    ...orderedCats.map(c=>({key:c, label:c, count:rows.filter(r=>r.categorie===c).length})),
   ];
 
-  wrap.innerHTML = `<div style="display:flex;gap:.35rem;flex-wrap:wrap;margin-bottom:.75rem;">
-    ${pills.map(p=>`
-      <button onclick="invSetCat('${p.key}')" id="inv-pill-${p.key.replace(/[^a-z]/gi,'_')}"
-        style="font-family:'IM Fell English',serif;font-style:italic;font-size:.85rem;
-               padding:.22rem .7rem;border:1px solid var(--border-g);cursor:pointer;border-radius:2px;
-               background:${invActiveCat===p.key?'var(--green-dark)':'var(--parch)'};
-               color:${invActiveCat===p.key?'var(--gold-light)':'var(--ink-mid)'};">
-        ${p.label}
-      </button>`).join('')}
-    <button onclick="invToggleEmpty()"
-      style="font-family:'IM Fell English',serif;font-style:italic;font-size:.85rem;
-             padding:.22rem .7rem;border:1px solid var(--border-g);cursor:pointer;border-radius:2px;
-             background:${invShowEmpty?'transparent':'rgba(122,16,16,.1)'};
-             color:${invShowEmpty?'var(--ink-faint)':'#7A1010'};margin-left:.5rem;">
-      ${invShowEmpty?'Masquer':'Afficher'} les épuisés
-    </button>
+  // Injecter ou créer le conteneur avant la table
+  let wrap = document.getElementById('inv-cat-tabs');
+  if(!wrap){
+    const table = document.querySelector('#page-inventaire table, #page-inventaire .sect-table');
+    if(!table) return;
+    wrap = document.createElement('div');
+    wrap.id = 'inv-cat-tabs';
+    table.parentNode.insertBefore(wrap, table);
+  }
+
+  wrap.innerHTML = `<div style="display:flex;gap:.3rem;flex-wrap:wrap;margin-bottom:.8rem;border-bottom:1px solid var(--border-g);padding-bottom:.6rem;">
+    ${tabs.map(t=>{
+      const active = invActiveCat === t.key;
+      const epuises = t.key==='tout'
+        ? rows.filter(r=>r.quantite<=0).length
+        : rows.filter(r=>r.categorie===t.key&&r.quantite<=0).length;
+      return `<button onclick="invSetCat('${t.key}')"
+        style="font-family:'Eagle Lake',serif;font-size:.82rem;padding:.28rem .8rem;
+               border:1px solid ${active?'var(--green)':'var(--border-g)'};
+               border-bottom:${active?'2px solid var(--green-dark)':'1px solid var(--border-g)'};
+               background:${active?'var(--parch-dark)':'transparent'};
+               color:${active?'var(--green-dark)':'var(--ink-mid)'};
+               cursor:pointer;white-space:nowrap;">
+        ${t.label}
+        <span style="font-family:'IM Fell English',serif;font-size:.78rem;
+                     color:${active?'var(--ink-mid)':'var(--ink-faint)'};margin-left:.3rem;">
+          ${t.count}${epuises>0?` <span style="color:#7A1010;">(${epuises}✕)</span>`:''}
+        </span>
+      </button>`;
+    }).join('')}
   </div>`;
 }
 
 function invSetCat(cat){
   invActiveCat = cat;
-  renderInvFilterPills();
-  applyInvFilter();
-}
-
-function invToggleEmpty(){
-  invShowEmpty = !invShowEmpty;
-  renderInvFilterPills();
+  // Re-rendre les onglets pour mettre à jour l'actif
+  renderInvCatTabs(invRows);
+  // Filtrer les lignes du tableau
   applyInvFilter();
 }
 
 function applyInvFilter(){
-  const rows = document.querySelectorAll('#inv-tbody tr, #inv-tbody .inv-cat-header');
-  let lastHeaderVisible = null;
-
-  rows.forEach(row=>{
+  document.querySelectorAll('#inv-tbody tr').forEach(row=>{
     if(row.classList.contains('inv-cat-header')){
-      lastHeaderVisible = row;
-      row.style.display = 'none'; // on l'affichera si au moins un item de sa catégorie est visible
+      // Vérifier si la catégorie du header correspond
+      const cat = row.getAttribute('data-cat-header')||'';
+      row.style.display = (invActiveCat==='tout'||invActiveCat===cat)?'':'none';
       return;
     }
-    const cat   = row.getAttribute('data-cat')  || '';
-    const stock = row.getAttribute('data-stock') || '';
-    const catMatch   = invActiveCat==='tout' || invActiveCat==='epuise' || cat===invActiveCat;
-    const stockMatch = invActiveCat==='epuise' ? stock==='vide' : (invShowEmpty || stock!=='vide');
-    const visible    = catMatch && stockMatch;
-    row.style.display = visible ? '' : 'none';
-    if(visible && lastHeaderVisible) lastHeaderVisible.style.display = '';
+    const cat = row.getAttribute('data-cat')||'';
+    row.style.display = (invActiveCat==='tout'||cat===invActiveCat)?'':'none';
   });
 }
 
@@ -222,9 +180,8 @@ function renderInventaire(rows){
   document.getElementById('inv-empty').textContent = empty;
   document.getElementById('inv-act-head').style.display = canAdmin?'':'none';
 
-  // Tabs + pills
-  renderInvTabs();
-  renderInvFilterPills();
+  // Onglets catégorie
+  renderInvCatTabs(rows);
 
   // Grouper par catégorie
   const grouped = {};
