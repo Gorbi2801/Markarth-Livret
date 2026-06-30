@@ -33,6 +33,7 @@ const carteState={
   selectedType:null,
   selectedPinId:null,
   selectedZoneId:null,
+  editing:false,
   draftCoords:null,
   draftZonePoints:[],
   placing:false,
@@ -175,6 +176,7 @@ function carteSelectNothing(){
   carteState.selectedType=null;
   carteState.selectedPinId=null;
   carteState.selectedZoneId=null;
+  carteState.editing=false;
 }
 
 function mountCarteSection(){
@@ -552,7 +554,7 @@ function renderCarteDetail(){
     return;
   }
 
-  if(canEdit&&(pin||carteState.draftCoords)){
+  if(canEdit&&((pin&&carteState.editing)||(!pin&&carteState.draftCoords))){
     const reportIds=new Set(pin?carteLinkedReportIds('pin',pin.id):[]);
     const x=pin?.x??carteState.draftCoords?.x??0.5;
     const y=pin?.y??carteState.draftCoords?.y??0.5;
@@ -564,13 +566,14 @@ function renderCarteDetail(){
       ${carteCommonForm('pin',pin,reportIds)}
       <div class="carte-editor-actions">
         <button type="button" class="btn-action btn-gold" onclick="carteStartPlacement()">${pin?'Déplacer sur la carte':'Choisir sur la carte'}</button>
+        ${pin?'<button type="button" class="btn-action" onclick="carteCancelEdit()">Annuler</button>':''}
         ${pin?'<button type="button" class="btn-del" onclick="carteDeleteSelectedPin()">Supprimer</button>':''}
         <button type="button" class="btn-submit" onclick="carteSavePin()">Enregistrer</button>
       </div>`;
     return;
   }
 
-  if(canEdit&&(zone||carteState.draftZonePoints.length>=3)){
+  if(canEdit&&((zone&&carteState.editing)||(!zone&&carteState.draftZonePoints.length>=3))){
     const reportIds=new Set(zone?carteLinkedReportIds('zone',zone.id):[]);
     editor.innerHTML=`
       <div class="carte-editor-head">
@@ -580,6 +583,7 @@ function renderCarteDetail(){
       ${carteCommonForm('zone',zone,reportIds)}
       <div class="carte-editor-actions">
         ${zone?'<button type="button" class="btn-action btn-gold" onclick="carteStartZoneDrawing(true)">Redessiner</button>':''}
+        ${zone?'<button type="button" class="btn-action" onclick="carteCancelEdit()">Annuler</button>':''}
         ${zone?'<button type="button" class="btn-del" onclick="carteDeleteSelectedZone()">Supprimer</button>':''}
         <button type="button" class="btn-submit" onclick="carteSaveZone()">Enregistrer</button>
       </div>`;
@@ -587,14 +591,14 @@ function renderCarteDetail(){
   }
 
   const selected=pin?{kind:'pin',row:pin}:zone?{kind:'zone',row:zone}:null;
-  editor.innerHTML=selected?renderCarteReadOnly(selected.kind,selected.row):`
+  editor.innerHTML=selected?renderCarteReadOnly(selected.kind,selected.row,canEdit):`
     <div class="carte-empty-detail">
       <h3>Aucun élément sélectionné</h3>
       <p>Sélectionne un ping ou une zone pour voir ses informations. Les éditeurs peuvent créer un ping ou dessiner une zone depuis le panneau de gauche.</p>
     </div>`;
 }
 
-function renderCarteReadOnly(kind,row){
+function renderCarteReadOnly(kind,row,canEdit=false){
   const linkedReports=carteLinkedReportIds(kind,row.id)
     .map(id=>carteState.reports.find(report=>report.id===id))
     .filter(Boolean);
@@ -611,6 +615,7 @@ function renderCarteReadOnly(kind,row){
         <strong>Rapports liés</strong>
         ${linkedReports.length?linkedReports.map(report=>`<span>${carteEsc(carteReportLabel(report))}</span>`).join(''):'<span>Aucun rapport lié.</span>'}
       </div>
+      ${canEdit?'<div class="carte-editor-actions"><button type="button" class="btn-submit" onclick="carteStartEditSelected()">Modifier</button></div>':''}
     </div>`;
 }
 
@@ -639,6 +644,7 @@ function carteToggleSidebar(){
 function carteToggleCreatePanel(){
   if(!canEditSection('carte'))return;
   carteSelectNothing();
+  carteState.editing=true;
   carteState.draftCoords={x:0.5,y:0.5};
   carteState.draftZonePoints=[];
   carteState.placing=true;
@@ -654,16 +660,24 @@ function carteStartPlacement(){
   }
   carteState.placing=true;
   carteState.drawingZone=false;
+  carteState.editing=true;
   renderCarte();
 }
 
 function carteStartZoneDrawing(redraw=false){
   if(!canEditSection('carte'))return;
   const zone=carteSelectedZone();
-  carteState.selectedType=redraw&&zone?'zone':null;
+  if(redraw&&zone){
+    carteState.selectedType='zone';
+  }else{
+    carteState.selectedType=null;
+    carteState.selectedZoneId=null;
+    carteState.selectedPinId=null;
+  }
   carteState.draftCoords=null;
   carteState.placing=false;
   carteState.drawingZone=true;
+  carteState.editing=true;
   carteState.draftZonePoints=redraw&&zone?[]:[];
   renderCarte();
 }
@@ -678,8 +692,32 @@ function carteFinishZoneDrawing(){
   if(carteState.draftZonePoints.length<3)return;
   carteState.drawingZone=false;
   carteState.selectedType='zone';
-  carteState.selectedZoneId=null;
+  if(!carteSelectedZone())carteState.selectedZoneId=null;
   carteState.selectedPinId=null;
+  carteState.editing=true;
+  renderCarte();
+}
+
+function carteStartEditSelected(){
+  if(!canEditSection('carte'))return;
+  const pin=carteSelectedPin();
+  const zone=carteSelectedZone();
+  if(!pin&&!zone)return;
+  carteState.editing=true;
+  if(pin)carteState.draftCoords={x:Number(pin.x)||0.5,y:Number(pin.y)||0.5};
+  if(zone)carteState.draftZonePoints=[];
+  carteState.placing=false;
+  carteState.drawingZone=false;
+  renderCarte();
+}
+
+function carteCancelEdit(){
+  carteState.editing=false;
+  const pin=carteSelectedPin();
+  carteState.draftCoords=pin?{x:Number(pin.x)||0.5,y:Number(pin.y)||0.5}:null;
+  carteState.draftZonePoints=[];
+  carteState.placing=false;
+  carteState.drawingZone=false;
   renderCarte();
 }
 
@@ -806,6 +844,7 @@ async function carteSavePin(){
     await carteSaveLinks('pin',pinId,carteSelectedReportIds());
     carteState.selectedType='pin';
     carteState.selectedPinId=pinId;
+    carteState.editing=false;
     carteState.draftCoords=null;
     carteState.placing=false;
     carteState.loaded=false;
@@ -838,6 +877,7 @@ async function carteSaveZone(){
     await carteSaveLinks('zone',zoneId,carteSelectedReportIds());
     carteState.selectedType='zone';
     carteState.selectedZoneId=zoneId;
+    carteState.editing=false;
     carteState.draftZonePoints=[];
     carteState.drawingZone=false;
     carteState.loaded=false;
@@ -893,6 +933,7 @@ function carteSelectPin(pinId){
   carteState.selectedType='pin';
   carteState.selectedPinId=pinId;
   carteState.selectedZoneId=null;
+  carteState.editing=false;
   carteState.draftCoords={x:Number(pin.x)||0.5,y:Number(pin.y)||0.5};
   carteState.draftZonePoints=[];
   carteState.placing=false;
@@ -906,6 +947,7 @@ function carteSelectZone(zoneId){
   carteState.selectedType='zone';
   carteState.selectedZoneId=zoneId;
   carteState.selectedPinId=null;
+  carteState.editing=false;
   carteState.draftCoords=null;
   carteState.draftZonePoints=[];
   carteState.placing=false;
