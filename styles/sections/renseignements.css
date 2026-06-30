@@ -142,3 +142,35 @@ body{background:#1C1A18;font-family:'IM Fell English',Georgia,serif;font-size:16
 .rapport-accordion.highlight{animation:highlightPulse 1.5s ease;}
 @keyframes highlightPulse{0%{box-shadow:0 0 0 3px rgba(201,168,76,.8);}100%{box-shadow:none;}}
 .badge-invalidee{background:rgba(80,80,80,.1);color:#444;border-color:rgba(80,80,80,.4);}
+
+/* ══════════════════════════════════════════════════════════════════════
+   TABLEAU DES FICHES — vue compacte (remplace l'ancien accordéon dense)
+   ══════════════════════════════════════════════════════════════════════ */
+.rens-table-wrap{border:1px solid var(--border-g);border-top:2px solid var(--gold);overflow:hidden;margin-bottom:1rem;}
+.rens-table{width:100%;border-collapse:collapse;}
+.rens-table thead th{background:var(--parch-deep);font-family:'Eagle Lake',serif;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint);text-align:left;padding:.5rem .75rem;border-bottom:1px solid var(--border-g);}
+.rens-table .rens-th-chevron{width:1.8rem;}
+.rens-table .rens-th-count{text-align:center;width:5rem;}
+.rens-table .rens-th-actions{text-align:right;width:auto;}
+
+.rens-table tbody tr.rens-row{cursor:pointer;background:var(--parch-dark);border-bottom:1px solid var(--border-g);transition:background .15s;}
+.rens-table tbody tr.rens-row:hover{background:rgba(0,0,0,.035);}
+.rens-table tbody tr.rens-row td{padding:.5rem .75rem;vertical-align:middle;}
+.rens-table tbody tr.rens-row td:first-child{border-left:4px solid var(--gold);}
+.rens-table tbody tr.rens-row.urgente td:first-child{border-left-color:#7A1010;}
+
+.rens-row-chevron{color:var(--ink-faint);font-size:.85rem;display:inline-block;transition:transform .2s;}
+.rens-table tr.rens-row.open .fiche-chevron{transform:rotate(90deg);display:inline-block;}
+.rens-row-name{font-family:'Eagle Lake',serif;font-size:1rem;color:var(--green-dark);}
+.rens-row-count{text-align:center;font-family:'Eagle Lake',serif;font-size:.88rem;color:var(--ink-mid);}
+.rens-row-actions{text-align:right;white-space:nowrap;}
+.rens-row-actions .badge{margin-right:.4rem;}
+
+.fiche-detail-row{display:none;background:var(--parch);}
+.fiche-detail-row > td{padding:0;border-bottom:1px solid var(--border-g);}
+.fiche-detail-row .fiche-body{display:block;padding:.9rem 1.1rem 1.1rem;}
+
+@media(max-width:680px){
+  .rens-table .rens-th-count,.rens-table td.rens-row-count{display:none;}
+  .rens-row-actions{display:flex;flex-wrap:wrap;gap:.3rem;justify-content:flex-end;}
+}

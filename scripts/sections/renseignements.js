@@ -41,7 +41,10 @@ function showTab(id, el){
 
 function toggleFiche(id){
   const el = document.getElementById(id);
-  if(el) el.classList.toggle('open');
+  if(!el) return;
+  el.classList.toggle('open');
+  const detail = document.getElementById('detail-'+id);
+  if(detail) detail.style.display = el.classList.contains('open') ? 'table-row' : 'none';
 }
 function toggleRap(id){
   const el = document.getElementById(id);
@@ -64,6 +67,8 @@ function goToFiche(ficheId, tab){
     const target = document.getElementById('fiche-'+ficheId);
     if(!target) return;
     target.classList.add('open');
+    const detail = document.getElementById('detail-fiche-'+ficheId);
+    if(detail) detail.style.display = 'table-row';
     target.scrollIntoView({behavior:'smooth', block:'start'});
     target.classList.add('highlight');
     setTimeout(()=>target.classList.remove('highlight'), 1500);
@@ -163,7 +168,7 @@ function renderTab(type){
   const listEl = container.querySelector('.fiches-list');
   if(!listEl) return;
   if(fiches.length===0){
-    listEl.innerHTML = '<p style="font-style:italic;color:var(--ink-faint);font-size:.92rem;padding:.5rem 0;">Aucune fiche.</p>';
+    listEl.innerHTML = '<tr><td colspan="5" style="font-style:italic;color:var(--ink-faint);font-size:.92rem;padding:.7rem .9rem;">Aucune fiche.</td></tr>';
     return;
   }
   listEl.innerHTML = fiches.map(f=>buildFicheHTML(f)).join('');
@@ -194,36 +199,36 @@ function buildFicheHTML(f){
   const peutSupprimer = rensCanDelete();
 
   return `
-  <div class="fiche${f.urgente?' urgente':''}" id="fiche-${f.id}" data-id="${f.id}" data-tab="${f.type}">
-    <div class="fiche-header" onclick="toggleFiche('fiche-${f.id}')">
-      <div class="fiche-left">
-        <span class="fiche-chevron">▶</span>
-        <div>
-          <div class="fiche-nom">${escH(f.nom)}${raps.length>0?`<span style="display:inline-block;margin-left:.5rem;padding:.05rem .45rem;font-size:.72rem;font-family:'Eagle Lake',serif;background:var(--green-dark);color:var(--gold-light);border-radius:2px;vertical-align:middle;">${raps.length}</span>`:''}</div>
+  <tr class="rens-row${f.urgente?' urgente':''}" id="fiche-${f.id}" data-id="${f.id}" data-tab="${f.type}" onclick="toggleFiche('fiche-${f.id}')">
+    <td class="rens-row-chevron"><span class="fiche-chevron">▶</span></td>
+    <td class="rens-row-name">${escH(f.nom)}</td>
+    <td>${badgeStatut || '<span style="color:var(--ink-faint);font-style:italic;">Neutre</span>'}</td>
+    <td class="rens-row-count">${raps.length>0?raps.length:'—'}</td>
+    <td class="rens-row-actions" onclick="event.stopPropagation()">
+      ${badgeUrgente}
+      ${peutModifier?`<button class="btn-sm" onclick="openEditFiche('${f.id}')">Modifier</button>`:''}
+      ${peutSupprimer?`<button class="btn-sm" style="color:#7A1010;" onclick="deleteFiche('${f.id}')">Suppr.</button>`:''}
+    </td>
+  </tr>
+  <tr class="fiche-detail-row" id="detail-fiche-${f.id}">
+    <td colspan="5">
+      <div class="fiche-body">
+        ${quickFields?`<div class="fiche-quick">${quickFields}</div>`:''}
+        ${f.notes?`<div style="font-size:.9rem;color:var(--ink);background:rgba(28,26,24,.04);border-left:3px solid var(--border-g);padding:.5rem .75rem;margin-bottom:.75rem;white-space:pre-wrap;">${escH(f.notes)}</div>`:''}
+        ${relsHTML}
+        <div class="rapports-section">
+          <div class="rapports-title">
+            Rapports &amp; renseignements
+            ${peutAjouter?`<button class="btn-sm" onclick="toggleAdd('addrap-${f.id}')">+ Déposer un rapport</button>`:''}
+          </div>
+          ${raps.length===0?'<p style="font-style:italic;color:var(--ink-faint);font-size:.92rem;">Aucun rapport déposé.</p>':''}
+          ${rapsHTML}
+          ${peutAjouter?buildAddRapportFormHTML(f.id):''}
         </div>
+        ${peutModifier?buildAddFicheNotes(f):''}
       </div>
-      <div class="fiche-badges">
-        ${badgeUrgente}${badgeStatut}
-        ${peutModifier?`<button class="btn-sm" style="margin-left:.5rem;" onclick="event.stopPropagation();openEditFiche('${f.id}')">Modifier</button>`:''}
-        ${peutSupprimer?`<button class="btn-sm" style="color:#7A1010;" onclick="event.stopPropagation();deleteFiche('${f.id}')">Suppr.</button>`:''}
-      </div>
-    </div>
-    <div class="fiche-body">
-      ${quickFields?`<div class="fiche-quick">${quickFields}</div>`:''}
-      ${f.notes?`<div style="font-size:.9rem;color:var(--ink);background:rgba(28,26,24,.04);border-left:3px solid var(--border-g);padding:.5rem .75rem;margin-bottom:.75rem;white-space:pre-wrap;">${escH(f.notes)}</div>`:''}
-      ${relsHTML}
-      <div class="rapports-section">
-        <div class="rapports-title">
-          Rapports &amp; renseignements
-          ${peutAjouter?`<button class="btn-sm" onclick="toggleAdd('addrap-${f.id}')">+ Déposer un rapport</button>`:''}
-        </div>
-        ${raps.length===0?'<p style="font-style:italic;color:var(--ink-faint);font-size:.92rem;">Aucun rapport déposé.</p>':''}
-        ${rapsHTML}
-        ${peutAjouter?buildAddRapportFormHTML(f.id):''}
-      </div>
-      ${peutModifier?buildAddFicheNotes(f):''}
-    </div>
-  </div>`;
+    </td>
+  </tr>`;
 }
 
 function buildRelationsHTML(f, rels){
