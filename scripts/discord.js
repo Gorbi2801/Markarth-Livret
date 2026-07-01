@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  async function notifyDiscord(action,payload={}){
+  async function sendDiscordNotification(action,payload={}){
     if(!window.GrimoireSupabase)return;
     try{
       const { error } = await window.GrimoireSupabase.functions.invoke('discord-notify',{
@@ -13,5 +13,5 @@
     }
   }
 
-  window.notifyDiscord=notifyDiscord;
+  window.sendDiscordNotification=sendDiscordNotification;
 })();

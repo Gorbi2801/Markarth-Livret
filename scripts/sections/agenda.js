@@ -403,8 +403,8 @@ async function saveAgendaEvent(){
         .single();
       if(error)throw error;
       savedId=data?.id||null;
-      if(savedId&&typeof window.notifyDiscord==='function'){
-        await window.notifyDiscord('agenda_created',{eventId:savedId});
+      if(savedId&&typeof window.sendDiscordNotification==='function'){
+        await window.sendDiscordNotification('agenda_created',{eventId:savedId});
       }
     }
     agendaState.selectedId=savedId;

@@ -181,8 +181,8 @@ function renderPresenceHistory(){
 
 // ── Notification Discord ─────────────────────────────────────────────
 async function notifyDiscord(type) {
-  if(typeof window.notifyDiscord!=='function')return;
-  await window.notifyDiscord(type==='start'?'presence_start':'presence_stop');
+  if(typeof window.sendDiscordNotification!=='function')return;
+  await window.sendDiscordNotification(type==='start'?'presence_start':'presence_stop');
 }
 
 async function startPresence(){
@@ -245,6 +245,6 @@ async function notifyDiscordForceStop(nomGarde){
     ? gardeRows.find(r => (r.prenom+' '+r.nom).trim() === nomGarde.trim())
     : null;
   const grade = gardeRow?.grade || '';
-  if(typeof window.notifyDiscord!=='function')return;
-  await window.notifyDiscord('presence_force_stop',{targetName:nomGarde,targetGrade:grade});
+  if(typeof window.sendDiscordNotification!=='function')return;
+  await window.sendDiscordNotification('presence_force_stop',{targetName:nomGarde,targetGrade:grade});
 }

@@ -563,8 +563,8 @@ function buildNewFicheFormHTML(){
 
 // ── Notification Discord ─────────────────────────────────────────────
 async function notifyDiscordRenseignement(type, detail){
-  if(typeof window.notifyDiscord!=='function')return;
-  await window.notifyDiscord(type==='fiche'?'renseignement_fiche':'renseignement_rapport',{detail});
+  if(typeof window.sendDiscordNotification!=='function')return;
+  await window.sendDiscordNotification(type==='fiche'?'renseignement_fiche':'renseignement_rapport',{detail});
 }
 
 // ── CRUD Fiches ──────────────────────────────────────────────────────
