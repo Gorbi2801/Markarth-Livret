@@ -128,6 +128,21 @@ body{background:#1C1A18;font-family:'IM Fell English',Georgia,serif;font-size:16
 .rapport-action label{font-family:'Eagle Lake',serif;font-size:.68rem;letter-spacing:.06em;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:.25rem;}
 .rapport-action p{font-size:.92rem;color:var(--ink-mid);font-style:italic;line-height:1.5;}
 
+.rens-attachments{margin-top:.65rem;background:rgba(28,26,24,.035);border:1px solid rgba(93,73,47,.22);padding:.6rem .75rem;}
+.rens-attachments-title{font-family:'Eagle Lake',serif;font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:.45rem;}
+.rens-attachment-list{display:grid;gap:.45rem;}
+.rens-attachment-item{background:rgba(237,230,214,.74);border:1px solid rgba(93,73,47,.22);padding:.45rem .55rem;}
+.rens-attachment-main{display:flex;align-items:center;gap:.45rem;min-width:0;}
+.rens-attachment-icon{display:inline-flex;align-items:center;justify-content:center;width:1.45rem;height:1.45rem;border:1px solid rgba(201,168,76,.6);background:rgba(201,168,76,.12);font-size:.65rem;color:var(--ink-faint);flex:0 0 auto;}
+.rens-attachment-name{font-family:'Eagle Lake',serif;font-size:.78rem;color:var(--green-dark);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.rens-attachment-size{font-size:.82rem;color:var(--ink-mid);font-style:italic;margin-left:auto;white-space:nowrap;}
+.rens-attachment-actions{display:flex;gap:.35rem;flex-wrap:wrap;margin-top:.45rem;}
+.rens-attachment-preview{margin-top:.5rem;border-top:1px solid rgba(93,73,47,.18);padding-top:.5rem;}
+.rens-attachment-preview[hidden]{display:none;}
+.rens-attachment-preview img{display:block;max-width:100%;max-height:460px;object-fit:contain;background:var(--parch);border:1px solid var(--border-g);}
+.rens-attachment-preview p,.rens-attachment-error{font-size:.9rem;color:var(--ink-mid);font-style:italic;}
+.rens-file-hint{margin:.25rem 0 .15rem;font-size:.86rem;color:var(--ink-mid);font-style:italic;}
+
 /* FORM AJOUT RAPPORT */
 .add-rapport{background:rgba(28,26,24,.04);border:1px dashed var(--border-g);padding:.85rem 1rem;margin-top:.5rem;display:none;}
 .add-rapport.open{display:block;}

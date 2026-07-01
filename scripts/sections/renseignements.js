@@ -11,6 +11,7 @@ const RENS = {
   rapportRapport: [],   // mk_rens_rapport_rapport (rapport → rapport)
   mapNodes:       [],   // mk_rens_map_nodes
   mapLinks:       [],   // mk_rens_map_links
+  attachments:    [],   // mk_rens_attachments
   activeTab: 'lieux',
   searchQ:   '',
   filterStatut: '',
@@ -23,6 +24,9 @@ const RENS = {
   selectedMapLink: ''
 };
 let rensMapNetwork = null;
+const RENS_ATTACHMENT_BUCKET = 'renseignements';
+const RENS_ATTACHMENT_MAX_SIZE = 5 * 1024 * 1024;
+const RENS_ATTACHMENT_TYPES = new Set(['image/jpeg','image/png','image/webp','image/gif']);
 
 // ── Helpers UI ───────────────────────────────────────────────────────
 function showTab(id, el){
@@ -102,16 +106,26 @@ async function rensOptionalGet(table, params = ''){
   }
 }
 
+async function rensLoadAttachments(){
+  try{
+    return await sbGet('mk_rens_attachments','?select=*&order=created_at.asc');
+  }catch(error){
+    console.warn('Table des pièces jointes indisponible: mk_rens_attachments', error);
+    return [];
+  }
+}
+
 async function rensLoad(){
   RENS.mapReady = true;
-  const [rf, rr, rl, rpl, rrp, mn, ml] = await Promise.all([
+  const [rf, rr, rl, rpl, rrp, mn, ml, atts] = await Promise.all([
     sbGet('mk_rens_fiches','?select=*&order=created_at.desc'),
     sbGet('mk_rens_rapports','?select=*&order=created_at.desc'),
     sbGet('mk_rens_relations','?select=*'),
     rensOptionalGet('mk_rens_rapport_liens','?select=*'),
     rensOptionalGet('mk_rens_rapport_rapport','?select=*'),
     rensOptionalGet('mk_rens_map_nodes','?select=*&order=created_at.asc'),
-    rensOptionalGet('mk_rens_map_links','?select=*')
+    rensOptionalGet('mk_rens_map_links','?select=*'),
+    rensLoadAttachments()
   ]);
   RENS.fiches          = rf  || [];
   RENS.rapports        = rr  || [];
@@ -120,6 +134,7 @@ async function rensLoad(){
   RENS.rapportRapport  = rrp || [];
   RENS.mapNodes        = mn  || [];
   RENS.mapLinks        = ml  || [];
+  RENS.attachments     = atts || [];
   rensRenderAll();
 }
 
@@ -318,6 +333,7 @@ function buildRapportHTML(r){
         <label>Action recommandée</label>
         <p>${escH(r.action_recommandee)}</p>
       </div>`:''}
+      ${buildRapportAttachmentsHTML(r)}
       ${buildRapportLiensHTML(r)}
       ${peutModifier?buildEditRapportFormHTML(r):''}
     </div>
@@ -468,6 +484,171 @@ function rensCanEditOwn(row){
   return rensCanDelete() || rensIsOwner(row);
 }
 
+function rensAttachmentsForRapport(rapportId){
+  return RENS.attachments.filter(att=>att.rapport_id===rapportId);
+}
+
+function rensFormatFileSize(bytes){
+  const size = Number(bytes) || 0;
+  if(size < 1024) return `${size} o`;
+  if(size < 1024 * 1024) return `${Math.round(size / 102.4) / 10} Ko`;
+  return `${Math.round(size / 1024 / 102.4) / 10} Mo`;
+}
+
+function rensAttachmentExtension(file){
+  const byMime = {
+    'image/jpeg':'jpg',
+    'image/png':'png',
+    'image/webp':'webp',
+    'image/gif':'gif',
+  };
+  return byMime[file.type] || (file.name.split('.').pop() || 'img').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,8) || 'img';
+}
+
+function rensAttachmentPath(rapportId, file){
+  const userId = session?.user?.id || 'unknown';
+  const randomId = crypto?.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  return `${userId}/${rapportId}/${randomId}.${rensAttachmentExtension(file)}`;
+}
+
+function rensAttachmentInputHTML(inputId){
+  return `
+    <label>Pièces jointes <span style="font-style:italic;font-weight:normal;font-family:'IM Fell English',serif;font-size:.88rem;color:var(--ink-faint);">(images, facultatif)</span></label>
+    <input type="file" id="${inputId}" accept="image/png,image/jpeg,image/webp,image/gif" multiple>
+    <p class="rens-file-hint">Formats acceptés : PNG, JPG, WEBP ou GIF. Taille maximale : 5 Mo par image.</p>`;
+}
+
+function buildRapportAttachmentsHTML(r){
+  const attachments = rensAttachmentsForRapport(r.id);
+  const canRemove = rensCanEditOwn(r);
+  if(!attachments.length)return '';
+  return `
+  <div class="rens-attachments">
+    <div class="rens-attachments-title">Pièces jointes</div>
+    <div class="rens-attachment-list">
+      ${attachments.map(att=>`
+      <div class="rens-attachment-item" id="att-${att.id}">
+        <div class="rens-attachment-main">
+          <span class="rens-attachment-icon">□</span>
+          <span class="rens-attachment-name">${escH(att.file_name||'Image')}</span>
+          <span class="rens-attachment-size">${rensFormatFileSize(att.file_size)}</span>
+        </div>
+        <div class="rens-attachment-actions">
+          <button class="btn-sm" onclick="previewRensAttachment('${att.id}')">Prévisualiser</button>
+          <button class="btn-sm" onclick="openRensAttachment('${att.id}')">Ouvrir</button>
+          ${canRemove?`<button class="btn-sm btn-danger-soft" onclick="deleteRensAttachment('${att.id}')">Suppr.</button>`:''}
+        </div>
+        <div class="rens-attachment-preview" id="att-preview-${att.id}" hidden></div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function rensValidateAttachmentFile(file){
+  if(!RENS_ATTACHMENT_TYPES.has(file.type)){
+    throw new Error(`${file.name} n'est pas un format image accepté.`);
+  }
+  if(file.size > RENS_ATTACHMENT_MAX_SIZE){
+    throw new Error(`${file.name} dépasse la limite de 5 Mo.`);
+  }
+}
+
+async function uploadRensAttachments(rapportId, inputId){
+  const input = document.getElementById(inputId);
+  const files = [...(input?.files || [])];
+  if(!files.length)return;
+  if(!window.GrimoireSupabase?.storage){
+    throw new Error('Le client Supabase Storage est indisponible.');
+  }
+
+  files.forEach(rensValidateAttachmentFile);
+  const storage = window.GrimoireSupabase.storage.from(RENS_ATTACHMENT_BUCKET);
+  for(const file of files){
+    const path = rensAttachmentPath(rapportId, file);
+    const { error } = await storage.upload(path, file, {
+      contentType: file.type,
+      cacheControl: '3600',
+      upsert: false,
+    });
+    if(error)throw error;
+
+    try{
+      await sbPost('mk_rens_attachments',{
+        rapport_id: rapportId,
+        bucket_id: RENS_ATTACHMENT_BUCKET,
+        path,
+        file_name: file.name,
+        mime_type: file.type,
+        file_size: file.size,
+        created_by: session?.user?.id || null,
+      });
+    }catch(error){
+      await storage.remove([path]).catch(()=>{});
+      throw error;
+    }
+  }
+  input.value = '';
+}
+
+async function rensSignedAttachmentUrl(att){
+  const bucket = att.bucket_id || RENS_ATTACHMENT_BUCKET;
+  const { data, error } = await window.GrimoireSupabase.storage
+    .from(bucket)
+    .createSignedUrl(att.path, 60 * 10);
+  if(error)throw error;
+  return data?.signedUrl || data?.signedURL;
+}
+
+async function rensRemoveStorageFiles(bucket, paths){
+  if(!paths.length)return;
+  const { error } = await window.GrimoireSupabase.storage.from(bucket).remove(paths);
+  if(error)throw error;
+}
+
+async function previewRensAttachment(attId){
+  const att = RENS.attachments.find(x=>x.id===attId);
+  const preview = document.getElementById('att-preview-'+attId);
+  if(!att || !preview)return;
+  if(!preview.hidden){
+    preview.hidden = true;
+    preview.innerHTML = '';
+    return;
+  }
+  preview.hidden = false;
+  preview.innerHTML = '<p>Chargement de l’image...</p>';
+  try{
+    const url = await rensSignedAttachmentUrl(att);
+    preview.innerHTML = `<img src="${url}" alt="${escH(att.file_name||'Pièce jointe')}">`;
+  }catch(error){
+    preview.innerHTML = `<p class="rens-attachment-error">Impossible de charger l’image : ${escH(error.message)}</p>`;
+  }
+}
+
+async function openRensAttachment(attId){
+  const att = RENS.attachments.find(x=>x.id===attId);
+  if(!att)return;
+  try{
+    const url = await rensSignedAttachmentUrl(att);
+    window.open(url, '_blank', 'noopener');
+  }catch(error){
+    alert('Impossible d’ouvrir la pièce jointe : '+error.message);
+  }
+}
+
+async function deleteRensAttachment(attId){
+  const att = RENS.attachments.find(x=>x.id===attId);
+  const report = RENS.rapports.find(r=>r.id===att?.rapport_id);
+  if(!att || !report || !rensCanEditOwn(report))return;
+  if(!confirm('Supprimer cette pièce jointe ?'))return;
+  try{
+    await rensRemoveStorageFiles(att.bucket_id || RENS_ATTACHMENT_BUCKET, [att.path]);
+    await sbDelete('mk_rens_attachments',`?id=eq.${encodeURIComponent(attId)}`);
+    await rensLoad();
+  }catch(error){
+    alert('Erreur : '+error.message);
+  }
+}
+
 function buildAddRapportFormHTML(ficheId){
   return `
   <div class="add-rapport" id="addrap-${ficheId}">
@@ -487,6 +668,7 @@ function buildAddRapportFormHTML(ficheId){
     <textarea id="raf-cnt-${ficheId}" rows="7" placeholder="Faits, témoignages, observations..."></textarea>
     <label>Action recommandée <span style="font-style:italic;font-weight:normal;font-family:'IM Fell English',serif;font-size:.88rem;color:var(--ink-faint);">(facultatif)</span></label>
     <textarea id="raf-act-${ficheId}" rows="3"></textarea>
+    ${rensAttachmentInputHTML(`raf-files-${ficheId}`)}
     <div style="display:flex;gap:.5rem;margin-top:.65rem;">
       <button class="btn-add" style="font-size:.82rem;padding:.3rem .8rem;" onclick="saveRapport('${ficheId}')">Enregistrer</button>
       <button class="btn-sm" onclick="toggleAdd('addrap-${ficheId}')">Annuler</button>
@@ -513,6 +695,7 @@ function buildEditRapportFormHTML(r){
     <textarea id="er-cnt-${r.id}" rows="7" placeholder="Faits, témoignages, observations...">${escH(r.contenu||'')}</textarea>
     <label>Action recommandée <span style="font-style:italic;font-weight:normal;font-family:'IM Fell English',serif;font-size:.88rem;color:var(--ink-faint);">(facultatif)</span></label>
     <textarea id="er-act-${r.id}" rows="3">${escH(r.action_recommandee||'')}</textarea>
+    ${rensAttachmentInputHTML(`er-files-${r.id}`)}
     <div style="display:flex;gap:.5rem;margin-top:.65rem;">
       <button class="btn-add" style="font-size:.82rem;padding:.3rem .8rem;" onclick="saveEditRapport('${r.id}')">Enregistrer</button>
       <button class="btn-sm" onclick="openEditRapport('${r.id}')">Annuler</button>
@@ -680,10 +863,24 @@ async function saveRapport(ficheId){
     created_by_name:author.name||null,
     created_by_grade:author.grade||null,
   };
-  try{await sbPost('mk_rens_rapports',payloadWithAuthor);}
+  let createdReport = null;
+  try{
+    const inserted = await sbPost('mk_rens_rapports',payloadWithAuthor);
+    createdReport = Array.isArray(inserted) ? inserted[0] : inserted;
+  }
   catch(error){
-    try{await sbPost('mk_rens_rapports',payload);}
+    try{
+      const inserted = await sbPost('mk_rens_rapports',payload);
+      createdReport = Array.isArray(inserted) ? inserted[0] : inserted;
+    }
     catch(fallbackError){ alert('Erreur : '+fallbackError.message); return; }
+  }
+  if(createdReport?.id){
+    try{
+      await uploadRensAttachments(createdReport.id, `raf-files-${ficheId}`);
+    }catch(error){
+      alert('Rapport enregistré, mais une pièce jointe n’a pas pu être ajoutée : '+error.message);
+    }
   }
   await notifyDiscordRenseignement('rapport', titre||'Sans titre');
   await rensLoad();
@@ -709,13 +906,30 @@ async function saveEditRapport(rapId){
   };
   try{ await sbPatch('mk_rens_rapports',`?id=eq.${encodeURIComponent(rapId)}`,payload); }
   catch(error){ alert('Erreur : '+error.message); return; }
+  try{
+    await uploadRensAttachments(rapId, `er-files-${rapId}`);
+  }catch(error){
+    alert('Rapport modifié, mais une pièce jointe n’a pas pu être ajoutée : '+error.message);
+  }
   await rensLoad();
 }
 
 async function deleteRapport(rapId, ficheId){
   if(!rensCanDelete())return;
   if(!confirm('Supprimer ce rapport ?')) return;
-  try{await sbDelete('mk_rens_rapports',`?id=eq.${rapId}`);}
+  const attachments = rensAttachmentsForRapport(rapId);
+  try{
+    const groupedPaths = attachments.reduce((acc, att)=>{
+      const bucket = att.bucket_id || RENS_ATTACHMENT_BUCKET;
+      if(!acc[bucket])acc[bucket]=[];
+      acc[bucket].push(att.path);
+      return acc;
+    }, {});
+    await Promise.all(Object.entries(groupedPaths).map(([bucket, paths])=>
+      rensRemoveStorageFiles(bucket, paths)
+    ));
+    await sbDelete('mk_rens_rapports',`?id=eq.${rapId}`);
+  }
   catch(error){ alert('Erreur : '+error.message); return; }
   await rensLoad();
 }

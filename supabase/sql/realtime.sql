@@ -28,6 +28,7 @@ declare
     'mk_rens_rapport_rapport',
     'mk_rens_map_nodes',
     'mk_rens_map_links',
+    'mk_rens_attachments',
     'mk_map_pins',
     'mk_map_zones',
     'mk_map_pin_reports',
